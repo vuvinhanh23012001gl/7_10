@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Roboto Condensed';
+    src: url('../css/style_take_photo.css/RobotoCondensed-Light.woff2') format('woff2'),
+        url('../css/style_take_photo.css/RobotoCondensed-Light.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+

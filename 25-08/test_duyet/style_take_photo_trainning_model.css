@@ -1,0 +1,97 @@
+     .point-row { margin-bottom: 10px; }
+        textarea {
+            font-family: monospace;
+        }
+        #summaryBox {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            height: 50%;
+        }
+        #cameraFrame {
+            border: 2px dashed #666;
+            width: 100%;
+            height: 480px;
+            background-color: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #555;
+        }
+    .btn_inc_dec {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+.btn_inc_dec button {
+    padding: 10px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn_inc_dec button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.btn_inc_dec button:active {
+    background-color: #003f88;
+    transform: scale(0.97);
+}
+#infoBox {
+    font-family: monospace;
+    border: 2px solid #007BFF;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    font-size:larger;
+  }
+/* Style for the <h3> element */
+#cir_status_connect {
+  box-sizing: border-box;
+  margin-top: 13px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: #15a0af; /* Màu xanh khi kết nối */
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  white-space: nowrap;
+}
+#cir_status_connect.disconnect {
+  background-color: red; /* Màu đỏ khi ngắt kết nối */
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6); /* Thêm bóng đỏ */
+  transform: scale(1.2); /* Phóng to nhẹ */
+}
+
+/* Hiệu ứng phóng to nhẹ khi kết nối */
+#cir_status_connect.connecting {
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.7); /* Thêm bóng mờ màu xanh */
+  background-color: rgba(76, 175, 80, 0.7); 
+}
+#status_connect {
+  margin-top: 2px;
+  box-sizing: border-box;
+  font-size: 23px;
+  font-weight:600;
+  color: #413030;
+  display: flex;
+  align-items: center;
+  gap: 10px;  /* Space between circle and text */
+  white-space: nowrap;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}

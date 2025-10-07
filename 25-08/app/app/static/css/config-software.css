@@ -1,0 +1,262 @@
+/* ===== OVERLAY ===== */
+#overlay_config_software {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== SETTINGS BOX ===== */
+#settings-box {
+  border-radius: 20px;
+  background-color: #1e1e2f;
+  width: 1100px;
+  max-height: 90vh;
+  padding: 25px 30px;
+  color: #e0e0e0;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+  animation: popup 0.3s ease;
+}
+
+/* ===== POPUP ANIMATION ===== */
+@keyframes popup {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+/* ===== TITLE ===== */
+#settings-title {
+  color: #00bcd4;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+  font-weight: 700;
+  text-shadow: 0 0 10px #00bcd4;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== SOFTWARE INFO DARK MODE ===== */
+#software-info {
+  border: 1px solid #444;
+  border-radius: 16px;
+  padding: 20px;
+  background-color: #2a2a3d;
+  color: #e0e0e0;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  transition: background 0.3s, color 0.3s;
+}
+
+#software-info h3 {
+  margin-top: 0;
+  color: #00bcd4;
+  font-size: 1.5em;
+  margin-bottom: 16px;
+  text-shadow: 0 0 6px #00bcd4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#software-info p {
+  margin: 10px 0;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#software-info span {
+  font-size: larger;
+  font-family: monospace;
+  flex: 1;
+  min-width: 180px;
+  word-break: break-word;
+  padding: 4px 8px;
+  border-radius: 8px;
+  
+  white-space: nowrap;
+}
+
+/* ===== EDIT BUTTON ===== */
+.edit-btn {
+  margin-left: 8px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #00bcd4;
+  transition: 0.2s;
+}
+
+.edit-btn:hover {
+  color: #00ffff;
+  transform: scale(1.1);
+}
+
+/* ===== INPUT FOR EDITING ===== */
+#software-info input[type="text"] {
+  width: 70%;
+  padding: 6px 10px;
+  border-radius: 30px;
+  border: 1px solid #00bcd4;
+  background-color: #353547;
+  color: #fff;
+  font-family: monospace;
+}
+
+/* ===== SOFTWARE PATHS ===== */
+#software-paths {
+
+  padding: 15px;
+  border-radius: 14px;
+  margin-top: 2px;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+}
+
+#software-paths h4 {
+  margin: 0 0 8px 0;
+  color: #00bcd4;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#software-paths p {
+  margin: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#software-paths span {
+  font-size: larger;
+  padding: 4px 8px;
+  border-radius: 8px;
+ 
+  font-family: monospace;
+}
+
+/* ===== SWITCHES ===== */
+#setting-log-image,
+#setting-log-product,
+#setting-log-software,
+#setting-retraining {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0;
+  font-size: 0.95em;
+  color: #ccc;
+}
+
+#switch-sound,
+#switch-notification,
+#switch-darkmode,
+#switch-retraining {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+#slider-sound,
+#slider-notification,
+#slider-darkmode,
+#slider-retraining {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #555;
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+#slider-sound:before,
+#slider-notification:before,
+#slider-darkmode:before,
+#slider-retraining:before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+#switch-sound input:checked + #slider-sound,
+#switch-notification input:checked + #slider-notification,
+#switch-darkmode input:checked + #slider-darkmode,
+#switch-retraining input:checked + #slider-retraining {
+  background-color: #00bcd4;
+  box-shadow: 0 0 12px #00bcd4;
+}
+
+#switch-sound input:checked + #slider-sound:before,
+#switch-notification input:checked + #slider-notification:before,
+#switch-darkmode input:checked + #slider-darkmode:before,
+#switch-retraining input:checked + #slider-retraining:before {
+  transform: translateX(24px);
+}
+
+/* ===== BUTTONS ===== */
+#buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 25px;
+}
+
+#save-settings, #close-settings {
+  width: 48%;
+  padding: 12px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 1em;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+#save-settings {
+  background-color: #00bcd4;
+  color: #fff;
+}
+
+#save-settings:hover {
+  background-color: #0097a7;
+  box-shadow: 0 0 12px #00bcd4;
+}
+
+#close-settings {
+  background-color: #444;
+  color: #ddd;
+}
+
+#close-settings:hover {
+  background-color: #666;
+  box-shadow: 0 0 8px #666;
+}
+
+/* ===== SCROLLBAR DARK ===== */
+#settings-box::-webkit-scrollbar {
+  width: 8px;
+}
+#settings-box::-webkit-scrollbar-track {
+  background: #1e1e2f;
+}
+#settings-box::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 4px;
+}

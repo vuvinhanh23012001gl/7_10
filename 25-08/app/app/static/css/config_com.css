@@ -1,0 +1,186 @@
+/* ===========================
+   Biến màu
+=========================== */
+#infor-com-connect {
+  width: 340px;
+  padding: 5px;
+  word-wrap: break-word;    /* xuống dòng khi từ quá dài */
+  white-space: normal;      /* cho phép xuống dòng */
+}
+#overlay_config_com{
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display:none; 
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.com-app {
+  --bg: #0f1724;
+  --card: #0b1220;
+  --muted: #9aa4b2;
+  --accent: #3b82f6;
+}
+
+/* ===========================
+   Tổng thể
+=========================== */
+
+.com-app {
+  background: var(--bg);
+  color: #e6eef6;
+  width: 980px;
+  max-width: 97%;
+  margin: 28px auto;
+  padding: 20px;
+  border: 1px solid rgba(255,255,255,0.04);
+  border-radius: 14px;
+  box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* ===========================
+   Header
+=========================== */
+.com-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.com-title {
+  margin: 0;
+  font-size: 20px;
+}
+.com-lead {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+.com-controls {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===========================
+   Nút bấm
+=========================== */
+#com-close,
+.com-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s;
+}
+#com-close:hover,
+.com-btn:hover {
+  background: rgba(255,255,255,0.06);
+  transform: translateY(-1px);
+}
+#com-close {
+  background: #f70a29;
+  border: none;
+}
+#com-close:hover {
+  background: #e22;
+}
+
+/* ===========================
+   Layout
+=========================== */
+.com-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 18px;
+}
+
+/* ===========================
+   Card
+=========================== */
+.com-card {
+  background: var(--card);
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.02);
+}
+.com-card-title {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ===========================
+   Danh sách cổng
+=========================== */
+.com-ports {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.com-ports li {
+  padding: 10px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border: 1px solid rgba(255,255,255,0.03);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.2s;
+}
+.com-ports li:hover {
+  background: rgba(255,255,255,0.05);
+}
+.com-small {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ===========================
+   Form chọn COM
+=========================== */
+.com-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.com-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  color: var(--muted);
+}
+.com-select {
+  margin-top: 6px;
+  background: #131a29;
+  color: #e6eef6;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+}
+.com-select:focus {
+  border-color: var(--accent);
+}
+
+/* ===========================
+   Responsive
+=========================== */
+@media (max-width: 860px) {
+  .com-grid {
+    grid-template-columns: 1fr;
+  }
+}

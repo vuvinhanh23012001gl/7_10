@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="../static/img/image.png">
+        <link rel="stylesheet" href="../static/css/show_main.css">
+        <link rel="stylesheet" href="../static/css/config_camera.css">
+        <link rel="stylesheet" href="../static/css/config_com.css">
+        <link rel="stylesheet" href="../static/css/config-software.css">
+        <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+        <title>Kiểm tra dầu</title>
+        <!-- <script>
+        if (localStorage.getItem("app_open") === "true") {   // kiem tra xem trinh duet mo hay chua 
+        window.location.href = "/empty_page.html";   
+        } else {
+        localStorage.setItem("app_open", "true");
+        }
+        window.addEventListener("beforeunload", () => {
+        localStorage.removeItem("app_open");
+        });
+        </script> -->
+</head>
+<body>
+    <div class = "header">
+        <ul class ="header-ul">
+            <li class="header-ul-li " id = "choose-product">Chọn loại sản phẩm</li>
+            <li class="header-ul-li " id = "add-product">Thêm sản phẩm mới</li>
+            <li class="header-ul-li">Cấu hình master
+                <img id = "preview">
+                 <ul class = "header-ul-li-master">
+                    <li id="header-ul-li-add-take">Chỉnh sửa master</li>
+                    <li id="header-ul-li-master-take">Lấy master</li>
+                    
+                 </ul>
+            </li>
+
+            <li class="header-ul-li">Cấu hình
+                 <ul>
+                    <li id="btn-open-camera-config">Cấu hình camera</li>
+                    <li id="btn-open-com-config">Cấu hình cổng COM</li>
+                    <li id="btn-open-software-config">Cấu hình phần mềm</li>
+                 </ul>
+            </li>
+            <li class="header-ul-li">Thông tin
+                  <ul>
+                    <li>Hướng dẫn sử dụng </li>
+                 </ul>
+            </li>
+            <li id="api-run" class="header-ul-li ">Chạy</li>   
+            <li class="header-ul-li close" style="text-align: center;padding-left: 70px;" id="out-app">Thoát</li>
+        </ul>
+    </div>
+    <div class="split-frame">
+        <div class = "show-screen">   
+                <div class = "show-img-master">
+                      <button class="scroll-up" style="background-color: #004085">◀️</button>
+                      <div class = "scroll-container">
+                           <div id = "scroll-content" data-img='{{ path_arr_img | tojson | safe }}'>
+                               <!-- Noi dung duoc chen o day -->
+                           </div>
+                      </div>
+                      <button class="scroll-down" style="background-color:#004085;">▶️</button>
+                </div>
+                <div class = "show-img">
+                      <!-- <img id="show-img-preview" src="" alt="Ảnh preview" /> -->
+                      <canvas id = "canvas-img"></canvas>   <!--Vẽ Ảnh-->
+                      <canvas id = "canvas-img-preview"></canvas> <!--nét tren vẽ -->
+                      <canvas id = "canvas-img-show-add-master"></canvas> <!--nét tren vẽ -->
+                </div>
+                <div class = "show-satus">
+                    <p id = "coordinate"></p>
+                    <div class="cluster">
+                        <div class="header-show-item-conect item1">
+                            <p class="header-show-circle on"></p>    
+                            <h2  id="header-show-status">Chờ kết nối....</h2>
+                        </div>
+                        <div class="header-show-item-conect item2">
+                            <p class="header-show-circle off "></p>    
+                            <h2  id="status-connect-cam">Chờ kết nối....</h2>
+                        </div>
+                        <button id="toggleBtn" class="toggle-btn">Ảnh phán định</button>
+                    </div>
+                </div>
+        </div>
+        <div class = "show-option">
+                <div id="paner-main" class = "paner active">
+                    <div class = "paner-main-status-product">   <!--chon run ok eg tuy vao trang thai phan dinh -->
+                        --
+                    </div>
+                    <div class = "paner-main-table-show-point">
+                         <div  id="table-show-point-detect"></div>     
+                    </div>
+                    <div class="paner-main-show-log" id = "log_judment">
+                    </div>
+                </div>
+                <div id="paner-take-master" class="paner take-master">
+                        <div id="part-table-log">
+                            <div class="log"></div>
+                            <table class="table">
+                                <tbody id="table"></tbody>
+                            </table>
+                        </div>
+                        <div class="part-controler">
+                            <div class="contour-select">
+                                    <label for="list-contour" >Chọn biên dạng</label>
+                                    <div id="list-contour">
+                                        <img id ="btn-square" src="../static/img/rectangle.png" alt="Hình Vuông" style="margin-left:33px;">
+                                        <img id = "btn-circle" src="../static/img/circle.png" alt="Hình Tròn">
+                                    </div>
+                            </div>
+                            <button id = "btn-select-min"><img src="../static/img/stop.png" alt="icon vẽ đường bao nhỏ nhất"> Vẽ đường bao điểm</button>
+                            <button id = "btn-undo"><img src="../static/img/eraser.png" alt="icon xóa hình"> Xóa hình trước</button>
+                            <button id = "btn-erase"><img src="../static/img/clean-up.png" alt="icon xóa tất cả"></i> Xóa tất cả các hình</button>
+                            <button id = "btn-check"><img src="../static/img/check.png" alt="icon kiểm tra tính hợp lệ">Kiểm tra hợp lệ</button>
+                            <button id = "btn-accept-and-send-server"><img src="../static/img/apply.png" alt="Áp dụng và thoát"> Áp dụng</button>
+                            <button id = "btn-close"><img src="../static/img/apply.png" alt="Áp dụng và thoát"> Thoát</button>
+                        </div>
+                </div>
+                <div id="panel-add-master" class="paner add-master">
+                        <!-- Bảng thông tin loại sản phẩm -->
+                        <div class="panel-table">
+                            <table class="product-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tên loại</th>
+                                        <th>Max X</th>
+                                        <th>Max Y</th>
+                                        <th>Max Z</th>
+                                        <th>Max K</th>
+                                    </tr> 
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                            <div class="log log-area" id="log_add_master"></div>
+                        </div>
+                        <!-- Nút điều khiển 1 điểm -->
+                        <div class="controls-single-point">
+                            <div class="anonymous" id="anonymous">
+                                <!--Chèn nội dung ở đây -->
+                            </div>
+                        </div> 
+
+                        <!-- Nút điều khiển tất cả điểm -->
+                        <div class="controls-all-points">
+                            <button class="btn btn-add-point" id = "btn-add-master"><img src="../static/img/gallery.png" alt="Thêm master"> Thêm master</button>
+                            <button class="btn btn-save" id = "run_all_master"><img src="../static/img/diskette.png" alt="Chạy các Master">Chạy các Master</button>
+                            <button class="btn btn-exit" id = "exit-add-master"><img src="../static/img/close.png" alt="Thoát master"> Thoát</button>
+                        </div>                    
+                </div>              
+        </div>
+    </div>
+    <!-- show thông tin cam và  -->
+    <div class="overlay_config_camera"> 
+        <div class="config-camera">
+            <!-- HEADER -->
+            <header class="app-header">
+            <div>
+                <h1 class="app-title">Blase Camera Dashboard</h1>
+                <p class="app-lead">Theo dõi thông tin & cấu hình camera hãng Blase</p>
+            </div>
+            </header>
+            <!-- MAIN CONTENT -->
+            <div class="grid grid-2">
+            <!-- Thông tin camera -->
+            <section class="card card-info">
+                <h2 class="card-title">Thông tin Camera</h2>
+                <ul class="info-list">
+                <li><span class="label">Model:</span> <span id="cam-model">--</span></li>
+                <li><span class="label">Serial:</span> <span id="cam-serial">--</span></li>
+                <li><span class="label">Vendor</span> <span id="cam-vendor">--</span></li>
+                <li><span class="label">Deceive class:</span> <span id="device-class">--</span></li>
+                <li><span class="label">Status:</span> <span id="cam-status" class="status offline">--</span></li>
+                </ul>
+            </section>
+            <!-- Cấu hình camera -->
+            <section class="card card-config">
+                <h2 class="card-title">Cấu hình</h2>
+                <form class="config-form" id="config-form">
+                <label class="form-label">
+                    Exposure
+                    <input id="cam-exposure"class="form-input" readonly>
+                </label>
+
+                <label class="form-label">
+                    Resolution
+                    <input id="cam-resolution" class="form-input" readonly>
+                    </P>
+                </label>
+
+                <label class="form-label">
+                    FPS
+                    <input id="cam-fps" class="form-input"  readonly>
+                </label>
+
+                <div class="row">
+                    <button  id="close-config-camera" class="btn btn-primary close" type="button">Thoát</button>
+                </div>
+                </form>
+            </section>
+            </div>
+        </div>
+    </div>
+    <!-- show thông tin cổng com -->
+    <div id = "overlay_config_com"> 
+       <div class="com-app">
+                <header class="com-header">
+                <div class="com-header-left">
+                    <h1 class="com-title">COM Ports Monitor</h1>
+                    <p class="com-lead">Hiển thị các cổng COM đang có/đang kết nối</p>
+                </div>
+                <div class="com-controls">
+                    <button id="com-close">Thoát</button>
+                </div>
+                </header>
+
+                <div class="com-grid">
+                <!-- Danh sách cổng COM -->
+                <section class="com-card com-ports-card">
+                    <h3 class="com-card-title">Danh sách cổng COM</h3>
+                    <ul id="com-ports-list" class="com-ports"></ul>
+                    <div class="com-small" id="show_info_list_cam"></div>
+                    
+
+                   
+                </section>
+
+                <!-- Thông tin COM -->
+                <aside class="com-card com-info-card">
+                    <h3 class="com-card-title">Thông tin cổng COM</h3>
+                    <form class="com-form">
+                    <p id="infor-com-connect"></p>
+                    <label class="com-label">
+                        Cổng COM
+                        <select id="com-select" class="com-select">
+                        <!-- <option>Apple</option>
+                        <option>Banana</option>
+                        <option>Orange</option> -->
+                        </select>
+                    </label>
+
+                    <label class="com-label">
+                        Baudrate
+                        <select id="baud-select" class="com-select">
+                        </select>
+                    </label>
+
+                    <button type="button" id="com-open" class="com-btn">Mở cổng và lưu thông tin</button>
+                    </form>
+                </aside>
+                </div>
+        </div>
+  </div>
+  <!-- show thong tin phan mem -->
+<div id="overlay_config_software"> 
+  <div id="settings-box">
+    <h2 id="settings-title">⚙️ Cấu hình phần mềm</h2>
+
+    <!-- 🔹 Thông tin phần mềm -->
+    <div id="software-info">
+      <h3>🧩 Thông tin phần mềm</h3>
+
+      <p>
+        <strong>Tên phần mềm:</strong> 
+        <span id="sw-name"></span>
+      </p>
+
+      <p>
+        <strong>Phiên bản:</strong> 
+        <span id="sw-version"></span>
+
+      </p>
+
+ 
+
+      <p>
+        <strong>Người phát triển:</strong> 
+        <span id="sw-author"></span>
+
+      </p>
+
+
+
+      <!-- 🔸 Đường dẫn dữ liệu -->
+      <div id="software-paths">
+        <h4 style="margin-bottom:6px;">📂 Đường dẫn dữ liệu</h4>
+
+        <p>
+          <strong>📸 Path hình ảnh điểm dầu:</strong> 
+          <span id="path-oil"></span>
+        </p>
+
+        <p>
+          <strong>📦 Path log sản phẩm:</strong> 
+          <span id="path-product"></span>
+        
+        </p>
+
+        <p>
+          <strong>🧠 Path log phần mềm:</strong> 
+          <span id="path-software">D:/Logs/SoftwareLogs/</span>
+        </p>
+      </div>
+    </div>
+    <!-- ⚙️ Các tùy chọn log -->
+    <div id="setting-log-image">
+      <span>Log hình ảnh</span>
+      <label id="switch-sound">
+        <input type="checkbox" id="set-sound">
+        <span id="slider-sound"></span>
+      </label>
+    </div>
+
+    <div id="setting-log-product">
+      <span>Log sản phẩm</span>
+      <label id="switch-notification">
+        <input type="checkbox" id="set-notification">
+        <span id="slider-notification"></span>
+      </label>
+    </div>
+
+    <div id="setting-log-software">
+      <span>Log phần mềm</span>
+      <label id="switch-darkmode">
+        <input type="checkbox" id="set-darkmode" checked>
+        <span id="slider-darkmode"></span>
+      </label>
+    </div>
+    <!-- 🔘 Nút điều khiển -->
+    <div id="buttons">
+      <button id="save-settings">💾 Lưu cấu hình</button>
+      <button id="close-settings">✖ Thoát</button>
+    </div>
+  </div>
+</div>
+
+
+<script type="module" src="../static/js/show_main.js"></script>    
+</body>
+  
+</html>
+

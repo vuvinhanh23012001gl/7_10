@@ -1,0 +1,141 @@
+
+
+.body-bg {
+  color:#e2e8f0;
+  font-family:'Segoe UI', Roboto, sans-serif;
+  line-height:1.6;
+}
+.config-camera {
+  max-width: 1200px;
+  width: 50%;             /* giữ tỉ lệ ngang hoặc đổi thành max-width */
+  max-height: 90vh;       /* Giới hạn chiều cao tối đa theo viewport */
+  overflow: auto;         /* Nếu nội dung vượt quá => xuất hiện thanh cuộn */
+  
+  margin:30px auto;
+  background:#0f172a;
+  padding:25px 25px 30px;
+  border-radius:15px;
+  color:white;
+}
+.overlay_config_camera {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display:none; 
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.card {
+  max-width:1000px;
+  margin-top: 20px;
+  background:#1e293b;
+  padding:24px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+
+/* ==== HEADER ==== */
+.config-camera-header { text-align:center; margin-bottom:30px; }
+.config-camera-title  { font-size:2rem; color:#38bdf8; margin-bottom:8px; }
+.config-camera-lead   { font-size:1rem; color:#94a3b8; }
+
+/* ==== GRID ==== */
+.grid-2 {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(350px,1fr));
+  gap:24px;
+}
+
+/* ==== CARD ==== */
+
+.card:hover {
+  transform:translateY(-4px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.45);
+}
+.card-title {
+  margin-bottom:20px;
+  font-size:1.3rem;
+  color:#f1f5f9;
+  border-left:4px solid #38bdf8;
+  padding-left:10px;
+}
+
+/* ==== INFO LIST ==== */
+.info-list { list-style:none; }
+.info-list li {
+  display:flex;
+  justify-content:space-between;
+  padding:10px 0;
+  border-bottom:1px solid #334155;
+}
+.label { font-weight:600; color:#cbd5e1; }
+.status {
+  padding:4px 10px;
+  border-radius:6px;
+  font-size:0.85rem;
+  font-weight:600;
+}
+.status.online  { background:#22c55e; color:#e0ffe7; }
+.status.offline { background:#ef4444; color:#ffe0e0; }
+
+/* ==== FORM ==== */
+.config-form .form-label {
+  display:block;
+  margin-bottom:16px;
+  font-weight:600;
+  color:#e2e8f0;
+}
+.config-form .form-input {
+  width:100%;
+  padding:10px 12px;
+  margin-top:6px;
+  border:1px solid #334155;
+  border-radius:8px;
+  background:#0f172a;
+  color:#f1f5f9;
+  transition:border-color .2s;
+}
+.config-form .form-input:focus {
+  outline:none;
+  border-color:#38bdf8;
+  box-shadow:0 0 0 2px rgba(56,189,248,0.3);
+}
+
+/* ==== BUTTON ==== */
+.btn-primary {
+  padding:10px 20px;
+  background:#38bdf8;
+  border:none;
+  border-radius:8px;
+  font-size:1rem;
+  font-weight:600;
+  color:#0f172a;
+  cursor:pointer;
+  transition:background .2s, transform .2s;
+}
+.btn-primary:hover {
+  background:#0ea5e9;
+  transform:translateY(-2px);
+}
+.row { text-align:right; 
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  margin-top:10px; 
+  gap: 20px;
+}
+
+.config-camera-footer {
+  text-align:center;
+  margin-top:30px;
+  padding:20px 0;
+  color:#64748b;
+  font-size:0.9rem;
+  border-top:1px solid #334155;
+}
+
+

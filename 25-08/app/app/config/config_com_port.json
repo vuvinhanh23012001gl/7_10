@@ -1,0 +1,9 @@
+{
+    "device_port": "COM4",
+    "baudrate": 921600,
+    "bytesize": 8,
+    "parity": "N",
+    "stopbits": 1,
+    "timeout": 1,
+    "reconnect_interval": 1
+}

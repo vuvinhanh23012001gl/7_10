@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Thông tin phần mềm</title>
+<style>
+/* ---------- Overlay (tương tự trước) ---------- */
+#overlay_config_software {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---------- Khung chính ---------- */
+#settings-box {
+  width: 920px;
+  max-width: calc(100% - 40px);
+  background: linear-gradient(145deg,#1e1e1e,#2b2b2b);
+  border-radius: 14px;
+  padding: 18px;
+  color: #f1f1f1;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 18px;
+}
+
+/* ---------- Tiêu đề ---------- */
+#settings-title {
+  grid-column: 1 / -1;
+  font-size: 1.4rem;
+  color: #00bcd4;
+  margin: 6px 0 8px 0;
+  font-weight: 600;
+  text-shadow: 0 0 6px rgba(0,188,212,0.12);
+}
+
+/* ---------- Cột trái: Thông tin & cấu hình ---------- */
+#left-panel {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 12px;
+  border-radius: 10px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* box header nhỏ */
+#info-title {
+  font-size: 1.05rem;
+  color: #00e676;
+  margin-bottom: 10px;
+}
+
+/* dòng thông tin */
+#info-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+#info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.02);
+  color: #dfeff3;
+  font-size: 0.95rem;
+}
+
+/* nhãn */
+#info-item span:first-child {
+  color: #cdeef6;
+  opacity: 0.95;
+}
+
+/* giá trị */
+#info-item span:last-child {
+  color: #fff;
+  font-weight: 600;
+}
+
+/* cấu hình (switch + inputs) */
+#config-title {
+  margin-top: 14px;
+  font-size: 1.02rem;
+  color: #00bcd4;
+}
+
+#config-block {
+  margin-top: 8px;
+  display: grid;
+  gap: 10px;
+}
+
+/* từng dòng cấu hình */
+#cfg-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  background: rgba(0,0,0,0.12);
+  border-radius: 8px;
+}
+
+/* input text */
+#field-line, #field-factory {
+  width: 100%;
+  padding: 8px;
+  background: #2b2b2b;
+  border: 1px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* nút nhỏ */
+#export-csv, #close-settings {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* xuất csv */
+#export-csv {
+  background: linear-gradient(90deg,#00bcd4,#00e676);
+  color: #042027;
+}
+
+/* đóng */
+#close-settings {
+  background: #333;
+  color: #e8e8e8;
+}
+
+/* ---------- Cột phải: Bảng log ---------- */
+#right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* header area trên bảng */
+#log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#log-title {
+  color: #ffd54f;
+  font-weight: 700;
+}
+
+/* filter input */
+#filter-input {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #222;
+  color: #fff;
+}
+
+/* bảng log */
+#log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+#log-table thead th {
+  text-align: left;
+  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  color: #cfeff8;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+#log-table tbody td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.02);
+  color: #e6f7fb;
+  vertical-align: middle;
+}
+
+/* hàng hover */
+#log-table tbody tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+/* responsive: chuyển 1 cột trên màn nhỏ */
+@media (max-width: 880px) {
+  #settings-box {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+<div id="overlay_config_software" style="display:flex;">
+  <div id="settings-box">
+    <h2 id="settings-title">⚙️ Thông tin & Log phần mềm</h2>
+
+    <!-- LEFT -->
+    <div id="left-panel">
+      <div id="info-title">Thông tin phần mềm</div>
+
+      <div id="info-list">
+        <div id="info-item"><span>Phiên bản</span><span id="info-version">v1.2.3</span></div>
+        <div id="info-item"><span>Uptime</span><span id="info-uptime">00:00:00</span></div>
+        <div id="info-item"><span>Last update</span><span id="info-lastupdate">2025-10-07 08:00</span></div>
+        <div id="info-item"><span>Folder log</span><span id="info-logpath">/var/logs/retraining</span></div>
+        <div id="info-item"><span>Số bản ghi</span><span id="info-count">0</span></div>
+      </div>
+
+      <div id="config-title">Cấu hình</div>
+      <div id="config-block">
+        <div id="cfg-row">
+          <div>Log hình ảnh</div>
+          <label id="switch-log-image">
+            <input type="checkbox" id="set-log-image" checked>
+            <span id="slider-log-image" style="display:none;"></span>
+          </label>
+        </div>
+
+        <div id="cfg-row">
+          <div>Log sản phẩm</div>
+          <label id="switch-log-product">
+            <input type="checkbox" id="set-log-product" checked>
+            <span id="slider-log-product" style="display:none;"></span>
+          </label>
+        </div>
+
+        <div id="cfg-row">
+          <div>Log phần mềm</div>
+          <label id="switch-log-software">
+            <input type="checkbox" id="set-log-software" checked>
+            <span id="slider-log-software" style="display:none;"></span>
+          </label>
+        </div>
+
+        <div id="cfg-row" style="flex-direction:column; align-items:flex-start;">
+          <label for="field-line" id="label-line">Tên truyền</label>
+          <input id="field-line" type="text" placeholder="VD: Truyền A">
+        </div>
+
+        <div id="cfg-row" style="flex-direction:column; align-items:flex-start;">
+          <label for="field-factory" id="label-factory">Tên nhà máy</label>
+          <input id="field-factory" type="text" placeholder="VD: Nhà máy Bắc Ninh">
+        </div>
+
+        <button id="export-csv" title="Xuất file CSV từ log hiển thị">📤 Xuất log CSV</button>
+        <button id="close-settings">✖ Đóng</button>
+      </div>
+    </div>
+
+    <!-- RIGHT (log) -->
+    <div id="right-panel">
+      <div id="log-header">
+        <div id="log-title">Bảng Log</div>
+        <div>
+          <input id="filter-input" placeholder="Tìm: event / status / time" />
+        </div>
+      </div>
+
+      <div id="log-table-wrap" style="overflow:auto; max-height:420px;">
+        <table id="log-table">
+          <thead>
+            <tr>
+              <th>Thời gian</th>
+              <th>Sự kiện</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="log-body">
+            <!-- JS sẽ render log tại đây -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* MẪU DỮ LIỆU LOG - trong thực tế bạn sẽ load từ server hoặc từ localStorage */
+const logs = [
+  {time: "2025-10-07 08:30:12", event: "Retraining Start", status: "OK"},
+  {time: "2025-10-07 08:31:02", event: "Capture image #123", status: "Saved"},
+  {time: "2025-10-07 08:31:22", event: "Inference - product A", status: "NG"},
+  {time: "2025-10-07 08:32:10", event: "Retraining Done", status: "Success"}
+];
+
+/* Render bảng log */
+function renderLogs(list) {
+  const tbody = document.getElementById("log-body");
+  tbody.innerHTML = "";
+  list.forEach(l => {
+    const tr = document.createElement("tr");
+    const tdTime = document.createElement("td");
+    const tdEvent = document.createElement("td");
+    const tdStatus = document.createElement("td");
+    tdTime.textContent = l.time;
+    tdEvent.textContent = l.event;
+    tdStatus.textContent = l.status;
+    tr.appendChild(tdTime);
+    tr.appendChild(tdEvent);
+    tr.appendChild(tdStatus);
+    tbody.appendChild(tr);
+  });
+  document.getElementById("info-count").textContent = list.length;
+}
+
+/* Tăng uptime đơn giản (demo) */
+let start = Date.now();
+function updateUptime(){
+  const sec = Math.floor((Date.now() - start)/1000);
+  const h = String(Math.floor(sec/3600)).padStart(2,"0");
+  const m = String(Math.floor((sec%3600)/60)).padStart(2,"0");
+  const s = String(sec%60).padStart(2,"0");
+  document.getElementById("info-uptime").textContent = `${h}:${m}:${s}`;
+}
+
+/* Xuất CSV (với BOM để Excel hiện tiếng Việt tốt) */
+function exportCSV(list){
+  if (!list || list.length === 0){ alert("Không có log để xuất!"); return; }
+  const header = Object.keys(list[0]).join(",") + "\n";
+  // escape dấu phẩy và dòng mới nếu cần: wrap by quotes and double quotes inside
+  const rows = list.map(obj => {
+    return Object.values(obj).map(v => {
+      const s = String(v);
+      if (s.includes(",") || s.includes("\n") || s.includes('"')) {
+        return `"${s.replace(/"/g,'""')}"`;
+      }
+      return s;
+    }).join(",");
+  }).join("\n");
+  const csv = "\uFEFF" + header + rows;
+  const blob = new Blob([csv], {type: "text/csv;charset=utf-8;"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "log_retraining.csv";
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+/* Tìm/filter */
+document.getElementById("filter-input").addEventListener("input", function(){
+  const q = this.value.trim().toLowerCase();
+  if (!q) { renderLogs(logs); return; }
+  const filtered = logs.filter(l =>
+    l.time.toLowerCase().includes(q) ||
+    l.event.toLowerCase().includes(q) ||
+    l.status.toLowerCase().includes(q)
+  );
+  renderLogs(filtered);
+});
+
+/* Nút Xuất CSV */
+document.getElementById("export-csv").addEventListener("click", () => {
+  // xuất theo filter hiện tại
+  const q = document.getElementById("filter-input").value.trim().toLowerCase();
+  const toExport = q ? logs.filter(l =>
+    l.time.toLowerCase().includes(q) ||
+    l.event.toLowerCase().includes(q) ||
+    l.status.toLowerCase().includes(q)
+  ) : logs;
+  exportCSV(toExport);
+});
+
+/* Nút đóng (ẩn overlay) */
+document.getElementById("close-settings").addEventListener("click", () => {
+  document.getElementById("overlay_config_software").style.display = "none";
+});
+
+/* Khởi tạo hiển thị */
+renderLogs(logs);
+setInterval(updateUptime, 1000);
+
+/* Gán một số thông tin demo - trong thực tế bạn load từ server */
+document.getElementById("info-version").textContent = "v1.2.3";
+document.getElementById("info-lastupdate").textContent = "2025-10-07 08:00";
+document.getElementById("info-logpath").textContent = "/var/logs/retraining";
+
+/* Lưu cấu hình tạm vào localStorage khi thay đổi input (ví dụ) */
+document.getElementById("field-line").value = localStorage.getItem("cfg_line") || "Truyền A";
+document.getElementById("field-factory").value = localStorage.getItem("cfg_factory") || "Nhà máy Bắc Ninh";
+document.getElementById("field-line").addEventListener("change", e => localStorage.setItem("cfg_line", e.target.value));
+document.getElementById("field-factory").addEventListener("change", e => localStorage.setItem("cfg_factory", e.target.value));
+</script>
+</body>
+</html>

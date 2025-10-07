@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Điền thông tin sản phẩm</title>
+  <link rel="icon" type="image/png" href="../static/img/image.png">
+  <link rel="stylesheet" href="../static/css/save_product_new.css">
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body>
+  <h1 id="header">Điền thông tin sản phẩm mới</h1>
+  <div class="container">
+    <!-- Form -->
+    <form id="productForm" action="/api_new_product/upload" method="post" enctype="multipart/form-data">
+      <div>
+        <label for="product_id">ID sản phẩm</label>
+        <input type="text" name="product_id" id="product_id" placeholder="Nhập ID theo định dạng SP:xxxx       xxxx là mã sản phẩm bắt đầu từ 0000  --Không nhập ID đã có" required>
+      </div>
+      <div>
+        <label for="product_name">Tên sản phẩm</label>
+        <input type="text" name="product_name" id="product_name" placeholder="Nhập tên sản phẩm . Tên sản phẩm có thể trùng với tên đã có nhưng ID không được trùng với ID đã có"required>
+      </div>
+       <div>
+        <label for="description">Thông tin mô tả như ngày tạo,lưu ý...</label>
+        <input type="text" name="description" id="description" placeholder="Thông tin bổ sung .Mô tả cho sản phẩm"required>
+      </div>
+      <div>
+        <label for="limit_x">Giới hạn trục X</label>
+        <input type="number" name="limit_x" id="limit_x" placeholder="Nhập giới hạn trục X của mỗi thiết bị" required>
+      </div>
+      <div>
+        <label for="limit_y">Giới hạn trục Y</label>
+        <input type="number" name="limit_y" id="limit_y" placeholder="Nhập giới hạn trục Y của mỗi thiết bị" required>
+      </div>
+      <div>
+        <label for="limit_z">Giới hạn trục Z</label>
+        <input type="number" name="limit_z" id="limit_z" placeholder="Nhập giới hạn trục Z của mỗi thiết bị" required>
+      </div>
+
+      <!-- Input file (ẩn) -->
+      <input type="file" name="file_upload" id="file_upload" accept="image/*" style="display:none">
+      <button type="button" onclick="document.getElementById('file_upload').click()">Chọn hình ảnh sản phẩm</button>
+      <button type="submit">Lưu</button>
+      <button type="button" id = "close">Thoát</button>
+      <p id="fileInfo">Chọn sản hình ảnh sản phẩm ở trong máy tính nếu không có sẽ không hiển thị hình ảnh sản phẩm</p>
+      <img id="previewImg" alt="Preview" style="max-width:200px; margin-top:10px; display:none">
+    </form>
+  
+    <!-- Show log -->
+    <div class="log-box">
+      <h2>Danh sách sản phẩm đã có</h2>
+      <div id ="log-entry"></div>
+
+    </div>
+  </div>
+  <script src = "../static/js/save_product_new.js"></script>
+</body>
+</html>

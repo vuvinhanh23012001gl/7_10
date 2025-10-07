@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.73, maximum-scale=1.0, user-scalable=no">
+
+    <title>Tranning product</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+     <link href="../static/style_take_photo_trainning_model.css" rel="stylesheet">
+</head>
+<body class="container-fluid py-4" >
+    <h2 class="text-center mb-4" style="padding-top: 0px;">🛠️ Hệ thống kiểm tra điểm dầu</h2>
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <p id="cir_status_connect"></p>    
+        <h3  id="status_connect">Chờ kết nối....</h3>
+    </div>
+    <div class="row g-4" style="position: relative;">
+        <!-- CỘT TRÁI -->
+        <div class="col-md-4">
+            <!-- Danh sách thiết bị -->
+            <div class="mb-4">
+                <h5 >📦 Danh sách thiết bị đang train </h5>
+                <ul id="deviceList" class="list-group">
+                    <!-- JS thêm ở đây -->
+                </ul>
+            </div>
+
+            <!-- Form thêm thiết bị -->
+            <form id="deviceForm">
+                <h5>➕ Thêm loại thiết bị mới</h5>
+                <div class="row g-2 mb-3">
+                    <div class="col-5">
+                        <input type="text" class="form-control" name="deviceId" placeholder="ID thiết bị" required>
+                    </div>
+                    <div class="col-7">
+                        <input type="text" class="form-control" name="deviceName" placeholder="Tên thiết bị" required>
+                    </div>
+                </div>
+                      <label for="Padding_x" >📍 Di chuyển theo trục X </label>
+                      <input  type="number" id ="Padding_x" class="form-control" name="paddingx" placeholder="Đơn vị x" min = 0 max = 10 required>
+                      <label for="Padding_y">📍 Di chuyển theo trục y</label>
+                      <input type="number" id ="Padding_y" class="form-control" name="paddingy" placeholder="Đơn vị y" min = 0 max = 10 required>
+                      <label for="Padding_z">📍 Di chuyển theo trục z</label>
+                      <input type="text" id ="Padding_z" class="form-control" name="paddingz" placeholder="Đơn vị z"min = 0 max = 10 required>
+                
+                <div id="pointsContainer">
+                    <h6>📍 Các điểm dầu</h6>
+                </div>
+               
+                <button type="button" class="btn btn-secondary my-2" onclick="addPoint()">➕ Thêm điểm dầu</button>
+                <br>
+                <button type="submit" class="btn btn-primary">💾 Lưu loại thiết bị</button>
+            </form>
+        </div>
+
+        <!-- CỘT GIỮA -->
+        <div class="col-md-4 " >
+            <h5 class="text-center">🎥 Hình ảnh camera</h5>
+            <div id="cameraFrame">[Hình ảnh camera ở đây]</div>
+                <div class="btn_inc_dec">
+                    <button>➕ Tăng X</button>
+                    <button>➕ Tăng Y</button>
+                    <button>➕ Tăng Z</button>
+                    <button>➖ Giảm X</button>
+                    <button>➖ Giảm Y</button>
+                    <button>➖ Giảm Z</button>
+                    <button>✅  ____Run____✅ </button>
+                </div>
+                <label for="infoBox">📋 Thông tin loại sản phẩm:</label>
+                <textarea id="infoBox" rows="6" readonly style="width: 100%; resize: none; height: 38%;overflow-y: auto; overflow-y: scroll;  "></textarea>
+
+                
+        </div>
+
+        <!-- CỘT PHẢI -->
+        <div class="col-md-4">
+            <h5>📋 Tiến trình train data</h5>
+            <textarea id="summaryBox" class="form-control" rows="22" readonly placeholder="Sẽ hiển thị khi thêm..."></textarea>
+        </div>
+    </div>
+
+    <script src = "../static/js/js_take_photo_trainning.js">
+
+    </script>
+</body>
+</html>

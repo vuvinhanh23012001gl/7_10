@@ -1,0 +1,63 @@
+<div id="overlay_config_software"> 
+  <div id="settings-box">
+    <h2 id="settings-title">⚙️ Cấu hình phần mềm</h2>
+
+    <!-- 🔹 Thông tin phần mềm -->
+    <div id="software-info" style="border: 1px solid #ccc; padding: 10px; border-radius: 10px; margin-bottom: 15px; background: #f9f9f9;">
+      <h3>🧩 Thông tin phần mềm</h3>
+      <p><strong>Tên phần mềm:</strong> Hệ thống nhận diện điểm dầu</p>
+      <p><strong>Phiên bản:</strong> v1.2.3</p>
+      <p><strong>Ngày cập nhật:</strong> 07/10/2025</p>
+      <p><strong>Người phát triển:</strong> Nhóm IoT Vision Lab</p>
+      <p><strong>Mô tả:</strong> Phần mềm nhận diện, phân loại và ghi log hình ảnh lỗi điểm dầu trên dây chuyền sản xuất.</p>
+
+      <!-- 🔸 Đường dẫn dữ liệu -->
+      <div id="software-paths" style="margin-top:10px; background:#fff; padding:8px; border-radius:8px;">
+        <h4 style="margin-bottom:6px;">📂 Đường dẫn dữ liệu</h4>
+        <p><strong>📸 Path hình ảnh điểm dầu:</strong> <span id="path-oil">D:/Data/OilPoints/</span></p>
+        <p><strong>📦 Path log sản phẩm:</strong> <span id="path-product">D:/Logs/ProductLogs/</span></p>
+        <p><strong>🔁 Path log retraining:</strong> <span id="path-retraining">D:/Logs/Retraining/</span></p>
+        <p><strong>🧠 Path log phần mềm:</strong> <span id="path-software">D:/Logs/SoftwareLogs/</span></p>
+      </div>
+    </div>
+
+    <!-- ⚙️ Các tùy chọn log -->
+    <div id="setting-log-image">
+      <span>Log hình ảnh</span>
+      <label id="switch-sound">
+        <input type="checkbox" id="set-sound">
+        <span id="slider-sound"></span>
+      </label>
+    </div>
+
+    <div id="setting-log-product">
+      <span>Log sản phẩm</span>
+      <label id="switch-notification">
+        <input type="checkbox" id="set-notification">
+        <span id="slider-notification"></span>
+      </label>
+    </div>
+
+    <div id="setting-log-software">
+      <span>Log phần mềm</span>
+      <label id="switch-darkmode">
+        <input type="checkbox" id="set-darkmode" checked>
+        <span id="slider-darkmode"></span>
+      </label>
+    </div>
+
+    <div id="setting-retraining">
+      <span>Chụp ảnh Retraining</span>
+      <label id="switch-retraining">
+        <input type="checkbox" checked>
+        <span id="slider-retraining"></span>
+      </label>
+    </div>
+
+    <!-- 🔘 Nút điều khiển -->
+    <div id="buttons">
+      <button id="save-settings">💾 Lưu cấu hình</button>
+      <button id="close-settings">✖ Thoát</button>
+    </div>
+  </div>
+</div>

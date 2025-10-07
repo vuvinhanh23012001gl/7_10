@@ -1,0 +1,244 @@
+{
+    "SP02": {
+        "type_id": "SP02",
+        "type_name": "STM32-F103C8T6",
+        "description": " Description deafaut ",
+        "len": 13,
+        "xyz": [
+            110,
+            75,
+            12
+        ],
+        "path_img_product": "static/Product_Photo/IMG_SP02.png",
+        "path_img_master": "static/Master_Photo/Master_SP02",
+        "point_check": [
+            {
+                "x": 50,
+                "y": 53,
+                "z": 0,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 1,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 2,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 3,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 4,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 6,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 7,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 8,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 9,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 10,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 11,
+                "brightness": 80
+            },
+            {
+                "x": 50,
+                "y": 53,
+                "z": 12,
+                "brightness": 80
+            },
+            {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "brightness": 0
+            }
+        ]
+    },
+    "SP01": {
+        "type_id": "SP01",
+        "type_name": "STM32-F103C8T6",
+        "description": " Description deafaut ",
+        "len": 8,
+        "xyz": [
+            110,
+            75,
+            12
+        ],
+        "path_img_product": "static/Product_Photo/IMG_SP01.png",
+        "path_img_master": "static/Master_Photo/Master_SP01",
+        "point_check": [
+            {
+                "x": 36,
+                "y": 43,
+                "z": 2,
+                "brightness": 80
+            },
+            {
+                "x": 41,
+                "y": 48,
+                "z": 2,
+                "brightness": 80
+            },
+            {
+                "x": 49,
+                "y": 50,
+                "z": 10,
+                "brightness": 80
+            },
+            {
+                "x": 52,
+                "y": 55,
+                "z": 5,
+                "brightness": 80
+            },
+            {
+                "x": 47,
+                "y": 62,
+                "z": 8,
+                "brightness": 80
+            },
+            {
+                "x": 62,
+                "y": 60,
+                "z": 10,
+                "brightness": 80
+            },
+            {
+                "x": 70,
+                "y": 69,
+                "z": 1,
+                "brightness": 80
+            },
+            {
+                "x": 76,
+                "y": 52,
+                "z": 4,
+                "brightness": 80
+            }
+        ]
+    },
+    "SP03": {
+        "type_id": "SP03",
+        "type_name": "GAT-123.124",
+        "description": " Description deafaut ",
+        "len": 4,
+        "xyz": [
+            110,
+            75,
+            12
+        ],
+        "path_img_product": "static/Product_Photo/IMG_SP03.png",
+        "path_img_master": "static/Master_Photo/Master_SP03",
+        "point_check": [
+            {
+                "x": 36,
+                "y": 43,
+                "z": 4,
+                "brightness": 80
+            },
+            {
+                "x": 36,
+                "y": 43,
+                "z": 4,
+                "brightness": 80
+            },
+            {
+                "x": 36,
+                "y": 43,
+                "z": 4,
+                "brightness": 80
+            },
+            {
+                "x": 36,
+                "y": 43,
+                "z": 4,
+                "brightness": 80
+            }
+        ]
+    },
+    "SP04": {
+        "type_id": "SP04",
+        "type_name": "STM32-F103C8T6",
+        "description": " Description deafaut ",
+        "len": 3,
+        "xyz": [
+            110,
+            75,
+            12
+        ],
+        "path_img_product": "static/Product_Photo/IMG_SP04.png",
+        "path_img_master": "static/Master_Photo/Master_SP04",
+        "point_check": [
+            {
+                "x": 36,
+                "y": 42,
+                "z": 2,
+                "brightness": 80
+            },
+            {
+                "x": 46,
+                "y": 63,
+                "z": 8,
+                "brightness": 80
+            },
+            {
+                "x": 52,
+                "y": 56,
+                "z": 4,
+                "brightness": 80
+            }
+        ]
+    },
+    "SP05": {
+        "type_id": "SP05",
+        "type_name": "STM32-F103C8T6",
+        "description": "23-09-2001 Sản xuất năm 1991",
+        "len": 0,
+        "xyz": [
+            110,
+            75,
+            12
+        ],
+        "path_img_product": "static/Product_Photo/IMG_SP05.png",
+        "path_img_master": "static/Master_Photo/Master_SP05",
+        "point_check": []
+    }
+}

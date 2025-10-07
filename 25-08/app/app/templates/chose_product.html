@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="../static/img/image.png">
+  <link rel="stylesheet" href="../static/css/chose_product.css">
+  <title>Chọn Loại Sản Phẩm</title>
+
+</head>
+<body>
+   <h1 id ="header" >Hãy chọn một loại sản phẩm muốn kiểm tra<span id="close">X<span></h1>
+   </div>
+   <div id="container-chose-product">
+   </div>
+<div id="exit-modal" class="modal-overlay" style="display: none;">
+  <div class="modal-content">
+    <p id="text">Bạn có chắc chắn muốn thoát quá trình training?</p>
+    <button type="button" id="confirm-exit" class="btn btn-danger" style="white-space: nowrap; padding: 7px;">Xóa sản phẩm</button>
+    <button type="button" class="btn btn-secondary" id="cancel-exit" onclick="hideExitModal()">Không</button>
+  </div>
+</div>
+
+
+   <script type="application/json" id="data-json">
+   {{ data | tojson | safe }}
+   </script>
+   <script type="application/json" id="choose-master">
+  {{ choose_master | tojson | safe }}
+  </script>
+
+   <script>
+      let close = document.getElementById("close");
+      close.addEventListener("click",()=>Exit())
+      window.addEventListener("popstate", function(event) {
+          window.location.href = "/";
+      });
+   const choose_master = JSON.parse(document.getElementById("choose-master").textContent);//master dang chon
+   console.log("choose_master",choose_master);
+   const data = JSON.parse(document.getElementById("data-json").textContent);
+   for (let key in data) {
+     const container = document.getElementById("container-chose-product");
+     const new_div = document.createElement("div");
+     const btn_erase = document.createElement("button");
+     btn_erase.className = "btn_erase";
+     btn_erase.innerHTML = "X";
+     new_div.className = "div-product";
+     const img = document.createElement("img");
+     img.src =`/${data[key].path_img_product}`;// Lấy từ /static/ trở đi
+     img.alt = data[key].type_name;
+     img.style.width = "100%";
+     img.style.height = "250px";
+     img.style.objectFit = "cover";
+     img.style.borderRadius = "8px";
+     
+     const product_name = document.createElement("h3");
+     product_name.innerText = `${data[key].type_id}: ${data[key].type_name}`;
+
+     const description = document.createElement("h4");
+     description.innerText = data[key].description || "Không có mô tả";
+      new_div.appendChild(btn_erase); // ✅ cho X vào trong div-product
+      new_div.appendChild(img);
+      new_div.appendChild(product_name);
+      new_div.appendChild(description);
+      container.appendChild(new_div);
+      if (choose_master == key){
+        new_div.classList.add("active");
+        console.log("da co thang giong nhau");
+      }
+     btn_erase.addEventListener("click",()=>SuggestBox(data[key].type_id));
+     img.addEventListener("click",()=>{
+    fetch('/api_choose_master/get_show_main', {
+      method: 'POST', // Hoặc GET tùy theo yêu cầu của bạn
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ data: key}) // Bạn có thể gửi dữ liệu ở đây
+    })
+    .then(response => response.json()) // Xử lý dữ liệu trả về từ server
+    .then(data => {
+       console.log(data);
+       if (data.redirect_url){
+        window.location.href = data.redirect_url;
+       }
+    })
+    .catch(error => {
+      console.error('Lỗi:', error);
+    });
+     })
+   }
+function Exit() {
+       fetch('/api_choose_master/exit')
+      .then(response => {
+          if (response.redirected) {
+              // Nếu Flask redirect trực tiếp
+              window.location.href = response.url;
+          } else {
+              // Nếu Flask trả về JSON (nếu bạn thay đổi API)
+              response.json().then(data => {
+                  window.location.href = data.redirect_url;
+              });
+          }
+      });
+}
+
+
+function SuggestBox(Choose_product_erase) {
+  currentProductToErase = Choose_product_erase;
+  document.getElementById("exit-modal").style.display = "flex";
+  const text = document.getElementById("text");
+  text.innerText = `Lưu ý\nKhi xóa sản phẩm tất cả dữ liệu về sản phẩm gồm ảnh sản phẩm, ảnh Master, dữ liệu điểm sẽ bị xóa !\n Bạn có chắc chăn muốn xóa sản phẩm ID:${Choose_product_erase}`
+}
+
+function hideExitModal() {
+  document.getElementById("exit-modal").style.display = "none";
+  currentProductToErase = null;
+}
+
+function confirmExit() {
+  if (!currentProductToErase) return;
+  fetch('/api_choose_master/erase_product', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ "Choose_product_erase": currentProductToErase })
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    if (data.redirect_url) {
+      window.location.href = data.redirect_url;
+    }
+  })
+  .catch(error => console.error('Lỗi:', error))
+  .finally(hideExitModal);
+}
+document.getElementById("confirm-exit").addEventListener("click", confirmExit);
+document.getElementById("cancel-exit").addEventListener("click", hideExitModal);
+   </script>
+</body>
+</html>

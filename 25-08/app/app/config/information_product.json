@@ -1,0 +1,11 @@
+{
+    "name": "Hệ thống nhận diện điểm dầu",
+    "version": "v1.0",
+    "author": "Nhóm phần mềm công ty Brother",
+    "path_log_img_oil": "C:\\Users\\anhuv\\Desktop\\26_08\\25_08_1\\25-08\\app\\app\\static\\Product_Img_Retraining",
+    "path_log_product": "C:\\Users\\anhuv\\Desktop\\26_08\\25_08_1\\25-08\\app\\app\\static\\log\\log_product",
+    "path_log_software": "C:\\Users\\anhuv\\Desktop\\26_08\\25_08_1\\25-08\\app\\app\\static\\log\\log_software",
+    "open_log_img_oil": true,
+    "open_log_product": true,
+    "open_log_software": true
+}

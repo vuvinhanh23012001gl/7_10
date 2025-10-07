@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cấu hình phần mềm</title>
+<style>
+/* ========== OVERLAY LỚP NỀN ========== */
+#overlay_config_software {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* ========== KHUNG CHÍNH ========== */
+#settings-box {
+  background: linear-gradient(145deg, #1e1e1e, #2b2b2b);
+  border: 1px solid #333;
+  border-radius: 18px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+  width: 430px;
+  padding: 25px 30px;
+  color: #f1f1f1;
+  animation: popup 0.3s ease;
+}
+
+@keyframes popup {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+#settings-title {
+  text-align: center;
+  color: #00bcd4;
+  font-size: 1.6em;
+  margin-bottom: 20px;
+  font-weight: 600;
+  text-shadow: 0 0 5px #00bcd4;
+}
+
+/* ========== CÁC DÒNG CẤU HÌNH ========== */
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0;
+}
+
+.setting-label {
+  font-size: 1em;
+  color: #e2e2e2;
+}
+
+/* ========== SWITCH TÙY CHỌN ========== */
+.switch-small {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+.switch-small input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #555;
+  transition: 0.3s;
+  border-radius: 24px;
+}
+
+.switch-slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.switch-small input:checked + .switch-slider {
+  background-color: #00bcd4;
+  box-shadow: 0 0 10px #00bcd4;
+}
+
+.switch-small input:checked + .switch-slider:before {
+  transform: translateX(24px);
+}
+
+/* ========== INPUT CẤU HÌNH NGƯỜI DÙNG ========== */
+#user-config-section {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #444;
+}
+
+#user-config-section h3 {
+  font-size: 1.2em;
+  color: #00e676;
+  margin-bottom: 12px;
+  text-shadow: 0 0 5px #00e676;
+}
+
+.input-item {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.input-label {
+  font-size: 0.95em;
+  margin-bottom: 6px;
+  color: #ccc;
+}
+
+.input-field {
+  padding: 9px 10px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #2b2b2b;
+  color: #fff;
+  font-size: 0.95em;
+  outline: none;
+  transition: 0.25s;
+}
+
+.input-field:focus {
+  border-color: #00bcd4;
+  box-shadow: 0 0 6px #00bcd4;
+}
+
+/* ========== NÚT BẤM ========== */
+button {
+  width: 48%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: 0.25s;
+  font-weight: 500;
+}
+
+#save-settings {
+  background-color: #00bcd4;
+  color: #fff;
+}
+
+#save-settings:hover {
+  background-color: #0097a7;
+  box-shadow: 0 0 10px #00bcd4;
+}
+
+#close-settings {
+  background-color: #444;
+  color: #ddd;
+}
+
+#close-settings:hover {
+  background-color: #666;
+  box-shadow: 0 0 8px #666;
+}
+
+/* Căn nút */
+#settings-box > button {
+  margin-top: 18px;
+  width: 48%;
+}
+
+#settings-box > button:first-of-type {
+  margin-right: 4%;
+}
+</style>
+</head>
+<body>
+
+<!-- GIAO DIỆN CẤU HÌNH -->
+<!-- ===== GIAO DIỆN ===== -->
+<div id="overlay_config_software"> 
+  <div id="settings-box">
+    <h2 id="settings-title">⚙️ Cấu hình phần mềm</h2>
+
+    <!-- Log hình ảnh -->
+    <div id="setting-log-image">
+      <span>Log hình ảnh</span>
+      <label id="switch-sound">
+        <input type="checkbox" id="set-sound">
+        <span id="slider-sound"></span>
+      </label>
+    </div>
+
+    <!-- Log sản phẩm -->
+    <div id="setting-log-product">
+      <span>Log sản phẩm</span>
+      <label id="switch-notification">
+        <input type="checkbox" id="set-notification">
+        <span id="slider-notification"></span>
+      </label>
+    </div>
+
+    <!-- Log phần mềm -->
+    <div id="setting-log-software">
+      <span>Log phần mềm</span>
+      <label id="switch-darkmode">
+        <input type="checkbox" id="set-darkmode" checked>
+        <span id="slider-darkmode"></span>
+      </label>
+    </div>
+
+
+    <!-- Nút -->
+    <div id="buttons">
+      <button id="save-settings">💾 Lưu cấu hình</button>
+      <button id="close-settings">✖ Thoát</button>
+    </div>
+  </div>
+</div>
+
+
+</body>
+</html>

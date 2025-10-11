@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="../static/css/config_camera.css">
         <link rel="stylesheet" href="../static/css/config_com.css">
         <link rel="stylesheet" href="../static/css/config-software.css">
-        <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+        <script src="../static/cnd/cnd_lybrary.js"></script>
         <title>Kiểm tra dầu</title>
         <!-- <script>
         if (localStorage.getItem("app_open") === "true") {   // kiem tra xem trinh duet mo hay chua 
@@ -69,7 +69,12 @@
                       <canvas id = "canvas-img-show-add-master"></canvas> <!--nét tren vẽ -->
                 </div>
                 <div class = "show-satus">
-                    <p id = "coordinate"></p>
+                    <p id = "coordinate">Pixel: (0, 0)</p>
+                    <div id="progress-container">
+                        <div id="progress-row"></div>
+                    </div>
+                    <div id="time-display">Thời gian chạy: 0.0 s</div>
+                    <div id="product-count">OK: 0 | Total: 0</div>  
                     <div class="cluster">
                         <div class="header-show-item-conect item1">
                             <p class="header-show-circle on"></p>    

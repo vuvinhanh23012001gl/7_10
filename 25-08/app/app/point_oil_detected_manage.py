@@ -124,12 +124,13 @@ class Manage_Point_Oil_Detect:
     def Init_Object_Oil(self,z)->bool:
         """Hàm này trả True nếu khởi tạo thành công danh sách các điểm dầu, ngược lại trả False"""
         if self.data:
-            data_tensor_data = self.get_data_tensor()
-            xyxyn_data  = self.get_xyxyn_data()
+            # data_tensor_data = self.get_data_tensor()
+            # xyxyn_data  = self.get_xyxyn_data()
             contourn_polygon_data  = self.get_contourn_polygon()
-            contourn_polygon_standardization_data= self.get_contourn_polygon_standardization()
-            masks_data = self.get_masks_data()
-            if (data_tensor_data and xyxyn_data and contourn_polygon_data and contourn_polygon_standardization_data and masks_data) is not None:
+            # contourn_polygon_standardization_data= self.get_contourn_polygon_standardization()
+            # masks_data = self.get_masks_data()
+            # if (data_tensor_data and xyxyn_data and contourn_polygon_data and contourn_polygon_standardization_data and masks_data) is not None:
+            if contourn_polygon_data:
                 print("---------------------------- Tiến hành khởi tạo danh sách các điểm mô hình phát hiện ----------------------------")
                 number_point = self.get_number_object_detect_and_number_data() 
                 self.number_point = number_point[0]
@@ -137,7 +138,9 @@ class Manage_Point_Oil_Detect:
                     print("Số lượng điểm phát hiện:",number_point[0])
                     for i in range(0,number_point[0]):
                         print(f"--------Khởi tạo điểm thứ {i+1}----------")
-                        point = point_oil_detect(conf = data_tensor_data[i],xyxyn = xyxyn_data[i],contourn_polygon = contourn_polygon_data[i],contourn_polygon_standardization = contourn_polygon_standardization_data[i], masks_data = masks_data[i])
+                        # point = point_oil_detect(conf = data_tensor_data[i],xyxyn = xyxyn_data[i],contourn_polygon = contourn_polygon_data[i],contourn_polygon_standardization = contourn_polygon_standardization_data[i], masks_data = masks_data[i])
+                        point = point_oil_detect(contourn_polygon = contourn_polygon_data[i])
+
                         # point.draw_mark_data()  # test ham nay oke
                         # point.get_predict_point_oil()
                         # point.count_mask_max_pixels()

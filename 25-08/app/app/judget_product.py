@@ -4,7 +4,6 @@ from ultralytics import YOLO
 from folder_create import Create
 from master_circle_shape import  Master_Circle_Shape
 from master_rect_shape import  Master_Rect_Shape
-from process_master import Proces_Shape_Master
 import numpy as np
 import cv2
 class Judget_Product:

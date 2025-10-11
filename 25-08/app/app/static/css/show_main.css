@@ -161,16 +161,29 @@ html, body {
 .div-index-img-mater {
   position: relative;
   height: 100%;
-  background-color: #f4f4f4;
+  color: rgb(15, 7, 7);
+  background-color: #f1ebeb;
   border: 2px solid black;
   border-radius: 10px;
   box-shadow: 5px 4px 12px rgba(0, 0, 0, 0.3);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+ 
+.div-index-img-mater.erro {
+  color: white;
+  background-color: #cb4d4d;
+}
+.div-index-img-mater.ok {
+  color: white;
+   background-color: #5fc861;
+}
 .div-index-img-mater:hover {
   transform: scale(1.02);
   box-shadow: 8px 6px 16px rgba(0, 0, 0, 0.5);
-  border: 2px solid rgb(18, 199, 123);
+}
+.div-index-img-mater.div_click{
+
+  border:8px solid #f0ce0b;
 }
 .p-index-img-master{
   text-align: center;
@@ -203,9 +216,92 @@ html, body {
 .show-satus{
   font-weight: 600;
   display: flex;
-  align-items: center;
   margin: 0px;
+  justify-content: space-between; /* căn trái phải */
+  align-items: center;
+  position: relative;
 }
+
+#time-display {
+  text-align: center; 
+  background-color: #004085;
+  white-space: nowrap;
+  height:34px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  display: flex;
+  align-items: center;
+  color: white;
+  border-radius: 15px;   
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+
+
+   font-size: 16px;
+  position: absolute;
+  left:47.3%;
+  font-weight: 600;
+  color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#product-count {
+  text-align: center; 
+  background-color: #004085;
+  white-space: nowrap;
+  height:34px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  display: flex;
+  align-items: center;
+  color: white;
+  border-radius: 15px;   
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  font-weight: 600;
+  color: #ffffff;
+  position: absolute;
+  left:37%;
+  font-size: 16px;
+  font-family: 'Segoe UI', sans-serif;
+}
+#progress-container {
+  position: absolute;
+  left:11%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-width:280px;
+  height: 20px;
+  border-radius: 11px;
+}
+#progress-row {
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  background-color: #f1f8f5;
+}
+.progress-box {
+  width: 20px;
+  height: 20px;
+  background-color: #ced684;   /* vàng nhạt khi chưa xử lý */
+  border: 2px solid #a3b18a;   /* viền mềm, đẹp mắt */          /* bo tròn nhẹ */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15); /* tạo cảm giác nổi */
+  transition: background-color 0.4s, transform 0.2s, box-shadow 0.3s;
+}
+.progress-box.done {
+  background-color: #4caf50; /* xanh lá khi đã xử lý */
+  border-color: #3e8e41;
+}
+/* Khi xử lý bị lỗi (EG/EN) */
+.progress-box.error {
+  background-color: #f44336; /* đỏ */
+  border-color: #b71c1c;
+}
+
 /*---------------------------------------------- css cho panel */
 .paner.add-master{
    
@@ -659,26 +755,20 @@ button.active{
    justify-content: center;
 }
 
-
-
-
-
-.show-satus {
-  display: flex;
-  justify-content: space-between; /* căn trái phải */
-  align-items: center;
-}
 .header-show-right {
   display: flex;
 }
 
 #coordinate{
-  padding: 5px;
+  text-align: center; 
+  background-color: #004085;
+  white-space: nowrap;
+  border-radius: 15px;   
+  padding: 7px;
   width:10%;
-   color: white;
+  color: white;
+  white-space: nowrap;
 }
-
-
 
 .header-show-circle {
   width: 12px;

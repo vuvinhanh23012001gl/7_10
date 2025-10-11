@@ -21,9 +21,10 @@ the_first_connect = True
 is_data_train = 0
 is_run = 0
 status_check_connect_arm =  0
+mumber_total_product = 0
+mumber_product_oke = 0
 
 obj_manager_serial = ManagerSerial(queue_rx_arm=queue_rx_arm,queue_tx_arm=queue_tx_arm) 
-#-------------------------------------------------
 def fuc_main_process():
     from judget_product import Judget_Product
     judget_product = Judget_Product()
@@ -104,16 +105,13 @@ def fuc_main_process():
                         choose_master_index =  choose_master_index.strip()
                         print("Chạy với ID là :",)
                         arr_point = manage_product_type.get_list_point_find_id(choose_master_index)
-                        name_product       = manage_product_type.get_product_name_find_id(choose_master_index)
-                        shape_master =  object_shape_master.get_data_is_id(choose_master_index)        
-                        print("shape_master",shape_master)
+                        # name_product       = manage_product_type.get_product_name_find_id(choose_master_index)
+                        # print("name product",name_product)    
+                        # shape_master =  object_shape_master.get_data_is_id(choose_master_index)        
+                        # print("shape_master",shape_master)
                         print("arr Point",arr_point)
-                        print("name product",name_product)
-                        if arr_point is not None and name_product is not None :
-                                print("Quá trình chạy các điểm")
-                                # func.run_and_capture(name_product,arr_point,obj_manager_serial)
-                                func.run_and_capture_copy(choose_master_index,name_product,arr_point,judget_product,object_shape_master,obj_manager_serial)
- 
+                        if arr_point is not None:
+                                func.run_and_capture(choose_master_index,arr_point,judget_product,object_shape_master,obj_manager_serial)
 
                         else:
                                 print("Không tìm thấy ID danh sách điểm để chạy")

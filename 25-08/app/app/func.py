@@ -6,7 +6,7 @@ import json
 import queue
 import os
 import cv2 
-
+import threading
 
 FILE_SATTIC_NAME = NAME_FILE_STATIC
 SIZE_X_MAX =  110
@@ -241,54 +241,72 @@ def prcess_check_run_train(name_protype:str,shiftx:int, shifty:int, shiftz:int, 
                     print("✅ Chạy lại điểm phụ thành công") if status_send_arm else print("❌ Chạy lại điểm  phụ không thành công điểm chính ")
                     data = {'productname':name_protype,'index':i,'lengt_index':len_arr_xyz,'training':1}
                     queue_accept_capture.put(data)
-                    
-def run_and_capture(name_product,List_point,obj_manager_serial):
+def check_all_true(arr):
+    """
+    Nhận một list các giá trị True/False.
+    Trả về True nếu tất cả đều True, ngược lại trả về False.
+    """
+    return all(arr)            
+def worker_judget(queue_in,queue_out, judget_product, i, obj_arr_list_point, data_one_point_master, length,time_start):
+    try: 
+        img = queue_in.get(block=True, timeout=1)
+        data_show_table, img_detect, is_frame_ok = judget_product.judget(
+            int(obj_arr_list_point[i].z), img, data_one_point_master
+        )
+        data_out = {
+            'index': i,
+            'length': length,
+            'img': img_detect,
+            'data':{f"{i}":data_show_table},
+            'status_frame': is_frame_ok
+        }
+        if i == length - 1:
+            time_end = time.perf_counter()
+            data_out["total_time"] = round((time_end - time_start),1)
+        queue_out.put(data_out)
+    except Exception as e:
+        print("Lỗi trong worker_judget:", e)
+
+def process_multi_thread(queue_in, queue_out, judget_product, i, obj_arr_list_point, data_one_point_master,length,time_start):
+    t = threading.Thread(
+        target=worker_judget,
+        args=(queue_in, queue_out, judget_product, i, obj_arr_list_point, data_one_point_master, length,time_start),
+        daemon=True 
+    )
+    t.start()
+   
+def run_and_capture(ID,List_point,judget_product,object_shape_master,obj_manager_serial):
     """Trả về False nếu đã cố gắng chạy nhưng không thành công trả về true nếu chạy thành công"""
-    print("name_product",name_product)
-    print("List_point",List_point)
+    # print("List_point",List_point)
     length_list_point =  len(List_point)
     obj_manager_serial.clear_rx_queue()
     obj_manager_serial.clear_tx_queue()
+    time_start = time.perf_counter()
     for i in range(length_list_point):
         from_data_send_run = f"cmd:{List_point[i].x},{List_point[i].y},{List_point[i].z},{List_point[i].brightness}"
         print(f"-------------------------------------Chạy lần thứ {i + 1 }-----------------------------")
+        print(from_data_send_run)
+        print(f"Phán định ID{ID} tại Index:{i}")
+        data_one_point_master = object_shape_master.get_data_shape_of_location_point(ID,i)
         obj_manager_serial.send_data(from_data_send_run)
         status_send_arm = wait_for_specific_data(obj_manager_serial,from_data_send_run)
         if status_send_arm :
                 print("✅Điểm Thành Công")
                 queue_accept_capture.put({"training":3,"capture_detect":1})
-                img = process_capture_detect.get(block=True,timeout=1)
-                # cv2.imshow("anh1",img)
-                # cv2.waitKey(1)
+                process_multi_thread(process_capture_detect,queue_tx_web_main,judget_product,i,List_point,data_one_point_master,length_list_point,time_start)
+        
 
-                try:
-                    convert_jpg = frame_to_jpeg_bytes(img)
-                    if convert_jpg:
-                        data_point = {
-                            'index':i,
-                            'length':length_list_point,
-                            'img':convert_jpg
-                        }
-                        try:
-                            queue_tx_web_main.put(data_point, timeout=0.1)
-                            print("✅ Đưa ảnh vào queue thành công")
-                        except queue.Full:
-                            print("⚠️ Queue đầy, bỏ qua frame này")
-                        print("ConVert gửi trong queue Thành công!")
-                except:
-                    print("Có lỗi gì ở bước chuyển ảnh")
+        
 
-        else :
-            print("❌ Chạy lại điểm  phụ không thành công điểm chính ")
-
-def run_and_capture_copy(ID,name_product,List_point,judget_product,object_shape_master,obj_manager_serial):  #def run_and_capture_copy(name_product,List_point,obj_manager_serial):
+def run_and_capture_copy(ID,name_product,List_point,judget_product,object_shape_master,obj_manager_serial,total_product_judment,total_product_ok):  #def run_and_capture_copy(name_product,List_point,obj_manager_serial):
     """Trả về False nếu đã cố gắng chạy nhưng không thành công trả về true nếu chạy thành công"""
     print("name_product",name_product)
     print("List_point",List_point)
+    status = True
     length_list_point =  len(List_point)
     obj_manager_serial.clear_rx_queue()
     obj_manager_serial.clear_tx_queue()
-    arr_is_frame = []
+    time_start = time.perf_counter()
     for i in range(length_list_point):
         from_data_send_run = f"cmd:{List_point[i].x},{List_point[i].y},{List_point[i].z},{List_point[i].brightness}"
         print(f"-------------------------------------Chạy lần thứ {i + 1 }-----------------------------")
@@ -304,48 +322,39 @@ def run_and_capture_copy(ID,name_product,List_point,judget_product,object_shape_
                 # cv2.imshow("anh1",img)
                 # cv2.waitKey(1)
                 # print("data_one_point_master truoc",data_one_point_master)
-                # print(f"Phán định tại Index:{i}")
+    #             # print(f"Phán định tại Index:{i}")
                 data_show_table , img_detect,is_frame_ok = judget_product.judget(int(List_point[i].z),img,data_one_point_master)
-                arr_is_frame.append(is_frame_ok)
+                if not is_frame_ok: status = False
                 data = {f"{i}":data_show_table}
-                # judget_product.judget_img(int(List_point[i].z),i,img,data_one_point_master)
-                try:
-                    convert_jpg = frame_to_jpeg_bytes(img_detect)
-                    if convert_jpg:
-                        data_point = {
+                data_point = {
                             'index':i,
                             'length':length_list_point,
-                            'img':convert_jpg
-                        }
-                        try:
-                            queue_data_detect_send_client.put(data, timeout=0.1)
-                            queue_tx_web_main.put(data_point, timeout=0.1)
-                            print("✅ Đưa ảnh vào queue thành công")
-                        except queue.Full:
-                            print("⚠️ Queue đầy, bỏ qua frame này")
-                        print("ConVert gửi trong queue Thành công!")
-                except:
-                    print("Có lỗi gì ở bước chuyển ảnh")
-
+                            'img':img_detect,
+                            "status_frame":is_frame_ok
+                }
+                try:
+                    queue_data_detect_send_client.put(data, timeout=0.1)
+                    queue_tx_web_main.put(data_point, timeout=0.1)
+                    print("✅ Đưa ảnh vào queue thành công")
+                except queue.Full:
+                        print("⚠️ Queue đầy, bỏ qua frame này")
         else :
             print("❌ Chạy lại điểm  phụ không thành công điểm chính ")
-    for status in arr_is_frame:
-        if status == False:
-            queue_data_detect_send_client.put({"status":False}, timeout=0.1)
+    time_end = time.perf_counter()
+    if status == False:
+            queue_data_detect_send_client.put({"status":False,'total_product_ok':total_product_ok,'total_product_judment':total_product_judment,"total_time":round((time_end-time_start),1)}, timeout=0.1)
             return False
-    queue_data_detect_send_client.put({"status":True}, timeout=0.1)
+    queue_data_detect_send_client.put({"status":True,'total_product_ok':total_product_ok,'total_product_judment':total_product_judment,"total_time":round((time_end-time_start),1)}, timeout=0.1)
     return True
 
         
        
-
 def frame_to_jpeg_bytes(frame, quality=90) -> bytes:
     """
     Chuyển từ numpy array (frame BGR) sang JPEG bytes.
     """
     ok, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), quality])
     return buffer.tobytes() if ok else None
-
 
     
 def get_path_from_static(full_path):

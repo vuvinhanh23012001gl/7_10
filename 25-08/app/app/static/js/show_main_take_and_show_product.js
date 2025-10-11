@@ -30,7 +30,6 @@ import {
 //logSocket se nhan tin hieu server nhận dữ liệu thành công hiển thị lên log
 // CONSTANT    
 const SCROLL_STEP = 300;
-//
 let index_point_current = 0
 let flag_index_choose_last = 1 //giup gan gia tri lan dau cho index_choose_last
 let index_choose_last = null ; //
@@ -62,7 +61,6 @@ let shapes = [];
 let mode = null;
 let startX = 0, startY = 0, endX = 0, endY = 0;
 let isDrawing = false;
-let prevUrl = null;
 let is_screen_frame_load_data = true;
 
 canvas_img_show.addEventListener("mousedown", handleMouseDown);
@@ -73,8 +71,6 @@ canvas_img_show.addEventListener("contextmenu", e => e.preventDefault());
 // ==========================
 // 3. Utility Functions
 // ==========================
-
-
 
 
 function check_no_select_shape(c1, c2, c3) {

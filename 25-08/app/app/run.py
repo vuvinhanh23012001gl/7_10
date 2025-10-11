@@ -47,29 +47,40 @@ def stream_frames():
 
 def stream_img(): # queue_tx_web_main gồm ảnh và data
     global OPEN_THREAD_IMG
+    arr_save_status_frame_ok = []
     while OPEN_THREAD_IMG:
-        # if convert_jpg:
-        #     data_poi = {
-        #                     'index':0,
-        #                     'img':convert_jpg
-        #                 }
-        # queue_tx_web_main.put(data_poi, timeout=0.1)
-
         if queue_tx_web_main.qsize() > 0:
             data_img_detect = queue_tx_web_main.get(block=False)
-            socketio.emit("photo_taken",data_img_detect, namespace="/img_and_data")
-        if queue_data_detect_send_client.qsize() > 0:
-            data_detect = queue_data_detect_send_client.get(block=False)
-            status  = data_detect.get("status",-1)
-            if status != -1:
-                socketio.emit("data_status", data_detect, namespace="/img_and_data")  #gui data trang thai
-            else :
-                socketio.emit("data_detect", data_detect, namespace="/img_and_data")  #gui data diem
+            img = data_img_detect.get("img",None)
+            try:
+                img_convert  = func.frame_to_jpeg_bytes(img)
+                data_img_detect["img"] = img_convert
+                index = data_img_detect.get("index",-1)
+                length = data_img_detect.get("length",-1)
+                status_frame = data_img_detect.get("status_frame",-1)
+                if status_frame != -1 and index >= 0:
+                    arr_save_status_frame_ok.append(status_frame)
+                if index!=-1 and length != -1:
+                    if index == length -1 :
+                        main_pc.mumber_total_product += 1
+                        data_img_detect["total_product"] = main_pc.mumber_total_product
+                        status_judment = func.check_all_true(arr_save_status_frame_ok)
+                        data_img_detect["status_judment"] = status_judment
+                        if status_judment : main_pc.mumber_product_oke+=1
+                        data_img_detect["total_product_ok"] = main_pc.mumber_product_oke
+                        arr_save_status_frame_ok = []
+                socketio.emit("photo_taken",data_img_detect, namespace="/img_and_data")
+            except:
+                print("convert anh khong thong cong")
+        # if queue_data_detect_send_client.qsize() > 0:
+        #     data_detect = queue_data_detect_send_client.get(block=False)
+        #     status  = data_detect.get("status",-1)
+        #     if status != -1:
+        #         socketio.emit("data_status", data_detect, namespace="/img_and_data")  #gui data trang thai
+        #     else :
+        #         socketio.emit("data_detect", data_detect, namespace="/img_and_data")  #gui data diem
 
-        time.sleep(0.1)
-
-
-
+        time.sleep(0.01)
 
 def stream_logs(): # gồm các loại log
     while OPEN_THREAD_LOG:
@@ -444,9 +455,6 @@ def capture_master():
                             "arr_point": arr_point,
                             "inf_product": inf_product
                     },namespace='/data_add_master')
-
-
-                    #
                 else:
                     print("Tạo File thất bại")
                     queue_tx_web_log.put_nowait("\nThêm thất bại")
@@ -629,6 +637,7 @@ from shared_queue import queue_accept_capture
 cam_basler = BaslerCamera(queue_accept_capture,socketio,config_file="Camera_25129678.pfs")
 
 print("doi tuong cam ---------------runnnnnnnnnnnnn--------------",cam_basler)
+
 if __name__ == "__main__":
     import main_pc
     from shared_queue import queue_rx_web_api,queue_tx_web_log,queue_tx_web_main,queue_data_detect_send_client

@@ -86,7 +86,7 @@ class Master_Circle_Shape():
 
         # Scale polygon sang pixel
         poly_pts = np.array([[x * w, y * h] for x, y in polygon], dtype=np.float64)
-
+        poly = self.safe_polygon(poly_pts)
         # Tạo đối tượng hình học
         poly = Polygon(poly_pts)
         circle = Point(cx, cy).buffer(r_pixel, resolution=256)  
@@ -109,6 +109,16 @@ class Master_Circle_Shape():
             "status": status,
             "inside_percent": inside_percent
         }
+    def safe_polygon(self,poly_pts):
+        """
+        Chuyển poly_pts (list of points) thành Polygon hợp lệ
+        """
+        poly = Polygon(poly_pts)
+        if not poly.is_valid:
+            poly = poly.buffer(0)  # sửa topology
+        if poly.is_empty or poly.area == 0:
+            return None
+        return poly
     def get_center_and_radius(self):
         """
         Lấy tọa độ tâm và bán kính của hình tròn

@@ -93,27 +93,27 @@ class BaslerCamera:
             print("  Serial Number:", device_info.GetSerialNumber())
             print("  Vendor Name:", device_info.GetVendorName())
             print("  Device Class:", device_info.GetDeviceClass())
-    def _emit_loop(self):
-        while self.acc_run:
-            try:
-                # Luôn chỉ lấy frame mới nhất
-                jpg_as_text = None
-                while not self.queue_send_video.empty():
-                    frame = self.queue_send_video.get_nowait()
-                    # print("sO LUONG QUEUE TRONG QUEUE LA",self.queue_send_video.qsize())
-                    _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY),BaslerCamera.VIDEO_IMAGE_QUALITY])
-                    jpg_as_text = base64.b64encode(buffer).decode('utf-8')
-                    if jpg_as_text:
-                        self.emit_func.emit(
-                            'camera_frame',
-                            {'image': jpg_as_text},
-                            namespace='/video'
-                        )
-                    time.sleep(1/120)
-                time.sleep(1/120)
-            except Exception as e:
-                time.sleep(1)
-                print(f"Lỗi gửi ảnh: {e}")
+    # def _emit_loop(self):
+    #     while self.acc_run:
+    #         try:
+    #             # Luôn chỉ lấy frame mới nhất
+    #             jpg_as_text = None
+    #             while not self.queue_send_video.empty():
+    #                 frame = self.queue_send_video.get_nowait()
+    #                 # print("sO LUONG QUEUE TRONG QUEUE LA",self.queue_send_video.qsize())
+    #                 _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY),BaslerCamera.VIDEO_IMAGE_QUALITY])
+    #                 jpg_as_text = base64.b64encode(buffer).decode('utf-8')
+    #                 if jpg_as_text:
+    #                     self.emit_func.emit(
+    #                         'camera_frame',
+    #                         {'image': jpg_as_text},
+    #                         namespace='/video'
+    #                     )
+    #                 time.sleep(1/120)
+    #             time.sleep(1/120)
+    #         except Exception as e:
+    #             time.sleep(1)
+    #             print(f"Lỗi gửi ảnh: {e}")
 
     def configure_camera(self):
         try:
@@ -127,35 +127,35 @@ class BaslerCamera:
         self.camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
         self.last_emit_time = time.time()
         self.min_emit_interval = 1/40  # Giới hạn: gửi ảnh mỗi 40ms (20 FPS)  #dieu chinh
-        self.queue_send_video = None
-        sender_started = False
-        self.sender_thread = None    
+        # self.queue_send_video = None
+        # sender_started = False
+        # self.sender_thread = None    
         while self.camera.IsGrabbing() and self.acc_run == True:
-            if not sender_started:
-                self.queue_send_video = queue.Queue(maxsize=2)  
-                self.sender_thread = threading.Thread(target=self._emit_loop, daemon=True)
-                self.sender_thread.start()
-                sender_started = True   
-            if not self.sender_thread.is_alive():
-                print("⚠️ Thread gửi ảnh đã chết, khởi động lại...")
-            grabResult = self.camera.RetrieveResult(BaslerCamera.SET_TIME_TAKE_IMG, pylon.TimeoutHandling_ThrowException)
+            # if not sender_started:
+            #     self.queue_send_video = queue.Queue(maxsize=2)  
+            #     self.sender_thread = threading.Thread(target=self._emit_loop, daemon=True)
+            #     self.sender_thread.start()
+            #     sender_started = True   
+            # if not self.sender_thread.is_alive():
+            #     print("⚠️ Thread gửi ảnh đã chết, khởi động lại...")
+            grabResult = self.camera.RetrieveResult(BaslerCamera.SET_TIME_TAKE_IMG,pylon.TimeoutHandling_Return)
             if grabResult.GrabSucceeded():
-                now = time.time()
-                if self.emit_func and (now - self.last_emit_time) >= self.min_emit_interval:
-                    image_cv = self.converter.Convert(grabResult)
-                    frame = image_cv.GetArray()
-                    # print("sO LUONG QUEUE TRONG QUEUE LA",self.queue_send_video.qsize())
-                    # print("put vao trong queue")
-                    if not self.queue_send_video.full():
-                        self.queue_send_video.put(frame)
-                    else:
-                        # Nếu queue đã đầy thì bỏ frame cũ, thay bằng frame mới
-                        try:
-                            self.queue_send_video.get_nowait()
-                        except queue.Empty:
-                            pass
-                        self.queue_send_video.put(frame)  
-                self.last_emit_time = now
+                # now = time.time()
+                # if self.emit_func and (now - self.last_emit_time) >= self.min_emit_interval:
+                #     image_cv = self.converter.Convert(grabResult)
+                #     frame = image_cv.GetArray()
+                #     # print("sO LUONG QUEUE TRONG QUEUE LA",self.queue_send_video.qsize())
+                #     # print("put vao trong queue")
+                #     if not self.queue_send_video.full():
+                #         self.queue_send_video.put(frame)
+                #     else:
+                #         # Nếu queue đã đầy thì bỏ frame cũ, thay bằng frame mới
+                #         try:
+                #             self.queue_send_video.get_nowait()
+                #         except queue.Empty:
+                #             pass
+                #         self.queue_send_video.put(frame)  
+                # self.last_emit_time = now
                 if self.queue.qsize() > 0:
                         data = self.queue.get()
                         product_name = data.get("productname", -1)
@@ -164,7 +164,6 @@ class BaslerCamera:
                         training     = data.get("training", -1)
                         name_capture  = data.get("name_capture", -1)
                         capture_detect = data.get("capture_detect",-1)
-                        
                         #training == 1 chup anh 
                         #training == 2 traing lai
                         #training == 3 chup anh
@@ -187,8 +186,8 @@ class BaslerCamera:
                                     print("Queue đầy không chụp được ảnh")
             grabResult.Release()
             time.sleep(1/60)
-        time.sleep(1)
         print("Camera chưa sẵn sàng chạy khởi động")
+        time.sleep(1)
     def show_camera_window(self):
         try:
             self.camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)

@@ -2,7 +2,11 @@
 import {logSocket,canvas_img_show_oke,ctx_oke,scroll_content} from "./show_main_status.js";
 console.log("đã vào Hàm phán định")
 
+const timeDisplay = document.getElementById('time-display');//thoi gian chay
+const progressRow = document.getElementById('progress-row');
+const productCount = document.getElementById('product-count');
 
+const time_total = document.getElementById("time-display");
 const io_img_and_data = io("/img_and_data");
 const table_show_point_detect = document.getElementById("table-show-point-detect");
 const toggleBtn = document.getElementById("toggleBtn");
@@ -15,12 +19,12 @@ let imgPath_current = null;   // nơi lưu link ảnh show hiện tại
 
 let status_view_master = true   //để xác định trạng thái nút nhấn đang ở chế độ xem master hay chế độ xem ảnh
 let reset_data_table = 0;       // biến reset bắt đầu chạy quá trình mới
-let data_table_browse = [];     
+let data_table_browse = [];
 let capturedImages = [];  // Mảng chứa nhiều ảnh
-
+let divCreateList = []; // biến toàn cục luu mang div
 
 logSocket.on("log_message_judment",(data)=>{
-    let data_log  = data?.log_data;  
+    let data_log  = data?.log_data;
     if (data_log){
         log_judment.innerHTML += `${data_log}<br>`;
     }
@@ -28,6 +32,7 @@ logSocket.on("log_message_judment",(data)=>{
 
 
 run_btn.addEventListener('click',()=>{
+      clearn_div(divCreateList);
        status_judment.innerHTML = "--";
       fetch('/api_run_application/run_application')
       .then(response => response.json())
@@ -40,19 +45,6 @@ run_btn.addEventListener('click',()=>{
       .catch(err => {
         console.error('❌ Lỗi khi gửi Run GET:', err);
       });
-});
-io_img_and_data.on("data_detect",(data)=>{
-  console.log("emit da nhan data_detect");
-  console.log(data);
-  let du_lieu_bang = Object.values(data)[0]
-  show_table(du_lieu_bang)
-  data_table_browse.push(data)
-  if (data?.[reset_data_table] == 0){
-    data_table_browse = [];
-   
-  }
-
-
 });
 
 toggleBtn.addEventListener("click",()=>{
@@ -77,17 +69,19 @@ toggleBtn.addEventListener("click",()=>{
       img.onload = () => {
           ctx_oke.drawImage(img, 0, 0, 1328, 830);  // Vẽ lên canvas sau khi ảnh load xong
         };
-      img.src = capturedImages[index_current_click].url; 
+      img.src = capturedImages[index_current_click].url;
       }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
   status_view_master = true  //ban đầu cho xuất hiện ảnh chụp master
-
   const dataImg = scroll_content.dataset.img;
   const imgList = JSON.parse(dataImg);
   console.log("Danh sách ảnh:", imgList);
+  // console.log("imgList.length",imgList.length);
+  createProgressBoxes(imgList.length) //De hien thi thanh dem o duoi
   imgList.forEach((imgPath, index) => {
+
     const div_create = document.createElement("div");
     div_create.className = "div-index-img-mater";
     const h_create = document.createElement("p");
@@ -103,8 +97,10 @@ document.addEventListener("DOMContentLoaded", () => {
     div_create.appendChild(img);
     div_create.appendChild(h_create);
     scroll_content.appendChild(div_create);
+    divCreateList.push(div_create);
 
     div_create.addEventListener("click", () => {
+      clearn_div_click(index,divCreateList)
       index_current_click = index;
       imgPath_current  = imgPath;
       let  du_lieu_bang = null;
@@ -125,14 +121,14 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     }
     else{
-      
+
       canvas_img_show_oke.width = 1328;
       canvas_img_show_oke.height = 830;
       const img = new Image();                     // ⬅️ Tạo Image object
       img.onload = () => {
           ctx_oke.drawImage(img, 0, 0, 1328, 830);  // Vẽ lên canvas sau khi ảnh load xong
       };
-    img.src = capturedImages[index].url; 
+    img.src = capturedImages[index].url;
     }
     show_table(du_lieu_bang)
     });
@@ -166,16 +162,13 @@ function show_table(data){
             Số lượng: ${master.number_point}<br>
             Max: ${master.max_point}mm <br>Min: ${master.min_point}mm
           `;
-          console.log("master.arr_pointreeqweqwewwewewq",master.arr_pointr)
+          // console.log("master.arr_pointreeqweqwewwewewq",master.arr_pointr)
 
           const pointInfo = infoRow.insertCell();
           pointInfo.appendChild(createPointTable(master.arr_pointr));
 
           table_show_point_detect.appendChild(masterTable);
       });
-
-
-
       // === Hàm tạo bảng con Point ===
       function createPointTable(points){
           const table = document.createElement("table");
@@ -207,17 +200,16 @@ function show_table(data){
           return table;
       }
     };
-    }
+  }
+
 io_img_and_data.on("data_status", (data) => {
- let  data_status = data?.status;
-  if (data_status == true){
-      status_judment.innerHTML ="OK";
-  }
-  else if (data_status == false){
-      status_judment.innerHTML = "NG";
-  }
-  else{
-    status_judment.innerHTML = "--;"
+// console.log("whgwhghewqgewjhegwehw",data);
+
+  let product_ok = data?.total_product_ok;
+  let product_judment_total = data?.total_product_judment;
+  if (product_judment_total != null && product_ok != null){
+      // console.log("product_judment_total",product_judment_total,"s",product_ok);
+      productCount.innerHTML = `OK: ${product_ok} | Tổng: ${product_judment_total}`;
   }
 });
 
@@ -228,8 +220,45 @@ io_img_and_data.on("connect", () => {
 
 io_img_and_data.on("photo_taken", (data) => {
 
-    console.log("Index:", data.index);
-    console.log("Total length:", data.length);
+    let data_show_table = data?.data
+    let firstValue = Object.values(data_show_table)[0];
+    // console.log("data nhan show bang 1",data);
+    // console.log("data nhan show bang 2",du_lieu_bang);
+    show_table(firstValue)
+    data_table_browse.push(data_show_table)
+    if (data_show_table?.[reset_data_table] == 0){
+      data_table_browse = [];
+    }
+    let total_time  = data?.total_time;
+    if (total_time){
+        time_total.innerHTML= `Thời gian chạy: ${total_time}s`;
+    }
+
+    let  data_status = data?.status_judment;
+      if (data_status == true){
+          status_judment.innerHTML ="OK";
+      }
+      else if (data_status == false){
+          status_judment.innerHTML = "NG";
+      }
+      else{
+        status_judment.innerHTML = "--"
+      }
+
+      let product_judment_total = data?.total_product;
+      let product_ok = data?.total_product_ok;
+      if (product_judment_total != null && product_ok != null){
+          // console.log("product_judment_total",product_judment_total,"s",product_ok);
+          productCount.innerHTML = `OK: ${product_ok} | Tổng: ${product_judment_total}`;
+      }
+    // console.log("Index:", data.index);
+    // console.log("Total length:", data.length);
+    if(data.index ==0){
+        createProgressBoxes(data.length);
+        clearn_div(divCreateList);
+    }
+    RunProgressBoxes(data.index,data.status_frame);
+    Run_div(data.index,data.status_frame,divCreateList);
     // Nếu muốn hiện lên giao diện
     // document.getElementById("index_label").innerText = `Điểm: ${data.index}/${data.length}`;  //thay label
     // Phần xử lý ảnh giữ nguyên như trước
@@ -249,7 +278,7 @@ io_img_and_data.on("photo_taken", (data) => {
     canvas_img_show_oke.width = 1328;
     canvas_img_show_oke.height = 830;
     ctx_oke.drawImage(img, 0, 0, 1328, 830);
-   
+
      };
     img.src = imgUrl;
     capturedImages.push({
@@ -258,11 +287,67 @@ io_img_and_data.on("photo_taken", (data) => {
         url: URL.createObjectURL(blob)  // link tạm để hiển thị
     });
 });
-function clean_ctx_canvas(){
-      canvas_img_show_oke.width = 1328;
-      canvas_img_show_oke.height = 830;
-      const show_img = new Image();
-      show_img.onload = () => {
-        ctx_oke.drawImage(show_img, 0, 0, 1328, 830);
-      };
+
+
+
+
+
+
+
+
+
+
+//--------------------------------------------------------------------- Load process------------------------------------------------------//
+// Tạo ô vuông tương ứng số ảnh của 1 sản phẩm (lặp lại cho toàn bộ sản phẩm)
+function createProgressBoxes(totalImages) {
+  progressRow.innerHTML = '';
+  for (let i = 0; i < totalImages; i++) {
+    const box = document.createElement('div');
+    box.className = 'progress-box';
+    progressRow.appendChild(box);
+  }
 }
+
+
+function RunProgressBoxes(index,status_frame) {
+  const boxes = document.querySelectorAll('.progress-box');
+  if(status_frame){
+  boxes[index].classList.add('done'); // đánh dấu ảnh đã xử lý
+  }
+  else{
+     boxes[index].classList.add('error');
+  }
+}
+
+function Run_div(index, status_frame, div_card) {
+  if (!div_card || !div_card[index]) return; // tránh lỗi nếu index sai
+
+  // Xóa class cũ (nếu có)
+  div_card[index].classList.remove('ok', 'erro');
+
+  // Thêm class tương ứng
+  if (status_frame) {
+    div_card[index].classList.add('ok');
+  } else {
+    div_card[index].classList.add('erro');
+  }
+}
+
+function clearn_div(div_card) {
+  if (!div_card) return;
+  for (let i = 0; i < div_card.length; i++) {
+    div_card[i].classList.remove('ok', 'erro');
+  }
+}
+function clearn_div_click(index,div_card) {
+  if (!div_card) return;
+  for (let i = 0; i < div_card.length; i++) {
+    div_card[i].classList.remove('div_click');
+    if(index == i){
+      div_card[i].classList.add('div_click');
+    }
+  }
+}
+
+
+//---------------------------------------------------------------------End Load process------------------------------------------------------//

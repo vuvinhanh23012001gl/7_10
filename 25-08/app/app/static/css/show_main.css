@@ -182,7 +182,6 @@ html, body {
   box-shadow: 8px 6px 16px rgba(0, 0, 0, 0.5);
 }
 .div-index-img-mater.div_click{
-
   border:8px solid #f0ce0b;
 }
 .p-index-img-master{
@@ -722,13 +721,13 @@ button.active{
 }
 
 .paner-main-status-product.OK{
-  background-color: #ECEFF1;
-  color: rgb(39, 133, 56);             
-  text-transform: uppercase; 
+  color: white;
+  background-color: rgb(39, 133, 56);             
+  text-transform: uppercase;
 }
 .paner-main-status-product.NG{
-  background-color: #ae0e0e;
-  color: rgb(239, 246, 240);             
+  color: white;
+  background-color: #ae0e0e;            
   text-transform: uppercase; 
 }
 .paner-main-table-show-point{

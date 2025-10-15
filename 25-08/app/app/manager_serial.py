@@ -72,7 +72,7 @@ class ManagerSerial:
                     flag = False
                     self.com_is_open = False
             elif busy:
-                print("Cổng COM đang bận")
+                print("Cổng com đang hoạt động")
                 self.gate_open_com_is_working = True
             else:
                 if not self.serial_com.ser:
@@ -84,7 +84,6 @@ class ManagerSerial:
                         self.open_thread_receive_and_send()
                     else:
                         print("Mở cổng thất bại")
-            print("self.com_is_open   ----------------------------------------------      ",self.com_is_open )
             time.sleep(1)
     def update_com(self,name_port,baudrate):
         if not self.com_is_open:

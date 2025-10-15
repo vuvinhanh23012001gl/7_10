@@ -3,6 +3,7 @@ import {
     scroll_content,set_Z_index_canvas_show,canvas_show,ctx_show,ctx,logSocket
 } from "./show_main_status.js";
 
+let divCreateList = []; // biến toàn cục luu mang div
 
 const socket_realtime = io("/data_add_master");
 const videoSocket = io("/video");
@@ -75,11 +76,14 @@ btn_add_master.addEventListener("click",function(){
     img.alt = "Click vào đây để chụp ảnh";
     img.style.padding = "35px";
     img.style.width = "200px";
+    divCreateList.push(div_create);
 
     div_create.appendChild(img);
     div_create.appendChild(h_create);
     scroll_content.appendChild(div_create); 
     div_create.addEventListener("click",function(){
+             clearn_div(divCreateList);
+            div_create.classList.add("div_click");
             console.log("Đã nhấn vào ảnh master mới để thêm master");
             const index = Array.from(scroll_content.children).indexOf(this);
             console.log("Ảnh master đang chỉ tới là 2",index);
@@ -180,7 +184,12 @@ headerMasterAdd.addEventListener("click",function(){
       setCurrentPanner(add_master);
 });
 
-
+function clearn_div(div_card_arr) {
+  if (!div_card_arr) return;
+  for (let i = 0; i < div_card_arr.length; i++) {
+    div_card_arr[i].classList.remove("div_click");
+  }
+}
 socket_realtime.on("data_realtime", (data) => {
   console.log("data",data);
   renderMaster(data);
@@ -210,8 +219,11 @@ function renderMaster(data) {
                 div_create.appendChild(img);
                 div_create.appendChild(h_create);
                 scroll_content.appendChild(div_create);
-
+                divCreateList.push(div_create);
                 div_create.addEventListener("click",function(){
+                      clearn_div(divCreateList);
+                      div_create.classList.add("div_click");
+
                       ctx.clearRect(0, 0, 1328, 830);
                       const show_img = new Image();
                       canvas_show.width = 1328;

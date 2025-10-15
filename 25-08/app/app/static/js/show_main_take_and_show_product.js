@@ -25,7 +25,7 @@ import {
   setCurrentPanner,
   index_img_current,
   set_index_img_current,
-  set_Z_index_canvas_show,canvas_img_show,ctx,canvas_img_show_oke,ctx_oke 
+  set_Z_index_canvas_show,canvas_img_show,ctx,canvas_img_show_oke,ctx_oke,logSocket
 } from "./show_main_status.js";
 //logSocket se nhan tin hieu server nhận dữ liệu thành công hiển thị lên log
 // CONSTANT    
@@ -71,6 +71,17 @@ canvas_img_show.addEventListener("contextmenu", e => e.preventDefault());
 // ==========================
 // 3. Utility Functions
 // ==========================
+
+logSocket.on("log_take_master",(data)=>{
+    let data_log  = data?.log;
+    if (data_log){
+        log.innerHTML  = `${data_log}<br>`;
+    }
+});
+
+
+
+
 
 
 function check_no_select_shape(c1, c2, c3) {
@@ -210,7 +221,7 @@ btn_accept_and_send.addEventListener("click",()=>{
     }
     else{
         //  console.log("Dữ liệu Shape là :",shapes_all);
-         log.textContent = `☑️Dữ liệu quy định master hợp lệ`;
+          log.textContent = `☑️Dữ liệu quy định master hợp lệ`;
           let normalizeShape  = normalizeShapes(shapes_all,1328, 830) 
          postData("/api_take_master/config_master",normalizeShape);
     }

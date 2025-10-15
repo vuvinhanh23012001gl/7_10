@@ -17,14 +17,15 @@ class ProductTypeManager:
 
     def __init__(self):
         self.product_types = {}
-        self.path_product_list = self.get_patd_datajson()    # Trả về đường dẫn của dẫn tới nơi lưu dữ liệu data.json
-        self.data = self.get_file_data()                     # Lấy dữ liệu từ File đấy ra
-        self.load_from_file()                                # Load File đấy ra
-
+        self.init()
     def get_patd_datajson(self):
         """"Hàm này trả về đường dẫn,dẫn tới data.json"""
         object_folder = Create()
         return object_folder.get_path_grandaugter(ProductTypeManager.NAME_DATA_PRODUCT_LIST,ProductTypeManager.NAME_FOLDER_PRODUCT_LIST,ProductTypeManager.FILE_NAME_STATIC)
+    def init(self):
+        self.path_product_list = self.get_patd_datajson()    # Trả về đường dẫn của dẫn tới nơi lưu dữ liệu data.json
+        self.data = self.get_file_data()                     # Lấy dữ liệu từ File đấy ra
+        self.load_from_file()                                # Load File đấy ra
 
     def load_from_file(self):
         """Load File vào trong đối tượng Point dầu"""

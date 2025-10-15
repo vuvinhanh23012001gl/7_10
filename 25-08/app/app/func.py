@@ -1,4 +1,4 @@
-from  shared_queue import queue_accept_capture,queue_tx_web_main,process_capture_detect,queue_data_detect_send_client
+from  shared_queue import queue_accept_capture,queue_tx_web_main,process_capture_detect,queue_data_detect_send_client,queue_tx_web_log
 from common_value import NAME_FILE_STATIC
 import time
 import queue
@@ -275,12 +275,16 @@ def process_multi_thread(queue_in, queue_out, judget_product, i, obj_arr_list_po
     )
     t.start()
    
+   
 def run_and_capture(ID,List_point,judget_product,object_shape_master,obj_manager_serial):
     """Trả về False nếu đã cố gắng chạy nhưng không thành công trả về true nếu chạy thành công"""
-    # print("List_point",List_point)
     length_list_point =  len(List_point)
     obj_manager_serial.clear_rx_queue()
     obj_manager_serial.clear_tx_queue()
+    data_shape_master = object_shape_master.get_quanlity_master_of_id(ID)
+    if not data_shape_master:
+        queue_tx_web_log.put("❌[ERRO]Chưa có dữ liệu Master. Hãy chọn \"Cấu hình master\"->\"Lấy master\"để lấy thông tin phán định.")
+        return 
     time_start = time.perf_counter()
     for i in range(length_list_point):
         from_data_send_run = f"cmd:{List_point[i].x},{List_point[i].y},{List_point[i].z},{List_point[i].brightness}"
@@ -290,12 +294,16 @@ def run_and_capture(ID,List_point,judget_product,object_shape_master,obj_manager
         data_one_point_master = object_shape_master.get_data_shape_of_location_point(ID,i)
         obj_manager_serial.send_data(from_data_send_run)
         status_send_arm = wait_for_specific_data(obj_manager_serial,from_data_send_run)
-        if status_send_arm :
-                print("✅Điểm Thành Công")
+        if status_send_arm and data_one_point_master:
                 queue_accept_capture.put({"training":3,"capture_detect":1})
                 process_multi_thread(process_capture_detect,queue_tx_web_main,judget_product,i,List_point,data_one_point_master,length_list_point,time_start)
+        if not status_send_arm:
+            queue_tx_web_log.put("❌[ERRO]Đợi tín hiệu phản hồi từ ARM lỗi!")
+            print("✅Chạy điểm thành Công")
+        else:
+            print("✅Điểm điểm không thành công")
+    
         
-
         
 
 def run_and_capture_copy(ID,name_product,List_point,judget_product,object_shape_master,obj_manager_serial,total_product_judment,total_product_ok):  #def run_and_capture_copy(name_product,List_point,obj_manager_serial):

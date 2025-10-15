@@ -59,6 +59,7 @@ class Proces_Shape_Master():
         Trả về None nếu không tìm thấy id
         Trả về 0 nếu rỗng , trả về len só lượng hình trong 1 index
         """
+        
         index = str(index)
         data_id = self.get_data_is_id(ID)
         if data_id:
@@ -91,6 +92,7 @@ class Proces_Shape_Master():
         self.list_regulations[type_id] = data_master
         with open(self.path_save, 'w', encoding='utf-8') as f:
             json.dump(self.list_regulations, f, ensure_ascii=False, indent=4)
+        self.update_data()
         return True
     def update_data(self) -> bool:
         """

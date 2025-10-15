@@ -2,9 +2,15 @@
 import {logSocket,canvas_img_show_oke,ctx_oke,scroll_content} from "./show_main_status.js";
 console.log("đã vào Hàm phán định")
 
-const timeDisplay = document.getElementById('time-display');//thoi gian chay
 const progressRow = document.getElementById('progress-row');
 const productCount = document.getElementById('product-count');
+
+const label_status_connect_com = document.getElementById("header-show-status");
+const circle_status_connect_com =  document.getElementById("element-circle-status-com");
+const circle_status_connect_camera =  document.getElementById("element-circle-status-camera");
+const label_status_connect_camera = document.getElementById("status-connect-cam");
+
+
 
 const time_total = document.getElementById("time-display");
 const io_img_and_data = io("/img_and_data");
@@ -29,9 +35,31 @@ logSocket.on("log_message_judment",(data)=>{
         log_judment.innerHTML += `${data_log}<br>`;
     }
 });
+logSocket.on("status_connect_com_arm",(data)=>{
+    let status_connect  = data?.status;
+    isConect(status_connect,circle_status_connect_com,label_status_connect_com,"COM");
+});
+logSocket.on("status_connect_camera",(data)=>{
+    let status_connect  = data?.status;
+    isConect(status_connect,circle_status_connect_camera,label_status_connect_camera,"Camera");
+});
 
+function isConect(isconect,element_circle,element_lable,str_lable){
+    if (isconect) {
+        element_circle.classList.remove("off");
+        element_circle.classList.add("on");
+        element_lable.innerText = `${str_lable} đã kết nối`;
+        } else {
+        element_circle.classList.add("off");
+        element_circle.classList.remove("on");
+        element_lable.innerText = `${str_lable} mất kết nối`;
+    }
+}
 
 run_btn.addEventListener('click',()=>{
+      status_judment.innerHTML = "--"
+      status_judment.classList.remove("OK");
+      status_judment.classList.remove("NG");
       clearn_div(divCreateList);
        status_judment.innerHTML = "--";
       fetch('/api_run_application/run_application')
@@ -237,12 +265,13 @@ io_img_and_data.on("photo_taken", (data) => {
     let  data_status = data?.status_judment;
       if (data_status == true){
           status_judment.innerHTML ="OK";
+          status_judment.classList.add("OK");
+          status_judment.classList.remove("NG");
       }
       else if (data_status == false){
           status_judment.innerHTML = "NG";
-      }
-      else{
-        status_judment.innerHTML = "--"
+          status_judment.classList.remove("OK");
+          status_judment.classList.add("NG");
       }
 
       let product_judment_total = data?.total_product;

@@ -72,19 +72,16 @@ def stream_img(): # queue_tx_web_main gồm ảnh và data
                 socketio.emit("photo_taken",data_img_detect, namespace="/img_and_data")
             except:
                 print("convert anh khong thong cong")
-        # if queue_data_detect_send_client.qsize() > 0:
-        #     data_detect = queue_data_detect_send_client.get(block=False)
-        #     status  = data_detect.get("status",-1)
-        #     if status != -1:
-        #         socketio.emit("data_status", data_detect, namespace="/img_and_data")  #gui data trang thai
-        #     else :
-        #         socketio.emit("data_detect", data_detect, namespace="/img_and_data")  #gui data diem
-
         time.sleep(0.01)
 
-def stream_logs(): # gồm các loại log
-    while OPEN_THREAD_LOG:
+def stream_logs(): # gồm các loại log   # va trang thai kết nối cam
+    while OPEN_THREAD_LOG:  
+            socketio.emit("status_connect_com_arm", {"status": main_pc.status_check_connect_arm}, namespace='/log')
+            socketio.emit("status_connect_camera", {"status": main_pc.status_check_connect_arm}, namespace='/log')   
             match main_pc.click_page_html:
+                case 3:
+                    if not queue_tx_web_log.empty():
+                        socketio.emit("log_take_master", {"log": f"{queue_tx_web_log.get()}"}, namespace='/log')
                 case 4:
                     log_message = manage_product.get_all_ids_and_names()      # Gửi log cho thêm sản phẩm mới
                     if log_message:
@@ -128,16 +125,6 @@ def show_main():
     """Là hàm hiển thị giao diện chính trên Html"""
     func.create_choose_master(NAME_FILE_CHOOSE_MASTER) #tạo file choose_master nếu tạo rồi thì thôi
     choose_master_index = func.read_data_from_file(NAME_FILE_CHOOSE_MASTER)#đọc lại file choose master cũ xem lần trước  người dùng chọn gì
-    #------------------------------------------------ Thay the bang file kia nha
-    # choose_master_index =  choose_master_index.strip()
-    # test = manage_product.find_by_id(choose_master_index)
-    # print("test",test)
-    # if(test == -1):
-    #     print("Tim khong thanh cong")
-    # else:
-    #     print("Tim thanh cong")
-    # check_shape.check_shapes()
-    #------------------------------------------------------------
     arr_type_id = manage_product.get_list_id_product()
     # print("arr_type_id :",arr_type_id)
     # print("choose_master_index :",choose_master_index)
@@ -179,7 +166,8 @@ def master_close():
 
 @api_take_master.route("/master_take",methods=["POST"])  #Khi nhan vao take masster thi thuc hien gui anh len truoc
 def master_take():
-    main_pc.click_page_html = 3
+    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
+    main_pc.click_page_html = 3  
     data = request.get_json()
     print(data)
     func.create_choose_master(NAME_FILE_CHOOSE_MASTER) # tạo file choose_master nếu tạo rồi thì thôi
@@ -207,10 +195,10 @@ def config_master():
     status_check = shape_master.check_all_rules(data)
     if status_check:
         status_save = shape_master.save_shapes_to_json(choose_master_index,data)
-        queue_tx_web_log.put_nowait("Lưu dữ liệu thành công") if status_save else queue_tx_web_log.put_nowait("Lưu dữ liệu thất bại")
+        queue_tx_web_log.put_nowait("[Server]Lưu dữ liệu thành công") if status_save else queue_tx_web_log.put_nowait("[Server]Lưu dữ liệu thất bại")
     else:
         print("Dữ liệu bị lỗi")
-        queue_tx_web_log.put_nowait("Kiểm tra dữ liệu bị sai")
+        queue_tx_web_log.put_nowait("[Server]Kiểm tra dữ liệu bị sai")
     return jsonify({'status':"OKE"})
 
 
@@ -218,7 +206,9 @@ def config_master():
 #--------------------------------------------------------Api_new_product ---------------------------------------------
 @api_new_product.route("/add")
 def add():
+     cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
      main_pc.click_page_html = 4
+
      return render_template("save_product_new.html")
 @api_new_product.route("/upload", methods=["POST"])
 def upload_product():
@@ -286,6 +276,7 @@ def get_content():
     return jsonify(response)
 @api_choose_master.route("/chose_product")
 def chose_product():
+    cam_basler.disable_send_video() # ngan nguoi dung nhan linh tinh khi dang gui video len nha
     main_pc.click_page_html = 5
     data =  manage_product.get_file_data() 
     choose_master_index = func.read_data_from_file(NAME_FILE_CHOOSE_MASTER)
@@ -298,7 +289,7 @@ def exit_choose_master():
         'redirect_url':'/'
     }
     return jsonify(response)
-@api_choose_master.route("/erase_product",methods = ["POST"])
+@api_choose_master.route("/erase_product",methods = ["POST"]) #phan nay co ban la oke1 roi 
 def erase_product():
     print("------------------------------------------Tiến hành xóa bắt đầu----------------------------------")
     data = request.get_json()
@@ -308,10 +299,12 @@ def erase_product():
     if Choose_product_erase != -1 :
         status_erase_product = manage_product.remove_product_type(Choose_product_erase)
         if status_erase_product:
+            shape_master.update_data() 
+            manage_product.init()
             response = {
                 'redirect_url':'/'
             }
-            print("------------------------------------------Tiến hành xóa kết thúc 1----------------------------------")
+            print("------------------------------------------Xoa thanh cong master----------------------------------")
             return jsonify(response)
 
         else :
@@ -358,6 +351,7 @@ def run_all_master():
 
 @api_add_master.route("/exit")
 def exit_add_master():
+    cam_basler.disable_send_video() #dung luong gui video khi nhan thoat
     response = {
         'redirect_url':'/'
     }
@@ -372,6 +366,7 @@ def api_add_master_tree():
     choose_master_index = func.read_data_from_file(NAME_FILE_CHOOSE_MASTER)# đọc lại file choose master cũ xem lần trước  người dùng chọn gì
     arr_type_id = manage_product.get_list_id_product()
     data_strip = choose_master_index.strip()
+    cam_basler.enable_send_video()
     if data_strip in  arr_type_id:
         print(f"gui data master co ten {choose_master_index}")
         path_arr_img = manage_product.get_list_path_master_product_img_name(data_strip)
@@ -443,6 +438,8 @@ def capture_master():
                         print("xyz",x,y,z,k,index_capture)
                         queue_accept_capture.put_nowait({"training":3,"name_capture":path})
                         manage_product.fix_score_point_product(data_strip,int(x.strip()),int(y.strip()),int(z.strip()),int(k.strip()),index_capture)
+                        # print("datatata su khhi adddddd la")
+                        # print(manage_product.return_data_dict(data_strip))
                     else:
                         print("Tạo File thất bại")
 
@@ -475,6 +472,7 @@ def exit_api_config_camera():
 
 @api_config_camera.route("/get_data_show",strict_slashes=False)
 def get_data_show():
+    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
     main_pc.click_page_html = 8 # Câu hình cổng com
     data_show = cam_basler.show_file_config()
     return jsonify({"status":"200OK","data":data_show})
@@ -492,6 +490,7 @@ def exit_api_config_software():
 
 @api_config_software.route("/config_software",strict_slashes=False)
 def config_software():
+    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
     data_information = OilDetectionSystem()
     data_send_client = data_information.to_dict()
     return jsonify({"status":"200OK","data":data_send_client})
@@ -516,6 +515,7 @@ def exit_api_config_com():
 @api_config_com.route("/get_list_com",strict_slashes=False)
 def get_list_com():
     main_pc.click_page_html = 7 # Câu hình cổng com
+    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
     arr_com = main_pc.obj_manager_serial.serial_com.show_list_port()
     data_connect = main_pc.obj_manager_serial.get_dict_data_send_server()
     return jsonify({"status":"200OK","data":arr_com,"data_connected":data_connect})
@@ -636,11 +636,9 @@ app.register_blueprint(api_config_software, url_prefix="/api_config_software")
 from shared_queue import queue_accept_capture
 cam_basler = BaslerCamera(queue_accept_capture,socketio,config_file="Camera_25129678.pfs")
 
-print("doi tuong cam ---------------runnnnnnnnnnnnn--------------",cam_basler)
-
 if __name__ == "__main__":
     import main_pc
-    from shared_queue import queue_rx_web_api,queue_tx_web_log,queue_tx_web_main,queue_data_detect_send_client
+    from shared_queue import queue_rx_web_api,queue_tx_web_log,queue_tx_web_main
     import threading
     threading.Thread(target=stream_logs,daemon = True).start()
     threading.Thread(target=stream_img,daemon = True).start()

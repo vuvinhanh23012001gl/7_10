@@ -99,6 +99,6 @@ def fuc_main_process():
             time.sleep(1)
             print("❌ Không tìm thấy cổng Serial. Vui lòng kiểm tra kết nối.")
        
-main_process = threading.Thread(target=fuc_main_process,daemon=True)
+main_process = threading.Thread(target=fuc_main_process,name="main_pc",daemon=True)
 main_process.start()     
     

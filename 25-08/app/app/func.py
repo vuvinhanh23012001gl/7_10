@@ -269,7 +269,7 @@ def worker_judget(queue_in,queue_out, judget_product, i, obj_arr_list_point, dat
 
 def process_multi_thread(queue_in, queue_out, judget_product, i, obj_arr_list_point, data_one_point_master,length,time_start):
     t = threading.Thread(
-        target=worker_judget,
+        target=worker_judget,name=f"judment_product_{i}",
         args=(queue_in, queue_out, judget_product, i, obj_arr_list_point, data_one_point_master, length,time_start),
         daemon=True 
     )

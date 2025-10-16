@@ -13,6 +13,7 @@ import os
 import common_object
 
 
+
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 main_html = Blueprint("main",__name__)
@@ -150,10 +151,12 @@ def run_application():
     choose_master_index = func.read_data_from_file(common_value.NAME_FILE_CHOOSE_MASTER) # đọc lại file choose master cũ xem lần trước  người dùng chọn gì
     choose_master_index =  choose_master_index.strip()
     arr_point = common_object.manage_product.get_list_point_find_id(choose_master_index)
-    print("arr Point",arr_point)
+    print("arr Point",)
+    common_object.obj_log.log_and_print("arr Point",arr_point)
     """Hàm này đê chạy run khi người dùng nhấn "chạy" trên giao diện chính"""
     common_value.is_run = 1      #bat bien Run len bat dau qua trinh chay
     print("Đã nhấn nút Run application")
+    common_object.obj_log.log_and_print("Đã nhấn nút Run application")
     return jsonify({"status":"OK"})
 #--------------------------------------------------------Api_master_take---------------------------------------------
 
@@ -639,9 +642,9 @@ if __name__ == "__main__":
     import main_pc
     import threading
     cam_basler = BaslerCamera(shared_queue.queue_accept_capture,socketio,config_file="Camera_25129678.pfs")
-    threading.Thread(target=stream_logs,daemon = True).start()
-    threading.Thread(target=stream_img,daemon = True).start()
-    threading.Thread(target = stream_frames,daemon=True).start()
+    threading.Thread(target=stream_logs,name="stream_log",daemon = True).start()
+    threading.Thread(target=stream_img,name="stream_img_and_data",daemon = True).start()
+    threading.Thread(target = stream_frames,name="stream_video",daemon=True).start()
     socketio.run(app, host="0.0.0.0", port=5000, debug=False, use_reloader=False)
     print("Đã thoát chương trình chính")
 

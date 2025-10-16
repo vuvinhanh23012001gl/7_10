@@ -21,7 +21,7 @@ class ManagerSerial:
         self.running_check_connect = True
         
 
-        self.rx_thread = threading.Thread(target=self._check_connect,daemon=True, name="while_check_connect")
+        self.rx_thread = threading.Thread(target=self._check_connect,daemon=True, name="check_connect_com")
         self.rx_thread.start()
 
     def open_thread_receive_and_send(self):

@@ -1,1 +1,16 @@
-{}
+{
+    "SP01": {
+        "type_id": "SP01",
+        "type_name": "STM32-F103C8T6",
+        "description": "23-09-2001 Sản xuất năm 1991",
+        "len": 0,
+        "xyz": [
+            110,
+            75,
+            12
+        ],
+        "path_img_product": "static/Product_Photo/IMG_SP01.png",
+        "path_img_master": "static/Master_Photo/Master_SP01",
+        "point_check": []
+    }
+}

@@ -196,8 +196,16 @@ socket_realtime.on("data_realtime", (data) => {
 });
 
 function renderMaster(data) {
+             if (!data){
+                    log_master.innerHTML = "Bạn chưa chọn loại sản phẩm.Hãy nhấn \"Chọn loại sản phẩm\"";
+                    return;
+              }
             const imgList = data?.path_arr_img;
             const list_point  = data?.arr_point;
+            if(!imgList||!list_point){
+                          log_master.innerHTML = "Bạn chưa chọn loại sản phẩm.Hãy nhấn \"Chọn loại sản phẩm\"";
+                          return;
+            }
             create_table_product(data)
             //if (!imgList || imgList.length === 0) {log_master.innerHTML = "Hệ thống chưa có ảnh master nào";console.log("Hệ thống chưa có ảnh master nào");return}
             scroll_content.innerHTML = "";
@@ -411,7 +419,6 @@ function HandleClickBtnRun(input_x_value,input_y_value,input_z_value,input_k_val
     isOpenShowCamVideo = true;         
       //nao xong sẽ sưa phần nến có kết nối với cam thì show video nếu không có thì show ảnh hiện có
     videoSocket.on("camera_frame", function(data) {
-        console.log("ewqeewewewewewqewqewqewq");
         if(isOpenShowCamVideo){                          // data.image là base64
             const img = new Image();
             img.onload = () => {                                             // Khởi tạo canvas kích thước phù hợp
@@ -511,7 +518,6 @@ function CheckData(element,str_name, data, value_max) {
 // Hàm kiểm tra một giá trị có hợp lệ hay không
 function isInvalid(value) {
   let num = Number(value);
-
   return (
     value === null ||        // null
     value === undefined ||   // undefined
@@ -659,10 +665,13 @@ function create_table_product(data) {
         console.log("Bảng không tồn tại");
         return;
        }
+       if (!data){
+            log_master.innerHTML = "Bạn chưa chọn loại sản phẩm.Hãy nhấn \"Chọn loại sản phẩm\"";
+       }
        tbody.innerHTML = "";
        let log = data?.inf_product;
         console.log("Dữ liệu nhận được là ",log);
-       let id =  log?.list_id[0];
+      //  let id =  log?.list_id[0]; //Id chua can de hien thi
        let name   = log?.list_name[0];
        let x = log?.xyz[0][0];
        Max_X = x;
@@ -688,38 +697,6 @@ function create_table_product(data) {
       tbody.appendChild(row);
 };
 
-//Log sản phẩm
-logSocket.on("log_message", function (data) {
-       const tbody = document.querySelector(".product-table tbody");
-       if (!tbody){
-        console.log("Bảng không tồn tại");
-        return;
-       }
-       tbody.innerHTML = "";
-       let log = data.log_add_master;
-          console.log("Dữ liệu nhận được là ",log);
-       let id =  log?.list_id[0];
-       let name   = log?.list_name[0];
-       let x = log?.xyz[0][0];
-       let y = log?.xyz[0][1];
-       let z = log?.xyz[0][2];
-       let k = 100;
-      //  console.log(name)
-      //  console.log(id)
-      //  console.log(x)
-      //  console.log(y)
-      //  console.log(z)
-      const row = document.createElement("tr");
-      row.innerHTML =  
-      `<td>${name}</td>
-       <td>${x}</td>
-       <td>${y}</td>
-       <td>${z}</td>
-       <td>${k}</td>
-      `;
-      tbody.appendChild(row);
-});
-
 // Log dữ liệu
 logSocket.on("log_data", function (data) {
    console.log(data.log);
@@ -732,44 +709,3 @@ logSocket.on("log_data", function (data) {
 
  
 
-  
-
-
-
-
-function handleStart(index,inputs) {
-  // Lấy giá trị từ các input
-  const x = parseFloat(inputs.X.value);
-  const y = parseFloat(inputs.Y.value);
-  const z = parseFloat(inputs.Z.value);
-  const brightness = parseFloat(inputs.K.value); // K là độ sáng
-
-  // const errorMsg = validatePoint(index, x, y, z, brightness);  thay doi
-  // if (errorMsg) {
-  //   alert(errorMsg);
-  //   return;
-  // }
-
-  // ✅ Gửi dữ liệu tới server
-  fetch('/api_new_model/run_point', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      x: x,
-      y: y,
-      z: z,
-      brightness: brightness
-    })
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log("Trạng thái:",data.message)
-      console.log(`✅ Đã gửi điểm ${index} đến thiết bị. Phản hồi: ${data.message}`);
-    })
-    .catch(error => {
-      console.error('Lỗi khi gửi điểm:', error);
-      alert('❌ Gửi dữ liệu thất bại.');
-    });
-}

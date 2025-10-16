@@ -174,6 +174,10 @@ class Proces_Shape_Master():
         ID = ID.strip()
         if self.list_regulations:
             list_key = self.get_list_id_master()
+            print(list_key)
+            if not list_key:
+                print("Trong File không có dữ liệu.Xóa thành công")
+                return True
             if ID in list_key:
                 print("Tìm thấy ID thực hiện xóa")
                 status_erase = self.list_regulations.pop(ID,None)
@@ -187,6 +191,9 @@ class Proces_Shape_Master():
             else:
                 print("Không tìm thấy ID đó trong sản phẩm")
                 return False
+        else:
+            print("Sản phẩm chưa tồn tại master,master rỗng xóa,xóa thành công")
+            return True #file rong roi chuc nang xoa dat duoc
     def erase_master_index(self, ID: str, index:int):
         """Hàm này thực hiện xóa index thứ bao nhiêu trong 1 ID"""
         print("Xóa master thứ index:", index)

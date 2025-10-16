@@ -29,6 +29,7 @@ class BaslerCamera:
         self._emit_running = False
         self.open_send_video = False
         self.flag_open_thread = True
+        
 
     # Hàm bật
     def enable_send_video(self):

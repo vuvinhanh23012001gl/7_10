@@ -105,9 +105,14 @@ document.addEventListener("DOMContentLoaded", () => {
   status_view_master = true  //ban đầu cho xuất hiện ảnh chụp master
   const dataImg = scroll_content.dataset.img;
   const imgList = JSON.parse(dataImg);
+  if(!imgList){
+    console.log("Hiện tại chưa có sản phẩm nào");
+    return;
+  }
   console.log("Danh sách ảnh:", imgList);
   // console.log("imgList.length",imgList.length);
   createProgressBoxes(imgList.length) //De hien thi thanh dem o duoi
+
   imgList.forEach((imgPath, index) => {
 
     const div_create = document.createElement("div");

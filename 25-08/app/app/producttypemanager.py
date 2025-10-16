@@ -16,36 +16,45 @@ class ProductTypeManager:
     Proces_Shape = Proces_Shape_Master()
 
     def __init__(self):
+
         self.product_types = {}
+        self.path_product_list = None
+        self.data =None
         self.init()
+
     def get_patd_datajson(self):
         """"Hàm này trả về đường dẫn,dẫn tới data.json"""
         object_folder = Create()
         return object_folder.get_path_grandaugter(ProductTypeManager.NAME_DATA_PRODUCT_LIST,ProductTypeManager.NAME_FOLDER_PRODUCT_LIST,ProductTypeManager.FILE_NAME_STATIC)
+    
     def init(self):
+        self.product_types = {}
         self.path_product_list = self.get_patd_datajson()    # Trả về đường dẫn của dẫn tới nơi lưu dữ liệu data.json
         self.data = self.get_file_data()                     # Lấy dữ liệu từ File đấy ra
         self.load_from_file()                                # Load File đấy ra
-
     def load_from_file(self):
-        """Load File vào trong đối tượng Point dầu"""
+        """Load File vào trong đối tượng ProductType"""
         print("📥 Đang tải dữ liệu từ file JSON...")
+        # ✅ Reset sạch trước khi load
+        self.product_types.clear()
         if self.data:
+            print("self.data.keys()", self.data.keys())
             for key in self.data.keys():
-                type_id = self.data[key].get("type_id",-1)
-                type_name = self.data[key].get("type_name",-1)
-                xyz  = self.data[key].get("xyz",-1)
+                type_id = self.data[key].get("type_id", -1)
+                type_name = self.data[key].get("type_name", -1)
+                xyz = self.data[key].get("xyz", -1)
                 if type_id == -1 or type_name == -1 or xyz == -1:
                     print("❌Không Tìm Thấy 1 Số Dữ liệu Khi Load Trả về False")
                     return
-                product = ProductType(type_id,type_name,xyz)
-                product.Init_path() #Tao File luon cho no
+                product = ProductType(type_id, type_name, xyz)
+                product.Init_path()
                 for point in self.data[key]["point_check"]:
                     product.add_list_point(point["x"], point["y"], point["z"], point["brightness"])
-                self.product_types[key] = product   #Thêm vào Sản phẩm
-                # self.show_all()
+                self.product_types[key] = product
         else:
+            self.product_types = {}
             print("❌Data rỗng chưa có dữ liệu")
+
     def save_json_data(self, data_file_path:str):
         "Luu dữ liệu điểm vào đường link data data.json"
         try:
@@ -76,10 +85,8 @@ class ProductTypeManager:
                 product.Init_path()
                 self.product_types[product.type_id] = product
                 try:
-
-                    self.save_json_data(self.path_product_list)
-                    self.data = self.get_file_data()
-                    self.load_from_file()
+                    self.update_data_json()
+                    print("self.product_types",self.product_types)
                     return True
                 except Exception as e:
                     print(f"❌ Lỗi khi lưu JSON sau khi thêm: {e}")
@@ -91,9 +98,8 @@ class ProductTypeManager:
             print("File Trống Cứ Thế Lưu")
             product.Init_path()
             self.product_types[product.type_id] = product
-            self.save_json_data(self.path_product_list)
-            self.data = self.get_file_data()
-            self.load_from_file()
+            self.update_data_json()
+            print("self.product_types",self.product_types)
             return True
 
     def get_file_data(self)->Dict[str, Any]:
@@ -134,11 +140,15 @@ class ProductTypeManager:
 
     def find_by_id(self, type_id:str)->object:
         """Trả về đối tượng có id trùng với id nhập  nếu không có trả về -1"""
+
+        print("self.product_types",self.product_types)
+        print("type_id",type_id)
         return self.product_types.get(type_id,-1 )
 
     def get_list_point_find_id(self,type_id_product:str)->dict:
         """Trả về None nếu không tìm thấy, Trả về mảng danh sách điểm có ID trùng"""
         result =  self.find_by_id(type_id_product)
+        print("result",result)
         if result == -1:
             return  None
         else :
@@ -212,24 +222,46 @@ class ProductTypeManager:
         """Trả về list point cua id loại cần nhập trả về None nếu không tìm thấy ID"""
         if(self.find_by_id(type_id)!= -1):
              return [ i.dict_point_oil()  for i in self.find_by_id(type_id).get_list_point()]
-    def remove_product_in_file_data(self,id:str):
-        """Xóa sản phẩm có ID trả về True nếu thành công không ngược lại  > Chỉ thực hiện xóa data thông chưa xóa đường linh ảnh . link treain, link sản phẩm"""
-        if id in self.get_all_id():
-            status_pop = self.product_types.pop(id,None)
-            if status_pop is None:
-                print(f"Xóa File có ID:{id} không thành công")
-                return False
-            else:
-                print(self.return_data_dict_all())
-                self.save_json_data(self.path_product_list)
-                self.data = self.get_file_data()
-                self.load_from_file()
-                print(f"Xóa ID:{id} thành công trong file data.json")
-                return True
-        else:
-            print("Không tìm thấy ID trong danh sách")
+    # def remove_product_in_file_data(self,id:str):
+    #     """Xóa sản phẩm có ID trả về True nếu thành công không ngược lại  > Chỉ thực hiện xóa data thông chưa xóa đường linh ảnh . link treain, link sản phẩm"""
+    #     if id in self.get_all_id():
+    #         status_pop = self.product_types.pop(id,None)
+    #         if status_pop is None:
+    #             print(f"Xóa File có ID:{id} không thành công")
+    #             return False
+    #         else:
+    #             print(self.return_data_dict_all())
+    #             self.save_json_data(self.path_product_list)
+    #             self.data = self.get_file_data()
+    #             self.load_from_file()
+    #             print(f"Xóa ID:{id} thành công trong file data.json")
+    #             return True
+    #     else:
+    #         print("Không tìm thấy ID trong danh sách")
+    #         return False
+    def remove_product_in_file_data(self, id: str):
+        """Xóa sản phẩm theo ID và cập nhật lại dữ liệu"""
+        if id not in self.product_types:
+            print(f"❌ Không tìm thấy ID {id}")
             return False
 
+        # Xóa khỏi bộ nhớ
+        del self.product_types[id]
+
+        # Ghi đè file ngay lập tức
+        self.save_json_data(self.path_product_list)
+
+        # Đảm bảo flush và đóng hoàn toàn
+        import time; time.sleep(0.05)
+
+        # Đọc lại dữ liệu mới từ file
+        self.data = self.get_file_data()
+        self.product_types.clear()         # <--- quan trọng
+        self.load_from_file()
+        print("self.product_types",self.product_types)
+        print("✅ Đã xóa sản phẩm ID:", id)
+        print("Danh sách còn lại:", list(self.product_types.keys()))
+        return True
     def add_list_point_to_product(self,type_id:str,x:int,y:int,z:int,brightness:int)->bool:
         if type_id is None or x is None or y is None or z is None or brightness is None:
             print("Giá trị đầu vào khác Null")
@@ -257,6 +289,7 @@ class ProductTypeManager:
                     return False
             isObject.add_list_point(x, y, z, brightness)
             self.update_data_json()
+            print("self.product_types",self.product_types)
             print("Thêm điểm thành công")
             return True
         print("Không tìm thấy ID trong danh sách")
@@ -348,10 +381,11 @@ class ProductTypeManager:
                         print("Không tìm thấy File ảnh lưu sản phẩm xóa ảnh chưa đc")
                 else:
                     print("Đường dẫn tới Product_Photo không tồn tại")
-                ProductTypeManager.Proces_Shape.get_file_data_json()  #Dam bao tat ca du lieu la moi nhat
                 status_erase_master = ProductTypeManager.Proces_Shape.erase_product_master(type_id)
                 status = self.remove_product_in_file_data(type_id)
+                print("status_erase_master",status_erase_master,"status",status)
                 if status !=False  and status_erase_master != False:
+                    ProductTypeManager.Proces_Shape.load_file()  #XOA XONG LOAD LAI FILE
                     print("Xóa thành công 4 File")
                     func.create_choose_master(NAME_FILE_CHOOSE_MASTER) # tạo file choose_master nếu tạo rồi thì thôi
                     choose_master_index = func.read_data_from_file(NAME_FILE_CHOOSE_MASTER)# đọc lại file choose master cũ xem lần trước  người dùng chọn gì
@@ -362,7 +396,7 @@ class ProductTypeManager:
                         #xoa du lieu reset neu dang chon ve 0
                         func.clear_file_content(NAME_FILE_CHOOSE_MASTER)
                         func.write_data_to_file(NAME_FILE_CHOOSE_MASTER,"0")
-                    print("Xóa thành công")
+                    print("------------------------------------------------------------------Xóa thành công----------------------------")
                     return True
                 else:
                     print("Xóa bị False")

@@ -1,6 +1,5 @@
 from point_oil import PointOil
-from common_value import NAME_FILE_STATIC
-from common_value import NAME_FILE_IMG_RETRAINING 
+from common_value import NAME_FILE_IMG_RETRAINING,NAME_FILE_STATIC
 import os
 
 class ProductType:

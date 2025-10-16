@@ -79,11 +79,6 @@ logSocket.on("log_take_master",(data)=>{
     }
 });
 
-
-
-
-
-
 function check_no_select_shape(c1, c2, c3) {
   return c1 === 0 && c2 === 0 && c3 === 0;
 }

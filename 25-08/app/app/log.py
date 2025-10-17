@@ -1,6 +1,8 @@
 import logging
 import threading
 import os
+
+
 class Log:
     def __init__(self, name=__name__, log_file="app.log"):
         self.name = name

@@ -13,7 +13,6 @@ import os
 import common_object
 
 
-
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 main_html = Blueprint("main",__name__)
@@ -28,7 +27,7 @@ api_config_camera = Blueprint("api_config_camera",__name__)
 api_config_com = Blueprint("api_config_com",__name__)
 api_config_software = Blueprint("api_config_software",__name__)
 api_inf_software = Blueprint("api_inf_software",__name__)
-
+api_login_software =  Blueprint("api_login_software",__name__)
 
 
 def stream_frames():
@@ -216,7 +215,6 @@ def config_master():
 def add():
      cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
      common_value.click_page_html = 4
-
      return render_template("save_product_new.html")
 @api_new_product.route("/upload", methods=["POST"])
 def upload_product():
@@ -619,6 +617,22 @@ def download_manual():
     print("Trả File Hướng dẫn sử dụng sản phẩm cho clinet")
     return send_file("static/docurment_manual/HuongDan.pdf", mimetype="application/pdf")
 
+
+@api_login_software.route("/login",methods=["POST"])
+def login():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    print("username","password",username,password)
+
+    if username == "admin" and password == "123":
+        return jsonify({"success": True, "message": "Đăng nhập thành công"})
+    else:
+        return jsonify({"success": False, "message": "Sai tài khoản hoặc mật khẩu"})
+
+
+
+
 #--------------------------------------------------------end Api----------------------------------------------
 app.register_blueprint(main_html)
 app.register_blueprint(api, url_prefix="/api")
@@ -632,7 +646,7 @@ app.register_blueprint(api_config_camera, url_prefix="/api_config_camera")
 app.register_blueprint(api_config_com, url_prefix="/api_config_com")
 app.register_blueprint(api_config_software, url_prefix="/api_config_software")
 app.register_blueprint(api_inf_software, url_prefix="/api_inf_software")
-
+app.register_blueprint(api_login_software, url_prefix="/api_login_software")
 
 
 if __name__ == "__main__":
@@ -646,7 +660,7 @@ if __name__ == "__main__":
     threading.Thread(target=stream_img,name="stream_img_and_data",daemon = True).start()
     threading.Thread(target = stream_frames,name="stream_video",daemon=True).start()
     socketio.run(app, host="0.0.0.0", port=5000, debug=False, use_reloader=False)
-    print("Đã thoát chương trình chính")
+    print("Đã thoát chương trình chính") 
 
 
 

@@ -1047,3 +1047,119 @@ button.btn:hover {
 .toggle-btn.active {
   background-color: rgb(10, 156, 149);
 }
+
+
+
+/* Overlay tổng */
+#overlay_login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 10, 10, 0.8);
+  display : flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  z-index: 1000;
+}
+
+/* Hiệu ứng orb */
+#orb_one, #orb_two {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.4;
+}
+
+/* Khung container */
+#container_login {
+  background: rgba(30, 30, 30, 0.9);
+  border-radius: 16px;
+  padding: 30px;
+  width: 400px;
+  box-shadow: 0 0 25px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/* Tabs */
+#tabs_login {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 25px;
+}
+
+#tab_login, #tab_signup {
+  cursor: pointer;
+  padding: 10px 20px;
+  color: #eee;
+  border-bottom: 2px solid transparent;
+  transition: 0.3s;
+}
+
+#tab_login.active,
+#tab_signup.active {
+  color: #1698af;
+  border-bottom: 2px solid #1698af;
+}
+
+/* Form login */
+#form_login,
+#form_signup {
+  display: none;
+  flex-direction: column;
+}
+
+#form_login.active,
+#form_signup.active {
+  display: flex;
+}
+
+#form_login input,
+#form_signup input {
+  background: #2a2a2a;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  padding: 10px;
+  color: #eee;
+  outline: none;
+}
+
+#btn_login, #btn_signup {
+  background: #1698af;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  color: white;
+  transition: background 0.3s;
+}
+
+#btn_login:hover,
+#btn_signup:hover {
+  background: #10c0d4;
+}
+
+#btn_exit_signup {
+  background: #444;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 8px;
+  cursor: pointer;
+  color: #eee;
+}
+
+#notification_login,
+#notification_signup {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #fffcfc;
+}
+#btn_exit_signup:hover{
+  background-color: rgb(204, 93, 93);  
+}

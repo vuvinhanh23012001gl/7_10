@@ -31,7 +31,6 @@
                  <ul class = "header-ul-li-master">
                     <li id="header-ul-li-add-take">Chỉnh sửa master</li>
                     <li id="header-ul-li-master-take">Lấy master</li>
-                    
                  </ul>
             </li>
 
@@ -340,7 +339,33 @@
   </div>
 </div>
 
+<div id="overlay_login">
+  <div id="container_login">
+    <div id="tabs_login">
+      <div id="tab_login" class="tab active" data-target="login">Đăng nhập</div>
+      <div id="tab_signup" class="tab" data-target="signup">Đăng ký</div>
+    </div>
+    <form id="form_login" class="active">
+      <input id="login_user" type="text" placeholder="Tài khoản" required>
+      <input id="login_pass" type="password" placeholder="Mật khẩu" required>
+      <button id="btn_login" type="submit">Đăng nhập vào phần mềm</button>
+      <div id="notification_login" class="notification"></div>
+    </form>
 
+    <form id="form_signup">
+      <input id="signup_first_name" type="text" placeholder="Tên - VD : A" required>
+      <input id="signup_last_name" type="text" placeholder="Họ đệm - VD : Nguyễn Văn" required>
+      <input id="signup_factory" type="text" placeholder="Nhà máy hoạt động - VD : F4" required>
+      <input id="signup_line" type="text" placeholder="Tên chuyền - VD : GA01" required>
+      <input id="signup_user" type="text" placeholder="Tên tài khoản - VD : abc" required>
+      <input id="signup_pass" type="password" placeholder="Mật khẩu - VD : 123" required>
+      <input id="signup_pass_confirm" type="password" placeholder="Xác nhận lại mật khẩu" required>
+      <button id="btn_signup" type="submit">Đăng kí tài khoản</button>
+      <button id="btn_exit_signup" type="button">Thoát</button>
+      <div id="notification_signup" class="notification"></div>
+    </form>
+  </div>
+</div>
 <script type="module" src="../static/js/show_main.js"></script>    
 </body>
   

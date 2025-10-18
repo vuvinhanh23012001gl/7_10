@@ -3,6 +3,9 @@ export const chooseProductBtn = document.getElementById("choose-product");
 export const current_panner_default = document.getElementById("paner-main");
 export const headerMasterTake = document.getElementById("header-ul-li-master-take");  //chuyển hướng
 
+export const btn_open_software_config = document.getElementById("btn-open-software-config");
+export const btn_open_com_config = document.getElementById("btn-open-com-config");
+export const btn_open_camera_config = document.getElementById("btn-open-camera-config");    
 export const btn_close = document.getElementById("btn-close");
 
 
@@ -32,11 +35,14 @@ export const headerMasterAdd = document.getElementById("header-ul-li-add-take");
 export let current_panner = current_panner_default;
 export let index_img_current  = 0 ;
 
+export let accept_power_by_user = false  //Bien nay khi dang nhap thanh cong o file login thi se bat thanh True
+export const overlay_login =  document.getElementById("overlay_login");
+
+
 export const canvas_img_show = document.getElementById("canvas-img-preview");
 export const ctx = canvas_img_show.getContext("2d");
 export const canvas_img_show_oke = document.getElementById("canvas-img");
 export const ctx_oke = canvas_img_show_oke.getContext("2d");
-
 
 export const logSocket = io("/log");
 
@@ -49,6 +55,55 @@ export function set_Z_index_canvas_show(z_Index) {
    ctx_oke.width = 0;
    ctx_oke.height = 0;
 }
+export function disableButtons() {
+  [
+    add_product,
+    headerMasterAdd,
+    headerMasterTake,
+    btn_open_camera_config,
+    btn_open_com_config,
+    btn_open_software_config
+  ].forEach(btn => {
+    if (!btn) return;
+    btn.style.pointerEvents = "none"; // ❌ chặn click chuột
+    btn.style.cursor = "not-allowed"; // đổi con trỏ chuột
+  });
+}
+
+
+export function enableButtons() {
+  [
+    add_product,
+    headerMasterAdd,
+    headerMasterTake,
+    btn_open_camera_config,
+    btn_open_com_config,
+    btn_open_software_config
+  ].forEach(btn => {
+    if (!btn) return;
+    btn.style.pointerEvents = "auto"; // ✅ cho phép click lại
+    btn.style.opacity = "1";
+    btn.style.cursor = "pointer";
+  });
+}
+
+export function setAcceptPowerByUser(value) {
+  sessionStorage.setItem("accept_power_by_user", value ? "true" : "false");
+}
+
+export function getAcceptPowerByUser() {
+  // Nếu chưa có trong sessionStorage thì gán mặc định là "false"
+  if (sessionStorage.getItem("accept_power_by_user") === null) {
+    sessionStorage.setItem("accept_power_by_user", "false");
+  }
+  
+  // Trả về true/false đúng kiểu boolean
+  return sessionStorage.getItem("accept_power_by_user") === "true";
+}
+
+
+
+
 
 export function setCurrentPanner(panner) {
   current_panner = panner;

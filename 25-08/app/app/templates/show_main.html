@@ -353,20 +353,27 @@
     </form>
 
     <form id="form_signup">
-      <input id="signup_first_name" type="text" placeholder="Tên - VD : A" required>
-      <input id="signup_last_name" type="text" placeholder="Họ đệm - VD : Nguyễn Văn" required>
-      <input id="signup_factory" type="text" placeholder="Nhà máy hoạt động - VD : F4" required>
-      <input id="signup_line" type="text" placeholder="Tên chuyền - VD : GA01" required>
-      <input id="signup_user" type="text" placeholder="Tên tài khoản - VD : abc" required>
-      <input id="signup_pass" type="password" placeholder="Mật khẩu - VD : 123" required>
-      <input id="signup_pass_confirm" type="password" placeholder="Xác nhận lại mật khẩu" required>
+      <label for="signup_first_name">Tên</label>
+      <input id="signup_first_name" type="text" placeholder=" VD : A" required>
+      <label for="signup_last_name">Họ đệm</label>
+      <input id="signup_last_name" type="text" placeholder=" VD : Nguyễn Văn" required>
+      <label for="signup_factory">Nhà máy hoạt động</label>
+      <input id="signup_factory" type="text" placeholder=" VD : F4" required>
+      <label for="signup_line">Tên chuyền</label>
+      <input id="signup_line" type="text" placeholder=" VD : GA01" required>
+      <label for="signup_user">Tài khoản</label>
+      <input id="signup_user" type="text" placeholder=" VD : abc" required>
+      <label for="signup_pass">Mật khẩu</label>
+      <input id="signup_pass" type="password" placeholder=" VD : 123" required>
+      <label for="signup_pass_confirm">Xác nhận mật khẩu</label>
+      <input id="signup_pass_confirm" type="password" placeholder="Nhập lại mật khẩu" required>
       <button id="btn_signup" type="submit">Đăng kí tài khoản</button>
       <button id="btn_exit_signup" type="button">Thoát</button>
       <div id="notification_signup" class="notification"></div>
     </form>
   </div>
 </div>
-<script type="module" src="../static/js/show_main.js"></script>    
+<script type="module" src="../static/js/show_main.js" defer ></script>    
 </body>
   
 </html>

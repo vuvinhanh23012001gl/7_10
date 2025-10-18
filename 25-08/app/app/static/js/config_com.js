@@ -1,9 +1,8 @@
 
 import {
-    postData,fetch_get
+    postData,fetch_get,btn_open_com_config
 } from "./show_main_status.js";
 const infor_com_connect = document.getElementById("infor-com-connect");
-const btn_open_com_config = document.getElementById("btn-open-com-config");
 const overlay_config_com = document.getElementById("overlay_config_com");
 const com_close = document.getElementById("com-close");
 const show_info_list_cam = document.getElementById("show_info_list_cam");

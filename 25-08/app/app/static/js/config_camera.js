@@ -1,9 +1,8 @@
 import {
-   fetch_get
+   fetch_get,btn_open_camera_config
 } from "./show_main_status.js";
 console.log("Đã vào camera config");
 const close_config_camera = document.getElementById("close-config-camera");
-const btn_open_camera_config = document.getElementById("btn-open-camera-config");    
 const overlay_config_camera = document.querySelector(".overlay_config_camera");
 
 const cam_model = document.getElementById("cam-model");

@@ -1,7 +1,7 @@
 import {
-    postData,fetch_get
+    postData,fetch_get,btn_open_software_config
 } from "./show_main_status.js";
-const btn_open_software_config = document.getElementById("btn-open-software-config");
+
 const overlay_config_software  = document.getElementById("overlay_config_software");
 const close_settings_software  = document.getElementById("close-settings");
 const sw_name = document.getElementById("sw-name");

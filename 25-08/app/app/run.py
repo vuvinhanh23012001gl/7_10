@@ -621,18 +621,42 @@ def download_manual():
 @api_login_software.route("/login",methods=["POST"])
 def login():
     data = request.get_json()
-    username = data.get("username")
-    password = data.get("password")
+    username = data.get("username").strip()
+    password = data.get("password").strip()
     print("username","password",username,password)
-
-    if username == "admin" and password == "123":
-        return jsonify({"success": True, "message": "Đăng nhập thành công"})
+    is_user,type_user = common_object.obj_manage_user.check_account(username,password)
+    if is_user:
+         return jsonify({"success": True,"type":type_user,"message": "Đăng nhập thành công"})   # type == True la admin nguoc lai la user
     else:
-        return jsonify({"success": False, "message": "Sai tài khoản hoặc mật khẩu"})
+        return jsonify({"success": False,"message": "Sai tài khoản hoặc mật khẩu"})
+    
 
-
-
-
+    
+@api_login_software.route("/register_an_account",methods=["POST"])
+def register_an_account():
+    data = request.get_json()
+    print(data)
+    print("Bạn vừa nhấn vào nút đăng kí tài khoản")
+    first_name = data.get("first_name",None)
+    last_name = data.get("last_name",None)
+    factory = data.get("factory",None)
+    line = data.get("line",None)
+    user = data.get("user",None)
+    password = data.get("pass",None)
+    if not all([first_name, last_name, factory, line, user, password]):
+        return jsonify({"success": False,"message": "Đăng kí thất bại"})   # typ
+    first_name = first_name.strip()
+    last_name = last_name.strip()
+    factory = factory.strip()
+    line = line.strip()
+    user = user.strip()
+    password = password.strip()
+    status_register_an_account,status_erro = common_object.obj_manage_user.create_user(user,password,first_name,last_name,line,factory)
+    if status_register_an_account:
+        return jsonify({"success": True,"message": status_erro})   
+    else:
+        return jsonify({"success": False,"message": status_erro})  
+        
 #--------------------------------------------------------end Api----------------------------------------------
 app.register_blueprint(main_html)
 app.register_blueprint(api, url_prefix="/api")

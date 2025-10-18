@@ -6,5 +6,29 @@
         "use_password": "use_password",
         "line": "line",
         "usine": "usine"
+    },
+    {
+        "first_name": "1",
+        "last_name": "1",
+        "user_name": "1",
+        "use_password": "1",
+        "line": "1",
+        "usine": "1"
+    },
+    {
+        "first_name": "1",
+        "last_name": "1",
+        "user_name": "12",
+        "use_password": "1",
+        "line": "1",
+        "usine": "1"
+    },
+    {
+        "first_name": "Ánh",
+        "last_name": "Vũ Vinh",
+        "user_name": "anhanhd",
+        "use_password": "1",
+        "line": "ADM-09",
+        "usine": "F4"
     }
 ]

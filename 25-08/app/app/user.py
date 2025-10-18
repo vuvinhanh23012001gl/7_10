@@ -66,7 +66,7 @@ class Manage_User():
     def create_user(self, user_name:str=None, use_password:str=None, first_name:str=None, last_name:str=None, line:str=None, usine:str=None):
         if not all([user_name, use_password, first_name, last_name, line, usine]):
             common_object.obj_log.error("Thiếu dữ liệu khi tạo tài khoản User")
-            return False
+            return False,"Thiếu dữ liệu khi tạo tài khoản"
         arr_user = []
         object_user = acc_use(user_name,use_password,first_name, last_name,line,usine)
         self.data_use = Manage_User.object_folder.get_data_grandaugter(Manage_User.NAME_FILE_JSON_USER,common_value.NAME_FOLDER_USER,common_value.NAME_FILE_STATIC)  # cap nhat truoc khi thay
@@ -75,16 +75,16 @@ class Manage_User():
                 user_name_file = acc.get("user_name",None)
                 if user_name_file:
                     if user_name_file.strip() == user_name.strip():
-                        return False
+                        return False,"Tài khoản này đã tồn tại"
             self.data_use.append(object_user.to_dict())  #cap nhat du lieu moi
             Manage_User.object_folder.save_json(self.data_use,Manage_User.path_user) # luu du lieu moi vao file
             common_object.obj_log.info(f"Lưu {user_name} thành công vào list File User")
-            return True
+            return True,"Tạo thành công tài khoản"
         else:
             arr_user.append(object_user.to_dict())
             Manage_User.object_folder.save_json(arr_user,Manage_User.path_user)
             common_object.obj_log.info(f"Lưu {user_name} vào phần tử đầu tiên trong list File User")
-            return True 
+            return True,"Tạo thành công tài khoản"
     def delete_user(self, user_name: str):
         """Xóa user theo user_name"""
         if not user_name:

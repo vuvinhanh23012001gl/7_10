@@ -30,7 +30,9 @@
   {{ choose_master | tojson | safe }}
   </script>
 
-   <script>
+   <script type="module">
+   let currentProductToErase;
+   import { get_user_or_admin } from "/static/js/user_role.js";
       let close = document.getElementById("close");
       close.addEventListener("click",()=>Exit())
       window.addEventListener("popstate", function(event) {
@@ -74,6 +76,36 @@
         console.log("da co thang giong nhau");
       }
      btn_erase.addEventListener("click",()=>SuggestBox(data[key].type_id));
+     btn_erase.addEventListener("mouseover", () => {
+        // Tạo label nếu chưa có
+        let label = document.getElementById("hover-label");
+        if (!label) {
+          label = document.createElement("div");
+          label.id = "hover-label";
+          label.innerText = "⚠️Chỉ tài khoản admin mới được quyền xóa";
+          label.style.position = "absolute";
+          label.style.background = "#333";
+          label.style.color = "white";
+          label.style.padding = "5px 10px";
+          label.style.borderRadius = "6px";
+          label.style.fontSize = "13px";
+          label.style.whiteSpace = "nowrap";
+          label.style.boxShadow = "0 2px 6px rgba(0,0,0,0.3)";
+          document.body.appendChild(label);
+        }
+
+        // Lấy vị trí của nút để đặt label cạnh
+        const rect = btn_erase.getBoundingClientRect();
+        label.style.top = `${rect.top + window.scrollY - 35}px`;
+        label.style.left = `${rect.left + window.scrollX + btn_erase.offsetWidth + 10}px`;
+        label.style.display = "block";
+      });
+
+      btn_erase.addEventListener("mouseout", () => {
+        const label = document.getElementById("hover-label");
+        if (label) label.style.display = "none";
+      });
+
      img.addEventListener("click",()=>{
     fetch('/api_choose_master/get_show_main', {
       method: 'POST', // Hoặc GET tùy theo yêu cầu của bạn
@@ -111,6 +143,10 @@ function Exit() {
 
 
 function SuggestBox(Choose_product_erase) {
+  if(!get_user_or_admin()){
+    console.log("Đây không phải admin không có quyền xóa")
+    return;
+  }
   currentProductToErase = Choose_product_erase;
   document.getElementById("exit-modal").style.display = "flex";
   const text = document.getElementById("text");

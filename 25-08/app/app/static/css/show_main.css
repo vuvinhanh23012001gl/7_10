@@ -1058,7 +1058,8 @@ button.btn:hover {
   width: 100vw;
   height: 100vh;
   background: rgba(10, 10, 10, 0.8);
-  display : flex;
+  display : none;  
+  /* moi dau load trang se khonng cho hien thi khi nao doc bien luu trong storage thi moi quyet dinh la dang nhap hay chua */
   justify-content: center;
   align-items: center;
   font-family: 'Poppins', sans-serif;
@@ -1162,4 +1163,13 @@ button.btn:hover {
 }
 #btn_exit_signup:hover{
   background-color: rgb(204, 93, 93);  
+}
+form label {
+  display: block;              /* mỗi label nằm trên 1 dòng riêng */
+  font-weight: 300;            /* chữ đậm nhẹ */
+  margin-top: 10px;            /* cách nhau một chút cho dễ đọc */
+  color: #fdfdfd;                 /* màu chữ nhạt nhẹ */
+  font-size: 14px;
+  padding-bottom:5px;
+   padding-left:10px;
 }

@@ -14,7 +14,7 @@ import common_object
 
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 main_html = Blueprint("main",__name__)
 api = Blueprint("api",__name__)
 api_new_model = Blueprint("api_new_model",__name__)
@@ -142,7 +142,7 @@ def out_app():
 
 
     print("Người dùng thoát tab")
-    return jsonify({"status":"OK"})
+    return jsonify({"status":"OK"}) 
 #--------------------------------------------------------Api_run_application---------------------------------------------
 @api_run_application.route('/run_application',methods = ['GET'])
 def run_application():

@@ -181,7 +181,7 @@ formLogin.addEventListener('submit', async (e) => {
           set_user_or_admin(true); //admin
           enableButtons();
           //thuc hien mot so quyen moi admin   
-      }
+      }   
       else if (type_user == false){
           console.log("Bạn vưa đăng nhập với tài khoản User")
           //thuc hien mot so quyen moi user

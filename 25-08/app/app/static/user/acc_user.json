@@ -30,5 +30,13 @@
         "use_password": "1",
         "line": "ADM-09",
         "usine": "F4"
+    },
+    {
+        "first_name": "Dương",
+        "last_name": "Nguyễn Thùy",
+        "user_name": "123",
+        "use_password": "1",
+        "line": "GA-1234",
+        "usine": "F3"
     }
 ]

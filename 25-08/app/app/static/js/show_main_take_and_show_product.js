@@ -1443,10 +1443,37 @@ function addShape(shape) {
 }
 
 
-out_app.addEventListener('click',()=>{
-  window.close();
+out_app.addEventListener('click', ()=>{
+  try {
+    // Thử đóng tab
+    window.close();
 
+    // Nếu không đóng được (tab do Flask render ra)
+    setTimeout(()=>{
+      if (!window.closed) {
+        // Chuyển sang trang trắng
+        window.location.href = "about:blank";
+
+        // Ngăn người dùng quay lại
+        setTimeout(()=>{
+          history.pushState(null, null, "about:blank");
+          window.addEventListener("popstate", ()=>{
+            history.pushState(null, null, "about:blank");
+          });
+        }, 100);
+      }
+    }, 200);
+  } catch (e) {
+    // Nếu bị lỗi, fallback luôn
+    window.location.href = "about:blank";
+    history.pushState(null, null, "about:blank");
+    window.addEventListener("popstate", ()=>{
+      history.pushState(null, null, "about:blank");
+    });
+  }
 });
+
+
 add_product.addEventListener("click",function(){
     window.location.href = "/api_new_product/add";
     history.replaceState(null, "", "/api_new_product/add");

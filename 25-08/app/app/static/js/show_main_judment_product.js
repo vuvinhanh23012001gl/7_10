@@ -1,5 +1,5 @@
 
-import {logSocket,canvas_img_show_oke,ctx_oke,scroll_content} from "./show_main_status.js";
+import {logSocket,canvas_img_show_oke,ctx_oke,scroll_content,enableButtons,disableButtons} from "./show_main_status.js";
 console.log("đã vào Hàm phán định")
 
 const progressRow = document.getElementById('progress-row');
@@ -101,7 +101,16 @@ toggleBtn.addEventListener("click",()=>{
       }
 });
 
+import { get_user_or_admin } from "/static/js/user_role.js";
 document.addEventListener("DOMContentLoaded", () => {
+  if (!get_user_or_admin()){
+     disableButtons();
+     console.log("Đây là tài khoản User nên không được vào cấu hình")
+  }
+  else{
+    console.log("Đây là tài khoản admin nên  được vào cấu hình")
+    enableButtons();
+  }
   status_view_master = true  //ban đầu cho xuất hiện ảnh chụp master
   const dataImg = scroll_content.dataset.img;
   const imgList = JSON.parse(dataImg);

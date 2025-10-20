@@ -3,7 +3,6 @@ from flask import Blueprint,render_template
 from flask_socketio import SocketIO
 from connect_camera import BaslerCamera
 from flask import redirect, url_for
-from config_software import OilDetectionSystem
 import shared_queue
 import common_value 
 import threading
@@ -492,21 +491,29 @@ def exit_api_config_software():
     }
     return jsonify(response)
 
+
+
+
 @api_config_software.route("/config_software",strict_slashes=False)
 def config_software():
     cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
-    data_information = OilDetectionSystem()
-    data_send_client = data_information.to_dict()
+    data_send_client = common_object.obj_config_software.to_dict()
     return jsonify({"status":"200OK","data":data_send_client})
 
 @api_config_software.route("/change_log",methods=["POST"],strict_slashes=False)
-def change_log():
+def change_log():   
     data_change = request.get_json()
+    print(data_change)
     status_log_img = data_change.get("log_img",True)
     status_log_product = data_change.get("log_product",True)
     status_log_software = data_change.get("log_software",True)
-    data_information = OilDetectionSystem()
-    data_information.update_open_btn(status_log_img,status_log_product,status_log_software)
+    set_time_save_log_software = data_change.get("set_time_save_log_software",30)
+    set_time_save_log_img = data_change.get("set_time_save_log_img",30)
+    set_time_save_log_excell = data_change.get("set_time_save_log_excell",30)
+    common_object.obj_config_software.update_open_btn(
+        status_log_img,status_log_product,status_log_software,
+        int(set_time_save_log_software),int(set_time_save_log_img),int(set_time_save_log_excell)
+    )
     return jsonify({"status":"200OK"})
 
 @api_config_com.route("/exit")
@@ -617,6 +624,12 @@ def download_manual():
     print("Trả File Hướng dẫn sử dụng sản phẩm cho clinet")
     return send_file("static/docurment_manual/HuongDan.pdf", mimetype="application/pdf")
 
+@api_inf_software.route("/data_infor_software") #thong tin phan mem 
+def data_infor_software():
+    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
+    data_send_client = common_object.obj_config_software.to_dict_infor_software()
+    print("Trả thông tin phần mềm cho clinet")
+    return jsonify({"status":"200OK","data":data_send_client})
 
 @api_login_software.route("/login",methods=["POST"])
 def login():

@@ -1065,6 +1065,22 @@ button.btn:hover {
   font-family: 'Poppins', sans-serif;
   z-index: 1000;
 }
+/* Overlay tổng */
+#overlay_inforsoftware{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(10, 10, 10, 0.8);
+  display : none;      /*cai nay de an lop 
+  /* moi dau load trang se khonng cho hien thi khi nao doc bien luu trong storage thi moi quyet dinh la dang nhap hay chua */
+  justify-content: center;
+  align-items: center;
+  font-family: 'Poppins', sans-serif;
+  z-index: 1000;
+
+}
 
 /* Hiệu ứng orb */
 #orb_one, #orb_two {
@@ -1072,6 +1088,11 @@ button.btn:hover {
   border-radius: 50%;
   filter: blur(60px);
   opacity: 0.4;
+}
+#software-info{
+  width: auto;
+  height: auto;
+  padding: 30px;
 }
 
 /* Khung container */

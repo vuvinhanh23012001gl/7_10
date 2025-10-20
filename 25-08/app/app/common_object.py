@@ -7,7 +7,7 @@ from folder_create import Create
 from log import Log
 from common_value import NAME_FOLDER_LOG
 from user import Manage_User
-
+from config_software import OilDetectionSystem
 
 folder =  Create()
 NAME_FILE_LOG = "log_data.txt"
@@ -20,3 +20,4 @@ obj_manager_serial = ManagerSerial(queue_rx_arm=queue_rx_arm,queue_tx_arm=queue_
 manage_product = ProductTypeManager()
 shape_master = Proces_Shape_Master()
 obj_manage_user = Manage_User()
+obj_config_software = OilDetectionSystem()

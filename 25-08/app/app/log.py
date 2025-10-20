@@ -104,3 +104,11 @@ class Log:
 
 # for t in threads:
 #     t.join()
+# class log_excell:
+#     def __init__(self,path_save_log_excell):
+#         self.data = None
+#         self.path_save = path_save_log_excell
+#     def 
+    
+        
+    

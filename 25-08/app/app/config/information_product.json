@@ -1,11 +1,14 @@
 {
     "name": "Hệ thống nhận diện điểm dầu",
     "version": "v1.0",
-    "author": "Nhóm phần mềm công ty Brother",
-    "path_log_img_oil": "C:\\Users\\anhuv\\Desktop\\26_08\\25_08_1\\25-08\\app\\app\\static\\Product_Img_Retraining",
-    "path_log_product": "C:\\Users\\anhuv\\Desktop\\26_08\\25_08_1\\25-08\\app\\app\\static\\log\\log_product",
-    "path_log_software": "C:\\Users\\anhuv\\Desktop\\26_08\\25_08_1\\25-08\\app\\app\\static\\log\\log_software",
-    "open_log_img_oil": false,
+    "author": "Nhóm phần mềm RD-PE công ty Brother Việt Nam",
+    "path_log_img_oil": "D:\\Disk Code Software\\Project\\brother_check_oil\\main_soft\\7_10\\25-08\\app\\app\\static\\Product_Img_Retraining",
+    "path_log_product": "D:\\Disk Code Software\\Project\\brother_check_oil\\main_soft\\7_10\\25-08\\app\\app\\static\\log\\log_product",
+    "path_log_software": "D:\\Disk Code Software\\Project\\brother_check_oil\\main_soft\\7_10\\25-08\\app\\app\\static\\log\\log_software",
+    "open_log_img_oil": true,
     "open_log_product": false,
-    "open_log_software": false
+    "open_log_software": true,
+    "set_time_save_log_software": 0,
+    "set_time_save_log_img": 0,
+    "set_time_save_log_excell": 7
 }

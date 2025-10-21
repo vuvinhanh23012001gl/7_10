@@ -1194,3 +1194,28 @@ form label {
   padding-bottom:5px;
    padding-left:10px;
 }
+#btn_exit_infor_software {
+  display: block;                    /* Để có thể căn giữa */
+  margin: 20px auto;                 /* auto => căn giữa ngang */
+  background-color: #e74c3c;         /* Đỏ nhạt tinh tế */
+  color: white;                      /* Màu chữ trắng */
+  border: none;                      /* Bỏ viền */
+  border-radius: 12px;               /* Bo góc mềm mại */
+  padding: 10px 20px;                /* Kích thước nút */
+  font-size: 16px;                   /* Cỡ chữ dễ nhìn */
+  font-weight: 600;                  /* Chữ đậm vừa */
+  cursor: pointer;                   /* Con trỏ dạng tay khi hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng nhẹ */
+  transition: all 0.3s ease;         /* Hiệu ứng chuyển mượt */
+}
+
+#btn_exit_infor_software:hover {
+  background-color: #c0392b;         /* Màu đậm hơn khi hover */
+  transform: scale(1.05);            /* Phóng to nhẹ */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+#btn_exit_infor_software:active {
+  transform: scale(0.95);            /* Hiệu ứng nhấn xuống */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}

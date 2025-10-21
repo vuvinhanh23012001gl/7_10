@@ -108,10 +108,11 @@ class Log:
 #         self.data = None
 #         self.path_save = path_save_log_excell
 #     def 
-
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils import get_column_letter
+import os
 from config_software import OilDetectionSystem
 obj_infor_config = OilDetectionSystem()
-from openpyxl import load_workbook
 class log_excell:
     from folder_create import Create
     obj_folder = Create()
@@ -124,7 +125,7 @@ class log_excell:
 
         self.path_file_save_log_excell = self.create_file_excell()  #self.path_file_save_log_excell  se cho co the bang none neu khong duoc phep tao file
         if self.path_file_save_log_excell:
-            self.write_file_excel(["Thời gian","Mã sản phẩm","Tên sản phẩm","Tên người thao tác","Trạng thái nhận diện"])
+            self.write_file_excel(["Thời gian","Mã sản phẩm","Tên sản phẩm","Tên người thao tác","Ảnh lưu","Mã lỗi","Ghi chú"])
 
     def get_path_file_save_log_excell(self):
         """Tra ve path File luu log hien tai"""
@@ -177,6 +178,7 @@ class log_excell:
                     log_excell.obj_folder.delete_file(path_file_delete)
             print("--Xóa thành công file--")
 
+
     def write_file_excel(self, row: list):
         """
         Ghi 1 dòng dữ liệu vào file Excel hiện tại.
@@ -188,25 +190,42 @@ class log_excell:
             return None
 
         file_path = self.get_path_file_save_log_excell()
-        if os.path.exists(file_path):
+
+        # 🔹 Nếu file chưa tồn tại -> tạo mới
+        if not os.path.exists(file_path):
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            self.wb = Workbook()
+            self.ws = self.wb.active
+            self.ws.title = "Log Data"
+            self.wb.save(file_path)
+        else:
             self.wb = load_workbook(file_path)
             self.ws = self.wb.active
+
+        # 🔹 Ghi dữ liệu vào dòng mới
         self.ws.append(row)
+
+        # 🔹 Tự động căn chỉnh độ rộng cột cho đẹp
+        for col in self.ws.columns:
+            max_length = 0
+            col_letter = get_column_letter(col[0].column)
+            for cell in col:
+                try:
+                    if cell.value is not None:
+                        max_length = max(max_length, len(str(cell.value)))
+                except:
+                    pass
+            adjusted_width = max_length + 4
+            self.ws.column_dimensions[col_letter].width = adjusted_width
+
+        # 🔹 Lưu file lại
         self.wb.save(file_path)
         print(f"✅ Đã lưu dòng dữ liệu vào: {file_path}")
+
         return file_path
-    
-
-
-
-
-
         
-        
-
-
 # test_obj_log_excell = log_excell(obj_infor_config)
-# test_obj_log_excell.write_file_excel([1,3,4,5])
+# test_obj_log_excell.write_file_excel([1,3,4,5,23])
 # # test_obj_log_excell.delete_file_old()
 # # test_obj_log_excell.create_file_excell()
 # # test_obj_log_excell.get_list_find_old(1)

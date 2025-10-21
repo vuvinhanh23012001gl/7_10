@@ -10,6 +10,8 @@ const sw_author = document.getElementById("sw-author");
 const path_oil = document.getElementById("path-oil");
 const path_product = document.getElementById("path-product");
 const path_software = document.getElementById("path-software");
+const btn_exit_infor_software = document.getElementById("btn_exit_infor_software");
+
 btn_infor_software.addEventListener("click",async()=>{
 overlay_inforsoftware.style.display = "flex";
         let data = await fetch_get("/api_inf_software/data_infor_software");
@@ -35,4 +37,7 @@ overlay_inforsoftware.style.display = "flex";
         path_product.innerHTML = path_log_product;
         path_software.innerHTML = path_log_software;
 
+});
+btn_exit_infor_software.addEventListener("click",()=>{
+    overlay_inforsoftware.style.display = "none";
 });

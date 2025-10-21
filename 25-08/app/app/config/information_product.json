@@ -6,9 +6,9 @@
     "path_log_product": "D:\\Disk Code Software\\Project\\brother_check_oil\\main_soft\\7_10\\25-08\\app\\app\\static\\log\\log_product",
     "path_log_software": "D:\\Disk Code Software\\Project\\brother_check_oil\\main_soft\\7_10\\25-08\\app\\app\\static\\log\\log_software",
     "open_log_img_oil": true,
-    "open_log_product": false,
+    "open_log_product": true,
     "open_log_software": true,
     "set_time_save_log_software": 0,
     "set_time_save_log_img": 0,
-    "set_time_save_log_excell": 7
+    "set_time_save_log_excell": 1
 }

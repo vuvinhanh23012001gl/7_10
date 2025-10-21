@@ -50,6 +50,22 @@ class OilDetectionSystem:
         self.open_log_img_oil = data_config.get("open_log_img_oil",False)
         self.open_log_product =data_config.get("open_log_product",False)
         self.open_log_software =data_config.get("open_log_software",False)
+    def get_path_log_img_oil(self):
+        return self.path_log_img_oil
+
+    def get_path_log_product(self): #log excell
+        return self.path_log_product
+
+    def get_path_log_software(self):
+          return self.path_log_software
+    def get_log_img_oil(self):
+        return self.open_log_img_oil
+
+    def get_log_product(self):  #log excell
+        return self.open_log_product
+
+    def get_log_software(self):
+        return self.open_log_software
     def set_open_log_img_oil(self, status: bool):
         self.open_log_img_oil = status
         self.wirte_data_config()

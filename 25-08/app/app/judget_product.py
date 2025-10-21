@@ -6,6 +6,8 @@ from master_circle_shape import  Master_Circle_Shape
 from master_rect_shape import  Master_Rect_Shape
 import numpy as np
 import cv2
+import shared_queue
+
 class Judget_Product:
     """Lớp này chỉ phán định sản phẩm có 
     lớp này chỉ khởi tạo 1 lần
@@ -116,7 +118,7 @@ class Judget_Product:
                 # cv2.waitKey(0)
                 # cv2.destroyAllWindows()
         
-    def judget(self,atitude_z,img:np.ndarray,data_one_point_master):
+    def judget(self,i,atitude_z,img:np.ndarray,data_one_point_master):
             """Khi cho 1 bức ảnh vào thì nó sẽ 
             phán định ok hay ng
             hàm này để test phán định
@@ -127,7 +129,7 @@ class Judget_Product:
             polygons = object_frame_detect.get_contourn_polygon_standardization()                    # Lấy các điểm bao 
             img = self.draw_polylines_on_image(img,polygons)   
             arr_shape_master = self.setting_object_master(data_one_point_master,img)
-            data_send_detect,is_frame_ok = self.process_judment(object_frame_detect,img,atitude_z,polygons,arr_shape_master)
+            data_send_detect,is_frame_ok = self.process_judment(object_frame_detect,img,atitude_z,polygons,arr_shape_master,i)
             # self.show_image(img)
             return data_send_detect,img,is_frame_ok
 
@@ -153,11 +155,11 @@ class Judget_Product:
                 img  = shape_object.draw(img)
         print("Khởi tạo thành công Master")
         return arr_object_shape
-    def process_judment(self,object_frame_detect,img,atitude_z,polygons,arr_shape_master):
+    def process_judment(self,object_frame_detect,img,atitude_z,polygons,arr_shape_master,i):
         print("-----------------------Bắt đầu phán định-----------------------")
         data_send_server_judgement = {}
         is_frame_ok =  True
-
+        #i la index cua san buc anh dang xu ly de show log thoi
         for index,shape_master in enumerate(arr_shape_master):
                 count_oil_point_avaiable = 0
                 count_oil_points_inside_master = 0
@@ -166,7 +168,7 @@ class Judget_Product:
                 index_point_detect = 0
                 # print(name_master)
                 arr_point_detect_send_server = []
-                for poly in polygons:    
+                for poly in polygons:   
                             object_point = object_frame_detect.get_object_index_area_while(index_point_detect) #Trả về đối tượng từng điểm ảnh phát hiện đc  print(object_point)
                             index_point_detect+=1
                             dict_data_detect = shape_master.contains_polygon(poly,img)                    # Trả về các phán định thuộc tính của các điểm nhận đc 
@@ -185,10 +187,11 @@ class Judget_Product:
                                 count_oil_points_inside_master += 1
                                 properties_oil = self.create_properties_oil(index_point_detect,width_reality,inside_percent,True)
                                 arr_point_detect_send_server.append(properties_oil)
-                    
                                 if(take_max_width_or_height <= shape_master.size_max and  take_max_width_or_height >= shape_master.size_min):
                                     print(f"Điểm phát hiện {index_point_detect} có size hợp lệ MIN:{shape_master.size_min} Thực tế:{take_max_width_or_height} MAX:{shape_master.size_max}")
                                     count_oil_point_avaiable += 1
+                                else:
+                                     shared_queue.queue_tx_web_log.put(f"[WARNING] Ảnh master{i}. Khung: {name_master}. Điểm thứ: {index_point_detect} <br>-->Không đúng kích thước quy định.")
                             elif status_detect_shape == "partial":
                                 width_reality = object_point.estimate_area_with_calib(atitude_z,object_frame_detect.calib_Z,object_frame_detect.calib_scale)
                                 take_max_width_or_height = max(width_reality[0],width_reality[1])
@@ -197,7 +200,7 @@ class Judget_Product:
                                 print(f"Không xét size điểm {index_point_detect}")
                                 properties_oil = self.create_properties_oil(index_point_detect,width_reality,inside_percent,False)
                                 arr_point_detect_send_server.append(properties_oil)
-                               
+                print(f"----so diem ok nam trong mastsr name {shape_master}dem duoc la {count_oil_points_inside_master}---")
                 data_send_server_judgement.update({ 
                     f"{index}":{
                     "name_master":name_master,
@@ -213,9 +216,10 @@ class Judget_Product:
                 statuse_check_number_oil_in_master = self.check_number_oil_inside_master(shape_master.number_point,count_oil_points_inside_master)
                 if not statuse_check_number_oil_in_master :
                     print(f"Tổng số điểm nằm trong master quy định {shape_master.number_point},Tổng số điểm nằm trong hợp lệ {count_oil_points_inside_master}==>NG")
+                    shared_queue.queue_tx_web_log.put(f"[WARNING] Ảnh master{i}. Khung: {name_master} <br>-->Master quy định: {shape_master.number_point} điểm.Nhận diện OK: {count_oil_points_inside_master} điểm")
                 else :
                     check_all_point = True
-                print("count_oil_points_inside_master",count_oil_points_inside_master,"count_oil_point_avaiable",count_oil_point_avaiable)
+                print("count_oil_points_inside_master",count_oil_points_inside_master,"count_oil_point_avaiable", )
                 statuse_check_size_oil_in_master  = self.check_number_oil_inside_master(count_oil_points_inside_master,count_oil_point_avaiable)
                 if not statuse_check_size_oil_in_master:
                     print(f"Tổng số size đúng master {shape_master.number_point},Tổng số size đúng hợp lệ{count_oil_point_avaiable}==>NG")
@@ -230,13 +234,13 @@ class Judget_Product:
                     if not check_size_point :
                             is_frame_ok = False
                             print(f"Master {name_master} lỗi do size ")
+                            # shared_queue.queue_tx_web_log.put(f"[WARNING] [Ảnh master{i}] Khung:[{name_master}] lỗi do kích thước điểm dầu không hợp lệ")
                     print(f"Master {name_master} NG")
                      
         # print(data_send_server_judgement)
         # import json
         # json_str = json.dumps(data_send_server_judgement, ensure_ascii=False, indent=4,
         #               default=lambda x: float(x) if isinstance(x, np.floating) else x)
-
         # print(json_str)
         if is_frame_ok:
             print("=====>>  OK") 

@@ -1,5 +1,5 @@
 
-import {logSocket,canvas_img_show_oke,ctx_oke,scroll_content,enableButtons,disableButtons} from "./show_main_status.js";
+import {logSocket,canvas_img_show_oke,ctx_oke,scroll_content,enableButtons,disableButtons,overlay_login,getAcceptPowerByUser} from "./show_main_status.js";
 console.log("đã vào Hàm phán định")
 
 const progressRow = document.getElementById('progress-row');
@@ -53,10 +53,11 @@ function isConect(isconect,element_circle,element_lable,str_lable){
         element_circle.classList.add("off");
         element_circle.classList.remove("on");
         element_lable.innerText = `${str_lable} mất kết nối`;
-    }
+    }  
 }
 
 run_btn.addEventListener('click',()=>{
+     log_judment.innerHTML = "";
       status_judment.innerHTML = "--"
       status_judment.classList.remove("OK");
       status_judment.classList.remove("NG");
@@ -103,6 +104,16 @@ toggleBtn.addEventListener("click",()=>{
 
 import { get_user_or_admin } from "/static/js/user_role.js";
 document.addEventListener("DOMContentLoaded", () => {
+
+ console.log("accept_power_by_user",getAcceptPowerByUser());
+  if (getAcceptPowerByUser()){
+        overlay_login.style.display = "none";
+    }
+  else{
+          overlay_login.style.display = "flex";
+  }
+
+
   if (!get_user_or_admin()){
      disableButtons();
      console.log("Đây là tài khoản User nên không được vào cấu hình")

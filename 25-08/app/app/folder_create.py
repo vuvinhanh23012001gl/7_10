@@ -1,8 +1,12 @@
+from datetime import datetime
 from typing import Dict,Any
 import json
 import os
 import shutil
 from pathlib import Path
+import openpyxl  # thư viện tạo file Excel
+
+
 class Create:
 
     def __init__(self,base_path: str = None):
@@ -357,3 +361,64 @@ class Create:
             print(f"✅ File đã tồn tại: {file_path}")
 
         return file_path
+    def get_list_file_in_folder(self,folder_path: str) -> list:
+        """Trả về danh sách các file có trong folder (không gồm thư mục con)."""
+        if not os.path.exists(folder_path):
+            return []
+        return [file for file in os.listdir(folder_path)
+                if os.path.isfile(os.path.join(folder_path, file))]
+    def create_file_excell_in_folder_log(self,path_save_log_excell, name_file=None):
+        """
+        Trả về đường dẫn đầy đủ của file Excel.
+        Nếu không truyền name_file, sẽ tạo tên file theo thời gian hiện tại.
+        Nếu file chưa tồn tại, hàm sẽ tạo file Excel rỗng.
+        """
+        # Tạo thư mục nếu chưa tồn tại
+        if not os.path.exists(path_save_log_excell):
+            os.makedirs(path_save_log_excell)
+
+        # Tạo tên file theo timestamp nếu chưa có
+        if name_file is None:
+            now = datetime.now()
+            # Dùng '-' thay ':' vì Windows không cho phép ':' trong tên file
+            name_file = f"log_{now.strftime('%Y%m%d_%H-%M-%S')}.xlsx"
+
+        file_path = os.path.join(path_save_log_excell, name_file)
+
+        # Nếu file chưa tồn tại, tạo file Excel rỗng
+        if not os.path.exists(file_path):
+            wb = openpyxl.Workbook()
+            wb.save(file_path)
+
+        return file_path
+    def get_old_files_by_threshold(self,files, days_threshold=30):
+        """
+        Nhận danh sách file log theo định dạng 'log_YYYYMMDD_HH-MM-SS.xlsx'.
+        Tìm file có ngày lớn nhất (mới nhất).
+        Trả về danh sách file có ngày cách ngày mới nhất > days_threshold.
+        """
+        if not files:
+            return []
+
+        file_dates = {}
+        for f in files:
+            try:
+                timestamp_str = f.replace('log_', '').replace('.xlsx', '')
+                dt = datetime.strptime(timestamp_str, '%Y%m%d_%H-%M-%S')
+                file_dates[f] = dt
+            except Exception as e:
+                print(f"Lỗi parse {f}: {e}")
+
+        if not file_dates:
+            return []
+
+        latest_date = max(file_dates.values())  # ngày mới nhất
+
+        # lọc file cách ngày mới nhất > days_threshold
+        old_files = [f for f, dt in file_dates.items()
+                    if (latest_date - dt).days > days_threshold]
+
+        return old_files
+    def find_file(self,path, filename):
+        file_path = os.path.join(path, filename)
+        return file_path if os.path.exists(file_path) else False

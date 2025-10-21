@@ -13,7 +13,7 @@ import common_object
 
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
 main_html = Blueprint("main",__name__)
 api = Blueprint("api",__name__)
 api_new_model = Blueprint("api_new_model",__name__)

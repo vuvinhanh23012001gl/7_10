@@ -250,7 +250,7 @@ def check_all_true(arr):
 def worker_judget(queue_in,queue_out, judget_product, i, obj_arr_list_point, data_one_point_master, length,time_start):
     try: 
         img = queue_in.get(block=True, timeout=1)
-        data_show_table, img_detect, is_frame_ok = judget_product.judget(
+        data_show_table, img_detect, is_frame_ok = judget_product.judget(i,
             int(obj_arr_list_point[i].z), img, data_one_point_master
         )
         data_out = {

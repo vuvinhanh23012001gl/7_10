@@ -2,8 +2,8 @@
     "SP001": {
         "type_id": "SP001",
         "type_name": "STM32-F103C8T6",
-        "description": "http://localhost:5000/api_new_product/add",
-        "len": 0,
+        "description": " Description deafaut ",
+        "len": 2,
         "xyz": [
             110,
             75,
@@ -11,6 +11,19 @@
         ],
         "path_img_product": "static/Product_Photo/IMG_SP001.png",
         "path_img_master": "static/Master_Photo/Master_SP001",
-        "point_check": []
+        "point_check": [
+            {
+                "x": 35,
+                "y": 42,
+                "z": 3,
+                "brightness": 80
+            },
+            {
+                "x": 60,
+                "y": 61,
+                "z": 10,
+                "brightness": 80
+            }
+        ]
     }
 }

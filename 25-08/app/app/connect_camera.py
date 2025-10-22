@@ -174,10 +174,7 @@ class BaslerCamera:
                         #training == 1 chup anh 
                         #training == 2 traing lai
                         #training == 3 chup anh
-                        print("ghgdajgdwshjsdaghjasgshgshdgshajdgsahjsgahagdahdgawhjdgashjdgashjdgashjgdashjdgashjdasghjagdshjdgsahjdgashjdgsahjdgasjhdgsahjdgsahjdgsahjdgj",self.obj_log_img)
-                        import common_object
-                        common_object.obj_log_img.create_file_log_img(frame)
-                        print("khong nhya dcuo c2")
+
                         if training == 3:
                             if  name_capture != -1:
                                 print("Đang chụp ảnh ")

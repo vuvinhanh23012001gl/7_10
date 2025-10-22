@@ -15,7 +15,7 @@ class ProductType:
         self.description =  " Description deafaut "    #se tao ra duong dan anh trong file static/Product_Photo
         self.Path_Product = None
         self.path_img_master = None
-        self.path_img_retraining = None
+        # self.path_img_retraining = None
     def get_xyz(self):
         return self.xyz
     def set_xyz(self, value):
@@ -32,23 +32,23 @@ class ProductType:
         name_file_parent = os.path.dirname(os.path.abspath(__file__))
         static = os.path.join(name_file_parent,ProductType.NAME_FILE_STATIC_CLASS)
         path_product = os.path.join(static,ProductType.NAME_FILE_PRODUCT_PHOTO )  #tao ra duong dan chuan Product_Photo
-        path_img_retraining = os.path.join(static,NAME_FILE_IMG_RETRAINING)  #tao ra duong dan chuan Product_Photo
+        # path_img_retraining = os.path.join(static,NAME_FILE_IMG_RETRAINING)  #tao ra duong dan chuan Product_Photo
         path_master = os.path.join(static,ProductType.NAME_FILE_MASTER_PHOTO)   #tao ra duong dan chuan Master_Photo
         # print(path_master)
         # print(path_product)
         os.makedirs(path_product, exist_ok=True)  #tao ra 2 thu muc path_product va path_master
         os.makedirs(path_master, exist_ok=True)
-        os.makedirs(path_img_retraining, exist_ok=True)
+        # os.makedirs(path_img_retraining, exist_ok=True)
         path_img_master = os.path.join(path_master,f"Master_{self.type_id}")
-        path_img_retraining = os.path.join(path_img_retraining,f"IMG_Retraining_{self.type_id}")
+        # path_img_retraining = os.path.join(path_img_retraining,f"IMG_Retraining_{self.type_id}")
         self.path_img_master = path_img_master
-        self.path_img_retraining = path_img_retraining
+        # self.path_img_retraining = path_img_retraining
         self.Path_Product = path_product
         os.makedirs(path_img_master, exist_ok=True)
-        os.makedirs(path_img_retraining, exist_ok=True)
+        # os.makedirs(path_img_retraining, exist_ok=True)
         return {"Path_Product":path_product,
                 "Path_Master": path_img_master,
-                "Path_img_retraining":path_img_retraining
+                # "Path_img_retraining":path_img_retraining
         }
     def description_product(self,commment):
         self.description = commment
@@ -119,9 +119,9 @@ class ProductType:
         """
         return self.list_point
   
-    def get_path_img_retraning(self):
-         """Trả về None nếu không tìm có path nếu có trả về đường dẫn đến ảnh Retraining data"""
-         return self.path_img_retraining
+    # def get_path_img_retraning(self):
+    #      """Trả về None nếu không tìm có path nếu có trả về đường dẫn đến ảnh Retraining data"""
+    #      return self.path_img_retraining
     def get_type_name(self):
         """ Trả về tên loại sản phẩm"""
         return self.type_name

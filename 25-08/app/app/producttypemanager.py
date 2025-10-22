@@ -350,23 +350,23 @@ class ProductTypeManager:
         isObject = self.find_by_id(type_id)
         if isObject!= -1:
             path_master = isObject.get_path_img_master()
-            path_retraining = isObject.get_path_img_retraning()
-            if path_master is not None and path_retraining is not None:
+            # path_retraining = isObject.get_path_img_retraning()
+            if path_master is not None :
                 print("File Tồn tại")
                 object_folder = Create()
-                print(path_master,"\n",path_retraining)
+                # print(path_master,"\n",path_retraining)
                 status_img_master = object_folder.delete_folder(path_master)
-                status_img_retraining = object_folder.delete_folder(path_retraining)
+                # status_img_retraining = object_folder.delete_folder(path_retraining)
                 if not status_img_master:
                     print("Xóa Path Img master Không Thành công")
                     return False
-                if not status_img_retraining:
-                    print("Xóa Path IMG retraining không thành công")
-                    return False
+                # if not status_img_retraining:
+                #     print("Xóa Path IMG retraining không thành công")
+                #     return False
                 if status_img_master:
                     print("Xóa Folder matster thành công")
-                if status_img_retraining:
-                    print("Xóa Folder retraining thành công")
+                # if status_img_retraining:
+                #     print("Xóa Folder retraining thành công")
                 path_product = isObject.get_Path_Product()
                 if path_product:
                      path_img = object_folder.find_file_in_folder(path_product,f"Img_{isObject.type_id.strip()}.png")

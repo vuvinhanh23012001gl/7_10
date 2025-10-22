@@ -145,6 +145,12 @@ def out_app():
 #--------------------------------------------------------Api_run_application---------------------------------------------
 @api_run_application.route('/run_application',methods = ['GET'])
 def run_application():
+    import numpy as np
+    print("khong nhya dcuo c2")                
+    import os
+    height, width, channels = 480, 640, 3
+    blank_image = np.zeros((height, width, channels), dtype=np.uint8)  
+    common_object.obj_log_img.create_file_log_img(blank_image)
     func.create_choose_master(common_value.NAME_FILE_CHOOSE_MASTER) # tạo file choose_master nếu tạo rồi thì thôi
     choose_master_index = func.read_data_from_file(common_value.NAME_FILE_CHOOSE_MASTER) # đọc lại file choose master cũ xem lần trước  người dùng chọn gì
     choose_master_index =  choose_master_index.strip()
@@ -660,6 +666,7 @@ app.register_blueprint(api_config_com, url_prefix="/api_config_com")
 app.register_blueprint(api_config_software, url_prefix="/api_config_software")
 app.register_blueprint(api_inf_software, url_prefix="/api_inf_software")
 app.register_blueprint(api_login_software, url_prefix="/api_login_software")
+
 
 
 if __name__ == "__main__":

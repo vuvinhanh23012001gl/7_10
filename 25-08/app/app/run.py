@@ -562,14 +562,6 @@ def stop_video():
     common_value.click_page_html = 1
     print("Người dùng đã thoát khỏi trang Training Model")
     return "ok"
-@api_new_model.route('/replay', methods=['GET'])
-def handle_replay():
-    common_value.is_data_train = 1
-    print("🔁 Người dùng đã nhấn nút replay!")
-    return jsonify({
-        "message": "Đã nhận tín hiệu từ nút Replay",
-        "status": "ok"
-    })
 @api_new_model.route("/run_point",methods=['POST'])
 def run_point():
     data = request.get_json()
@@ -597,22 +589,6 @@ def exit_training():
     common_value.click_page_html = 1
     print("Người dùng đã thoát khỏi trang Training Model")
     return redirect(url_for("main.show_main"))
-
-@api_new_model.route('/submit', methods=['POST'])
-def submit():
-    """Training khong the anh huong truc tiep den file chay hayg lam tap trung vao master lay master."""
-    form_data = request.form
-    status_check_submit = func.Check_form_data(form_data)  #status_check_submit co thể la typeid
-    print(status_check_submit)
-    if status_check_submit:
-        shared_queue.queue_tx_web_log.put("🔔Dữ liệu hợp lệ")
-        shared_queue.queue_tx_web_log.put("🔔Tiến hành Traing Data")
-        #Gui Tin hieu vao file main
-        common_value.is_data_train = 1
-    else:
-        shared_queue.queue_tx_web_log.put("🔔Dữ liệu không hợp lệ")
-        return "X Dữ liệu không hợp lệ"
-    return "✅ Đã nhận dữ liệu"
 @api_new_model.route("/training-model")
 def take_photo_trainning_model():
     func.clear_queue(shared_queue.queue_rx_web_api)   #rst bufff nhan
@@ -693,6 +669,8 @@ if __name__ == "__main__":
     import main_pc
     import threading
     cam_basler = BaslerCamera(shared_queue.queue_accept_capture,socketio,config_file="Camera_25129678.pfs")
+    print("hejhejegwjegrejgrewjhrgewhrgehrgehrgewhrewgrhrgewhrgewhi truoc",common_object.obj_log_img)
+    print("truoc",id(common_object.obj_log_img))
     threading.Thread(target=stream_logs,name="stream_log",daemon = True).start()
     threading.Thread(target=stream_img,name="stream_img_and_data",daemon = True).start()
     threading.Thread(target = stream_frames,name="stream_video",daemon=True).start()

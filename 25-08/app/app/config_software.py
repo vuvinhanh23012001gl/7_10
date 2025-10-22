@@ -40,9 +40,7 @@ class OilDetectionSystem:
         self.time_save_log_img = data_config.get("set_time_save_log_img",OilDetectionSystem.SET_TIME_SAVE_LOG_IMG)
         self.time_save_log_software = data_config.get("set_time_save_log_software",OilDetectionSystem.SET_TIME_SAVE_LOG_SOFTWARE)
         self.time_save_log_excell = data_config.get("set_time_save_log_excell",OilDetectionSystem.SET_TIME_SAVE_LOG_EXCELL)
-        
-        
-        
+  
         if all([name_data_in_file,version_data_in_file,author_data_in_file]):
             self.name = name_data_in_file
             self.version = version_data_in_file
@@ -50,8 +48,8 @@ class OilDetectionSystem:
         self.open_log_img_oil = data_config.get("open_log_img_oil",False)
         self.open_log_product =data_config.get("open_log_product",False)
         self.open_log_software =data_config.get("open_log_software",False)
-    def get_path_log_img_oil(self):
-        return self.path_log_img_oil
+    def get_path_log_img_oil(self):   
+        return self.path_log_img_oil     
 
     def get_path_log_product(self): #log excell
         return self.path_log_product

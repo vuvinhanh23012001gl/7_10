@@ -5,8 +5,8 @@ import os
 import shutil
 from pathlib import Path
 import openpyxl  # thư viện tạo file Excel
-
-
+import cv2
+import numpy as np
 class Create:
 
     def __init__(self,base_path: str = None):
@@ -37,6 +37,29 @@ class Create:
         except Exception as e:
             print("⚠️ File JSON rỗng hoặc sai định dạng → trả về dict rỗng")
             return {}
+    def save_image_grandaugter(self, image, file_name: str, parent: str, grandparent: str, extension: str = "jpg") -> str:
+        """
+        Lưu ảnh (numpy.ndarray) vào thư mục theo cấu trúc: grandparent/parent/file_name.extension
+        - image: ảnh numpy.ndarray
+        - file_name: tên file (không cần phần mở rộng)
+        - parent: thư mục con (VD: tên sản phẩm)
+        - grandparent: thư mục cha (VD: static/Master_Photo)
+        - extension: định dạng ảnh ('jpg', 'png', ...)
+        Trả về: đường dẫn ảnh đã lưu (str)
+        """
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        dir_grandparent = os.path.join(current_dir, grandparent)
+        dir_parent = os.path.join(dir_grandparent, parent)
+        os.makedirs(dir_parent, exist_ok=True)
+
+        file_path = os.path.join(dir_parent, f"{file_name}.{extension}")
+
+        if cv2.imwrite(file_path, image):
+            print(f"📸 Lưu ảnh thành công: {file_path}")
+            return file_path
+        else:
+            print(f"⚠️ Lưu ảnh thất bại: {file_path}")
+            return ""
     def get_data_in_path(self,path:str):
          """đọc File json theo đường dẫn nếu không có trả về False nếu không có  file hoặc 
          có đường dẫn nhưng không phải file json . nếu thỏa mãn hết tất cả trả về data của đường dẫn
@@ -367,7 +390,7 @@ class Create:
             return []
         return [file for file in os.listdir(folder_path)
                 if os.path.isfile(os.path.join(folder_path, file))]
-    def create_file_excell_in_folder_log(self,path_save_log_excell, name_file=None):
+    def create_file_log(self,path_save_log_excell,formart="xlsx",name_file=None):
         """
         Trả về đường dẫn đầy đủ của file Excel.
         Nếu không truyền name_file, sẽ tạo tên file theo thời gian hiện tại.
@@ -381,7 +404,7 @@ class Create:
         if name_file is None:
             now = datetime.now()
             # Dùng '-' thay ':' vì Windows không cho phép ':' trong tên file
-            name_file = f"log_{now.strftime('%Y%m%d_%H-%M-%S')}.xlsx"
+            name_file = f"log_{now.strftime('%Y%m%d_%H-%M-%S')}.{formart}"
 
         file_path = os.path.join(path_save_log_excell, name_file)
 
@@ -391,7 +414,53 @@ class Create:
             wb.save(file_path)
 
         return file_path
-    def get_old_files_by_threshold(self,files, days_threshold=30):
+    def create_file_log_img(self,img, path_save_log_img, file_name=None, extension="jpg"):
+        """
+        Tạo file ảnh (placeholder) trong folder path_save_log_img.
+        - img: ảnh numpy array
+        - path_save_log_img: đường dẫn folder lưu ảnh
+        - file_name: tên file (không cần phần mở rộng), nếu None thì tạo theo timestamp
+        - extension: 'jpg' hoặc 'png'
+        
+        Trả về: đường dẫn file ảnh đã tạo
+        """
+        if path_save_log_img is None:
+            print("Bạn cần truyền đường dẫn folder hợp lệ!")
+        
+        # Tạo thư mục nếu chưa tồn tại
+        if not os.path.exists(path_save_log_img):
+            os.makedirs(path_save_log_img)
+
+        # Tạo tên file theo timestamp nếu chưa có
+        if file_name is None:
+            now = datetime.now()
+            file_name = f"img_{now.strftime('%Y%m%d_%H-%M-%S')}"
+
+        file_path = os.path.join(path_save_log_img, f"{file_name}.{extension}")
+        cv2.imwrite(file_path, img)
+        print(f"📸 Tạo file ảnh thành công: {file_path}")
+        return file_path
+    def create_file_text_log(self, folder_path, extension="txt", name_file=None):
+        """
+        Tạo file log text (dùng cho logging module).
+        """
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+
+        if name_file is None:
+            now = datetime.now()
+            name_file = f"log_{now.strftime('%Y%m%d_%H-%M-%S')}.{extension}"
+
+        file_path = os.path.join(folder_path, name_file)
+
+        if not os.path.exists(file_path):
+            # ✅ Tạo file text rỗng
+            with open(file_path, "w", encoding="utf-8") as f:
+                f.write("")  
+
+        return file_path
+
+    def get_old_files_by_threshold(self, characters_check, files, days_threshold=30, format="xlsx"):
         """
         Nhận danh sách file log theo định dạng 'log_YYYYMMDD_HH-MM-SS.xlsx'.
         Tìm file có ngày lớn nhất (mới nhất).
@@ -403,22 +472,23 @@ class Create:
         file_dates = {}
         for f in files:
             try:
-                timestamp_str = f.replace('log_', '').replace('.xlsx', '')
-                dt = datetime.strptime(timestamp_str, '%Y%m%d_%H-%M-%S')
-                file_dates[f] = dt
+                # chỉ loại bỏ prefix và suffix, tránh replace toàn bộ
+                if f.startswith(characters_check) and f.endswith(f'.{format}'):
+                    timestamp_str = f[len(characters_check):-len(f'.{format}')]
+                    dt = datetime.strptime(timestamp_str, '%Y%m%d_%H-%M-%S')
+                    file_dates[f] = dt
             except Exception as e:
                 print(f"Lỗi parse {f}: {e}")
 
         if not file_dates:
             return []
 
-        latest_date = max(file_dates.values())  # ngày mới nhất
-
-        # lọc file cách ngày mới nhất > days_threshold
+        latest_date = max(file_dates.values())
         old_files = [f for f, dt in file_dates.items()
                     if (latest_date - dt).days > days_threshold]
 
         return old_files
+
     def find_file(self,path, filename):
         file_path = os.path.join(path, filename)
         return file_path if os.path.exists(file_path) else False

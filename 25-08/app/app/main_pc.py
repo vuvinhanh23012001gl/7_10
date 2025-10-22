@@ -45,7 +45,7 @@ def fuc_main_process():
             print("----------------- Bắt đầu điều khiển với ARM -------------------")
             common_value.status_check_connect_arm =  True
             match common_value.click_page_html:
-                case 2|6:
+                case 6:
                     if not shared_queue.queue_rx_web_api.empty():
                         data_web_rx = shared_queue.queue_rx_web_api.get()
                         if("cmd:" in data_web_rx):
@@ -55,12 +55,7 @@ def fuc_main_process():
                             if result_send:
                                 shared_queue.queue_tx_web_log.put(f"\n✔️Chạy {data_web_rx} thành công")
                             else :
-                                shared_queue.queue_tx_web_log.put(f"\n❌Chạy {data_web_rx} thất bại")
-                    if common_value.is_data_train == 1:
-                                common_value.is_data_train = 0
-                                print("Có sản phẩm cần Trainging")
-                                func.read_file_training('name_product_train.json',shared_queue.queue_tx_arm,common_object.obj_manager_serial,data_web_rx) # Thuc hien doc tin hieu tra ve va thuc hien
-                                time.sleep(0.5)         
+                                shared_queue.queue_tx_web_log.put(f"\n❌Chạy {data_web_rx} thất bại")    
                 case 1:
                     print("--- Đang ở trang phán định----")
                     if flag_the_firts_connect :

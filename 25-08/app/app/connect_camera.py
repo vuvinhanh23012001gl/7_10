@@ -9,14 +9,12 @@ import threading
 import traceback
 import os
 import queue
-
-class BaslerCamera:
+class BaslerCamera:  
     foler = Create()
     VIDEO_IMAGE_QUALITY = 50  #chất lượng hình ảnh video gửi lên
-    NAME_FILE_RETRAIN = "retraing"
-    NAME_FOLDER_TRAIN = "training"
     SET_TIME_TAKE_IMG = 20000
     def __init__(self,queue_wait = None ,emit_func=None,config_file = None):
+     
         self.camera = None
         self.converter = None
         self.emit_func = emit_func  # Hàm để gửi dữ liệu qua SocketIO (nếu có)
@@ -176,11 +174,10 @@ class BaslerCamera:
                         #training == 1 chup anh 
                         #training == 2 traing lai
                         #training == 3 chup anh
-                        if training == 1 and product_name !=-1  and index!=-1 and  lengt_index != -1:
-                            print("Lưu ảnh Vào File Training")
-                            self.capture_image_train(product_name,index,lengt_index,"Training")
-                        if training == 2  and product_name !=-1  and index!=-1 and  lengt_index != -1:
-                            self.capture_image_train(product_name,index,lengt_index,"Retraining")
+                        print("ghgdajgdwshjsdaghjasgshgshdgshajdgsahjsgahagdahdgawhjdgashjdgashjdgashjgdashjdgashjdasghjagdshjdgsahjdgashjdgsahjdgasjhdgsahjdgsahjdgsahjdgj",self.obj_log_img)
+                        import common_object
+                        common_object.obj_log_img.create_file_log_img(frame)
+                        print("khong nhya dcuo c2")
                         if training == 3:
                             if  name_capture != -1:
                                 print("Đang chụp ảnh ")
@@ -215,7 +212,6 @@ class BaslerCamera:
 
                     key = cv2.waitKey(1) & 0xFF
                     if key == ord('q'):
-                        # # self.capture_image_train(file_name_product="Product_01", index_point=0, len_arr_list_point=3,name_foder_in_static="Training")  
                         # img = self.capture_one_frame()
                         # cv2.imshow("anh",img)
                         # cv2.waitKey(0)  # Nhấn phím bất kỳ để đóng cửa sổ
@@ -229,54 +225,7 @@ class BaslerCamera:
                 grabResult.Release()
         except:
             print("Chua ket noi duoc cam nen khong show dc thong tin")
-    def capture_image_train(self, file_name_product: str, index_point: int, len_arr_list_point: int,name_foder_in_static:str):
-            with self.lock:
-                if self.camera is None or not self.camera.IsOpen():
-                    print("❌ Camera chưa khởi tạo hoặc không mở được.")
-                    return
-                if not self.camera.IsGrabbing():
-                    self.camera.StartGrabbing(pylon.GrabStrategy_LatestImageOnly)
 
-                try:
-                    self.folder_retrain = Create(BaslerCamera.NAME_FOLDER_TRAIN)
-                    # Tạo base: .../static/Training
-                    product_folder = self.folder_retrain.create_subfolder_support(name_foder_in_static)
-                    # Cho FolderCreator biết base mới
-                    self.folder_retrain.base_path = product_folder
-                    # Tạo sẵn các thư mục con: Training/<product>/Diem_i
-                    for i in range(len_arr_list_point):
-                        self.folder_retrain.create_nested_subfolder(file_name_product, f"Diem_{i}")
-
-                    grabResult = self.camera.RetrieveResult(BaslerCamera.SET_TIME_TAKE_IMG,
-                                                            pylon.TimeoutHandling_ThrowException)
-
-                    if grabResult.GrabSucceeded():
-                        image_cv = self.converter.Convert(grabResult)
-                        frame = image_cv.GetArray()
-
-                        if frame is None or frame.size == 0:
-                            print("❌ Khung hình rỗng, không thể lưu.")
-                        else:
-                            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")[:-3]
-                            # ✅ ĐÚNG CẤP THƯ MỤC:
-                            save_dir = product_folder / file_name_product / f"Diem_{index_point}"
-                            save_dir.mkdir(parents=True, exist_ok=True)  # an toàn dù đã tạo trước
-
-                            filename = save_dir / f"img_{timestamp}.png"
-
-                            ok = cv2.imwrite(os.fspath(filename), frame)
-                            if ok:
-                                print(f"📸 Đã lưu ảnh: {filename}")
-                            else:
-                                print(f"❌ cv2.imwrite() thất bại: {filename}")
-                    else:
-                        print("❌ Lỗi khi chụp ảnh:", grabResult.ErrorCode, grabResult.ErrorDescription)
-
-                    grabResult.Release()
-
-                except Exception as e:
-                    print(f"⚠️ Lỗi khi lấy ảnh từ camera: {e}")
-                    traceback.print_exc()
     def capture_one_frame_path(self, save_path: str = None):
         """
         Chụp một ảnh từ camera và trả về frame (numpy array).

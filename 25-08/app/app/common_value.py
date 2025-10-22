@@ -2,7 +2,6 @@ import threading
 click_page_html = threading.Lock()              
 click_page_html = 0
 the_first_connect = True    
-is_data_train = 0
 is_run = 0
 status_check_connect_arm = False
 mumber_total_product = 0   #run dung

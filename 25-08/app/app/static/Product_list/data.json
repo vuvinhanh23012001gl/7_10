@@ -3,7 +3,7 @@
         "type_id": "SP001",
         "type_name": "STM32-F103C8T6",
         "description": " Description deafaut ",
-        "len": 2,
+        "len": 3,
         "xyz": [
             110,
             75,
@@ -23,6 +23,12 @@
                 "y": 61,
                 "z": 10,
                 "brightness": 80
+            },
+            {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "brightness": 0
             }
         ]
     }

@@ -1,9 +1,10 @@
 from folder_create import Create
 import common_value
-import common_object   
+from log import Log
 
 USER_ADMIN = "BIVNRDP"
 PASSWORD_ADMIN = "BIVNRDP"
+show_log = Log()
 
 class acc_use():
     def __init__(self,user_name ="None",use_password="None",first_name="None",last_name="None",line="None",usine="None"):
@@ -17,14 +18,14 @@ class acc_use():
 
     def show_infor_user(self):
         """Hiển thị toàn bộ thông tin của user."""
-        common_object.obj_log.log_and_print("===== USER INFORMATION =====")
-        common_object.obj_log.log_and_print("First Name:", self.first_name)
-        common_object.obj_log.log_and_print("Last Name:", self.last_name)
-        common_object.obj_log.log_and_print("Username:", self.user_name)
-        common_object.obj_log.log_and_print("Password:", self.use_password)
-        common_object.obj_log.log_and_print("Line:", self.line)
-        common_object.obj_log.log_and_print("Usine:", self.usine)
-        common_object.obj_log.log_and_print("============================")
+        show_log.log_and_print("===== USER INFORMATION =====")
+        show_log.log_and_print("First Name:", self.first_name)
+        show_log.log_and_print("Last Name:", self.last_name)
+        show_log.log_and_print("Username:", self.user_name)
+        show_log.log_and_print("Password:", self.use_password)
+        show_log.log_and_print("Line:", self.line)
+        show_log.log_and_print("Usine:", self.usine)
+        show_log.log_and_print("============================")
     def to_dict(self):
         """Chuyển thông tin user thành dictionary."""
         return {
@@ -45,8 +46,8 @@ class acc_admmin():
         self.admin_password = admin_password
     def show_infor_use(self):
         """In thong tin tai khoan mat khau cua user """
-        common_object.obj_log.log_and_print("User:",self.admin_name)
-        common_object.obj_log.log_and_print("Password:",self.admin_password)
+        show_log.log_and_print("User:",self.admin_name)
+        show_log.log_and_print("Password:",self.admin_password)
     def to_dict(self):
         """Chuyển thông tin admin thành dictionary."""
         return {
@@ -65,7 +66,7 @@ class Manage_User():
         self.data_admin = {}
     def create_user(self, user_name:str=None, use_password:str=None, first_name:str=None, last_name:str=None, line:str=None, usine:str=None):
         if not all([user_name, use_password, first_name, last_name, line, usine]):
-            common_object.obj_log.error("Thiếu dữ liệu khi tạo tài khoản User")
+            show_log.error("Thiếu dữ liệu khi tạo tài khoản User")
             return False,"Thiếu dữ liệu khi tạo tài khoản"
         arr_user = []
         object_user = acc_use(user_name,use_password,first_name, last_name,line,usine)
@@ -78,17 +79,17 @@ class Manage_User():
                         return False,"Tài khoản này đã tồn tại"
             self.data_use.append(object_user.to_dict())  #cap nhat du lieu moi
             Manage_User.object_folder.save_json(self.data_use,Manage_User.path_user) # luu du lieu moi vao file
-            common_object.obj_log.info(f"Lưu {user_name} thành công vào list File User")
+            show_log.info(f"Lưu {user_name} thành công vào list File User")
             return True,"Tạo thành công tài khoản"
         else:
             arr_user.append(object_user.to_dict())
             Manage_User.object_folder.save_json(arr_user,Manage_User.path_user)
-            common_object.obj_log.info(f"Lưu {user_name} vào phần tử đầu tiên trong list File User")
+            show_log.info(f"Lưu {user_name} vào phần tử đầu tiên trong list File User")
             return True,"Tạo thành công tài khoản"
     def delete_user(self, user_name: str):
         """Xóa user theo user_name"""
         if not user_name:
-            common_object.obj_log.error("Chưa cung cấp user_name để xóa")
+            show_log.error("Chưa cung cấp user_name để xóa")
             return False
 
         # Load dữ liệu user hiện tại
@@ -99,23 +100,23 @@ class Manage_User():
         )
 
         if not self.data_use:
-            common_object.obj_log.error("Danh sách user đang trống, không thể xóa")
+            show_log.error("Danh sách user đang trống, không thể xóa")
             return False
 
         # Tìm và xóa user
         new_data_use = [user for user in self.data_use if user.get("user_name", "").strip() != user_name.strip()]
 
         if len(new_data_use) == len(self.data_use):
-            common_object.obj_log.warning(f"Không tìm thấy user {user_name} để xóa")
+            show_log.warning(f"Không tìm thấy user {user_name} để xóa")
             return False
 
         # Lưu lại file JSON sau khi xóa
         Manage_User.object_folder.save_json(new_data_use, Manage_User.path_user)
-        common_object.obj_log.info(f"Xóa user {user_name} thành công")
+        show_log.info(f"Xóa user {user_name} thành công")
         return True
     def create_admin(self, admin_name: str = "", admin_password: str = None):
         if not all([admin_name,admin_password]):
-            common_object.obj_log.error("Thiếu dữ liệu khi tạo tài khoản Admin tạo tài khoản admin mặc định")
+            show_log.error("Thiếu dữ liệu khi tạo tài khoản Admin tạo tài khoản admin mặc định")
             obj_acc_admmin = acc_admmin()
             self.data_admin  = obj_acc_admmin.to_dict()
             Manage_User.object_folder.save_json(self.data_admin,Manage_User.path_admin) # luu du lieu moi vao file

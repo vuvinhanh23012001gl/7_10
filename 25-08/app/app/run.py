@@ -1,8 +1,5 @@
-from flask import Flask,request,jsonify,send_file
-from flask import Blueprint,render_template
-from flask_socketio import SocketIO
-from connect_camera import BaslerCamera
-from flask import redirect, url_for
+
+from flask import Blueprint,render_template,request,jsonify,send_file,redirect, url_for
 import shared_queue
 import common_value 
 import threading
@@ -12,8 +9,7 @@ import os
 import common_object
 
 
-app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
+
 main_html = Blueprint("main",__name__)
 api = Blueprint("api",__name__)
 api_new_model = Blueprint("api_new_model",__name__)
@@ -27,13 +23,13 @@ api_config_com = Blueprint("api_config_com",__name__)
 api_config_software = Blueprint("api_config_software",__name__)
 api_inf_software = Blueprint("api_inf_software",__name__)
 api_login_software =  Blueprint("api_login_software",__name__)
-
+api_reset_count_product = Blueprint("api_reset_count_product",__name__)
 
 def stream_frames():
     while OPEN_THREAD_STREAM:
-         cam_basler.run_cam_html()
+         common_object.cam_basler.run_cam_html()
          time.sleep(1)
-    cam_basler.release()
+    common_object.cam_basler.release()
     print("Thoát luồng gửi video thành công")
 
 
@@ -62,33 +58,33 @@ def stream_img(): # queue_tx_web_main gồm ảnh và data
                         if status_judment : common_value.mumber_product_oke+=1
                         data_img_detect["total_product_ok"] = common_value.mumber_product_oke
                         arr_save_status_frame_ok = []
-                socketio.emit("photo_taken",data_img_detect, namespace="/img_and_data")
+                common_object.socketio.emit("photo_taken",data_img_detect, namespace="/img_and_data")
             except:
                 print("convert anh khong thong cong")
         time.sleep(0.01)
 
 def stream_logs(): # gồm các loại log   # va trang thai kết nối cam
     while OPEN_THREAD_LOG:  
-            socketio.emit("status_connect_com_arm", {"status":common_value.status_check_connect_arm}, namespace='/log')
-            socketio.emit("status_connect_camera", {"status": cam_basler.is_camera_stable()}, namespace='/log')   
+            common_object.socketio.emit("status_connect_com_arm", {"status":common_value.status_check_connect_arm}, namespace='/log')
+            common_object.socketio.emit("status_connect_camera", {"status": common_object.cam_basler.is_camera_stable()}, namespace='/log')   
             match common_value.click_page_html:
                 case 3:
                     if not shared_queue.queue_tx_web_log.empty():
-                        socketio.emit("log_take_master", {"log": f"{shared_queue.queue_tx_web_log.get()}"}, namespace='/log')
+                        common_object.socketio.emit("log_take_master", {"log": f"{shared_queue.queue_tx_web_log.get()}"}, namespace='/log')
                 case 4:
                     log_message = common_object.manage_product.get_all_ids_and_names()      # Gửi log cho thêm sản phẩm mới
                     if log_message:
-                        socketio.emit("log_message", {"log_create_product": log_message}, namespace='/log')
+                        common_object.socketio.emit("log_message", {"log_create_product": log_message}, namespace='/log')
                 case 6:
                     if not shared_queue.queue_tx_web_log.empty():
-                        socketio.emit("log_data", {"log": f"{shared_queue.queue_tx_web_log.get()}"}, namespace='/log')
+                        common_object.socketio.emit("log_data", {"log": f"{shared_queue.queue_tx_web_log.get()}"}, namespace='/log')
                 case 2:
                     if not shared_queue.queue_tx_web_log.empty():
-                        socketio.emit("log_message", {"log_training": f"{shared_queue.queue_tx_web_log.get()}"}, namespace='/log')    #Gửi log cho File Training
+                        common_object.socketio.emit("log_message", {"log_training": f"{shared_queue.queue_tx_web_log.get()}"}, namespace='/log')    #Gửi log cho File Training
                 case 1: # main
                     # queue_tx_web_log.put("xin chao ban")
                     if not shared_queue.queue_tx_web_log.empty():
-                        socketio.emit("log_message_judment", {"log_data": f"{shared_queue.queue_tx_web_log.get()}"}, namespace='/log')
+                        common_object.socketio.emit("log_message_judment", {"log_data": f"{shared_queue.queue_tx_web_log.get()}"}, namespace='/log')
             print(common_value.click_page_html)
             time.sleep(1)
 
@@ -101,16 +97,16 @@ def stream_logs(): # gồm các loại log   # va trang thai kết nối cam
 def already_open():
     # Đây là trang báo lỗi khi user mở tab thứ 2
     return render_template("empty_page.html")
-@socketio.on('connect', namespace='/video')
+@common_object.socketio.on('connect', namespace='/video')
 def video_connect():
     print("Client connected to /video")
-@socketio.on('connect', namespace='/img_and_data')
+@common_object.socketio.on('connect', namespace='/img_and_data')
 def handle_video_connect():
     print("📡 Client connected to /img_and_data")
-@socketio.on('connect', namespace='/log')
+@common_object.socketio.on('connect', namespace='/log')
 def handle_log_connect():
     print("📡 Client connected to /log")
-@socketio.on('connect',namespace='/data_add_master')  #'/data_add_master' img + loction point,...
+@common_object.socketio.on('connect',namespace='/data_add_master')  #'/data_add_master' img + loction point,...
 def handle_data_send_connect():
     print("📡 Client connect to /data_add_master") #img hiển thị hình ảnh sản phẩm
 
@@ -145,12 +141,12 @@ def out_app():
 #--------------------------------------------------------Api_run_application---------------------------------------------
 @api_run_application.route('/run_application',methods = ['GET'])
 def run_application():
-    import numpy as np
-    print("khong nhya dcuo c2")                
-    import os
-    height, width, channels = 480, 640, 3
-    blank_image = np.zeros((height, width, channels), dtype=np.uint8)  
-    common_object.obj_log_img.create_file_log_img(blank_image)
+    # import numpy as np
+    # print("khong nhya dcuo c2")                
+    # import os
+    # height, width, channels = 480, 640, 3
+    # blank_image = np.zeros((height, width, channels), dtype=np.uint8)  
+    # common_object.obj_log_img.create_file_log_img(blank_image)
     func.create_choose_master(common_value.NAME_FILE_CHOOSE_MASTER) # tạo file choose_master nếu tạo rồi thì thôi
     choose_master_index = func.read_data_from_file(common_value.NAME_FILE_CHOOSE_MASTER) # đọc lại file choose master cũ xem lần trước  người dùng chọn gì
     choose_master_index =  choose_master_index.strip()
@@ -174,7 +170,7 @@ def master_close():
 
 @api_take_master.route("/master_take",methods=["POST"])  #Khi nhan vao take masster thi thuc hien gui anh len truoc
 def master_take():
-    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
+    common_object.cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
     common_value.click_page_html = 3  
     data = request.get_json()
     print(data)
@@ -218,7 +214,7 @@ def config_master():
 #--------------------------------------------------------Api_new_product ---------------------------------------------
 @api_new_product.route("/add")
 def add():
-     cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
+     common_object.cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
      common_value.click_page_html = 4
      return render_template("save_product_new.html")
 @api_new_product.route("/upload", methods=["POST"])
@@ -287,7 +283,7 @@ def get_content():
     return jsonify(response)
 @api_choose_master.route("/chose_product")
 def chose_product():
-    cam_basler.disable_send_video() # ngan nguoi dung nhan linh tinh khi dang gui video len nha
+    common_object.cam_basler.disable_send_video() # ngan nguoi dung nhan linh tinh khi dang gui video len nha
     common_value.click_page_html = 5
     data =  common_object.manage_product.get_file_data() 
     choose_master_index = func.read_data_from_file(common_value.NAME_FILE_CHOOSE_MASTER)
@@ -361,7 +357,7 @@ def run_all_master():
 
 @api_add_master.route("/exit")
 def exit_add_master():
-    cam_basler.disable_send_video() #dung luong gui video khi nhan thoat
+    common_object.cam_basler.disable_send_video() #dung luong gui video khi nhan thoat
     response = {
         'redirect_url':'/'
     }
@@ -376,14 +372,14 @@ def api_add_master_tree():
     choose_master_index = func.read_data_from_file(common_value.NAME_FILE_CHOOSE_MASTER)# đọc lại file choose master cũ xem lần trước  người dùng chọn gì
     arr_type_id = common_object.manage_product.get_list_id_product()
     data_strip = choose_master_index.strip()
-    cam_basler.enable_send_video()
+    common_object.cam_basler.enable_send_video()
     if data_strip in  arr_type_id:
         print(f"gui data master co ten {choose_master_index}")
         path_arr_img = common_object.manage_product.get_list_path_master_product_img_name(data_strip)
         arr_point = common_object.manage_product.return_data_list_point(data_strip)
         print(path_arr_img)
         inf_product = common_object.manage_product.get_all_ids_and_names()
-        socketio.emit("data_realtime", {
+        common_object.socketio.emit("data_realtime", {
             "path_arr_img": path_arr_img,
             "arr_point": arr_point,
             "inf_product": inf_product
@@ -406,7 +402,7 @@ def erase_index():
         arr_point = common_object.manage_product.return_data_list_point(choose_id_strip)
         print(path_arr_img)
         inf_product = common_object.manage_product.get_all_ids_and_names()
-        socketio.emit("data_realtime", {
+        common_object.socketio.emit("data_realtime", {
                             "path_arr_img": path_arr_img,
                             "arr_point": arr_point,
                             "inf_product": inf_product
@@ -430,7 +426,7 @@ def capture_master():
        arr_type_id = common_object.manage_product.get_list_id_product()
        data_strip = choose_master_index.strip()
        if data_strip in  arr_type_id:
-            status_camera = cam_basler.is_camera_stable()
+            status_camera = common_object.cam_basler.is_camera_stable()
             if status_camera :
                 status = common_object.manage_product.create_file_and_path_img_master(data_strip,f"img_{index_capture}.png")
                 print(status)
@@ -456,7 +452,7 @@ def capture_master():
                     arr_point = common_object.manage_product.return_data_list_point(data_strip)
                     print(path_arr_img)
                     inf_product = common_object.manage_product.get_all_ids_and_names()
-                    socketio.emit("data_realtime", {
+                    common_object.socketio.emit("data_realtime", {
                             "path_arr_img": path_arr_img,
                             "arr_point": arr_point,
                             "inf_product": inf_product
@@ -481,9 +477,9 @@ def exit_api_config_camera():
 
 @api_config_camera.route("/get_data_show",strict_slashes=False)
 def get_data_show():
-    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
+    common_object.cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
     common_value.click_page_html = 8 # Câu hình cổng com
-    data_show = cam_basler.show_file_config()
+    data_show = common_object.cam_basler.show_file_config()
     return jsonify({"status":"200OK","data":data_show})
 
 
@@ -502,7 +498,7 @@ def exit_api_config_software():
 
 @api_config_software.route("/config_software",strict_slashes=False)
 def config_software():
-    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
+    common_object.cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
     data_send_client = common_object.obj_config_software.to_dict()
     return jsonify({"status":"200OK","data":data_send_client})
 
@@ -532,7 +528,7 @@ def exit_api_config_com():
 @api_config_com.route("/get_list_com",strict_slashes=False)
 def get_list_com():
     common_value.click_page_html = 7 # Câu hình cổng com
-    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
+    common_object.cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
     arr_com = common_object.obj_manager_serial.serial_com.show_list_port()
     data_connect = common_object.obj_manager_serial.get_dict_data_send_server()
     return jsonify({"status":"200OK","data":arr_com,"data_connected":data_connect})
@@ -608,7 +604,7 @@ def download_manual():
 
 @api_inf_software.route("/data_infor_software") #thong tin phan mem 
 def data_infor_software():
-    cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
+    common_object.cam_basler.disable_send_video() #dung luong gui video khi nguoi dung vao lai
     data_send_client = common_object.obj_config_software.to_dict_infor_software()
     print("Trả thông tin phần mềm cho clinet")
     return jsonify({"status":"200OK","data":data_send_client})
@@ -651,21 +647,30 @@ def register_an_account():
         return jsonify({"success": True,"message": status_erro})   
     else:
         return jsonify({"success": False,"message": status_erro})  
+
+
+@api_reset_count_product.route("/click_reset",methods=["POST"])
+def click_reset():
+    data = request.get_json()
+    print(data)
+    return jsonify({'status':"OK"})
+
         
 #--------------------------------------------------------end Api----------------------------------------------
-app.register_blueprint(main_html)
-app.register_blueprint(api, url_prefix="/api")
-app.register_blueprint(api_new_model, url_prefix="/api_new_model")
-app.register_blueprint(api_choose_master, url_prefix="/api_choose_master")
-app.register_blueprint(api_take_master, url_prefix="/api_take_master")
-app.register_blueprint(api_run_application, url_prefix="/api_run_application")
-app.register_blueprint(api_new_product, url_prefix="/api_new_product")
-app.register_blueprint(api_add_master, url_prefix="/api_add_master")
-app.register_blueprint(api_config_camera, url_prefix="/api_config_camera")
-app.register_blueprint(api_config_com, url_prefix="/api_config_com")
-app.register_blueprint(api_config_software, url_prefix="/api_config_software")
-app.register_blueprint(api_inf_software, url_prefix="/api_inf_software")
-app.register_blueprint(api_login_software, url_prefix="/api_login_software")
+common_object.app.register_blueprint(main_html)
+common_object.app.register_blueprint(api, url_prefix="/api")
+common_object.app.register_blueprint(api_new_model, url_prefix="/api_new_model")
+common_object.app.register_blueprint(api_choose_master, url_prefix="/api_choose_master")
+common_object.app.register_blueprint(api_take_master, url_prefix="/api_take_master")
+common_object.app.register_blueprint(api_run_application, url_prefix="/api_run_application")
+common_object.app.register_blueprint(api_new_product, url_prefix="/api_new_product")
+common_object.app.register_blueprint(api_add_master, url_prefix="/api_add_master")
+common_object.app.register_blueprint(api_config_camera, url_prefix="/api_config_camera")
+common_object.app.register_blueprint(api_config_com, url_prefix="/api_config_com")
+common_object.app.register_blueprint(api_config_software, url_prefix="/api_config_software")
+common_object.app.register_blueprint(api_inf_software, url_prefix="/api_inf_software")
+common_object.app.register_blueprint(api_login_software, url_prefix="/api_login_software")
+common_object.app.register_blueprint(api_reset_count_product, url_prefix="/api_reset_count_product")
 
 
 
@@ -675,13 +680,12 @@ if __name__ == "__main__":
     OPEN_THREAD_IMG = True
     import main_pc
     import threading
-    cam_basler = BaslerCamera(shared_queue.queue_accept_capture,socketio,config_file="Camera_25129678.pfs")
     print("hejhejegwjegrejgrewjhrgewhrgehrgehrgewhrewgrhrgewhrgewhi truoc",common_object.obj_log_img)
     print("truoc",id(common_object.obj_log_img))
     threading.Thread(target=stream_logs,name="stream_log",daemon = True).start()
     threading.Thread(target=stream_img,name="stream_img_and_data",daemon = True).start()
     threading.Thread(target = stream_frames,name="stream_video",daemon=True).start()
-    socketio.run(app, host="0.0.0.0", port=5000, debug=False, use_reloader=False)
+    common_object.socketio.run(common_object.app, host="0.0.0.0", port=5000, debug=False, use_reloader=False)
     print("Đã thoát chương trình chính") 
 
 

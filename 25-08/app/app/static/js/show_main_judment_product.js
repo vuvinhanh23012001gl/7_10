@@ -1,5 +1,5 @@
 
-import {logSocket,canvas_img_show_oke,ctx_oke,scroll_content,enableButtons,disableButtons,overlay_login,getAcceptPowerByUser} from "./show_main_status.js";
+import {logSocket,canvas_img_show_oke,ctx_oke,scroll_content,enableButtons,disableButtons,overlay_login,getAcceptPowerByUser,postData} from "./show_main_status.js";
 console.log("đã vào Hàm phán định")
 
 const progressRow = document.getElementById('progress-row');
@@ -11,7 +11,7 @@ const circle_status_connect_camera =  document.getElementById("element-circle-st
 const label_status_connect_camera = document.getElementById("status-connect-cam");
 
 
-
+const btn_reset_count_total =  document.getElementById("btn_reset_count_total");
 const time_total = document.getElementById("time-display");
 const io_img_and_data = io("/img_and_data");
 const table_show_point_detect = document.getElementById("table-show-point-detect");
@@ -57,6 +57,7 @@ function isConect(isconect,element_circle,element_lable,str_lable){
 }
 
 run_btn.addEventListener('click',()=>{
+      capturedImages = [];
      log_judment.innerHTML = "";
       status_judment.innerHTML = "--"
       status_judment.classList.remove("OK");
@@ -76,6 +77,14 @@ run_btn.addEventListener('click',()=>{
       });
 });
 
+btn_reset_count_total.addEventListener("click",function(){
+    console.log("Bạn vừa nhấn vào btn_reset_count_total");
+    postData("api_reset_count_product/click_reset", { "command": "reset" }).then(data => {
+    console.log("du lieu nhan lai duoc",data)
+  });
+
+
+});
 toggleBtn.addEventListener("click",()=>{
       status_view_master = !status_view_master;
     if(status_view_master){

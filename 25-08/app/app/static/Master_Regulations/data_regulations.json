@@ -1,1 +1,68 @@
-{}
+{
+    "SP001": {
+        "0": {
+            "shapes": [
+                {
+                    "color": "blue",
+                    "kich_thuoc_max": 6,
+                    "kich_thuoc_min": 1,
+                    "mode": "min",
+                    "so_diem_dau": 2,
+                    "ten_hinh_min": "diem1",
+                    "type": "rect",
+                    "x1": 0.34262048192771083,
+                    "x2": 0.6069277108433735,
+                    "y1": 0.12771084337349398,
+                    "y2": 0.43734939759036146
+                },
+                {
+                    "color": "blue",
+                    "kich_thuoc_max": 6,
+                    "kich_thuoc_min": 1,
+                    "mode": "min",
+                    "so_diem_dau": 2,
+                    "ten_hinh_min": "diem2",
+                    "type": "rect",
+                    "x1": 0.473644578313253,
+                    "x2": 0.7725903614457831,
+                    "y1": 0.5819277108433735,
+                    "y2": 0.9132530120481928
+                }
+            ]
+        },
+        "1": {
+            "shapes": [
+                {
+                    "color": "blue",
+                    "kich_thuoc_max": 6,
+                    "kich_thuoc_min": 1,
+                    "mode": "min",
+                    "so_diem_dau": 2,
+                    "ten_hinh_min": "diem1",
+                    "type": "rect",
+                    "x1": 0.516566265060241,
+                    "x2": 0.7033132530120482,
+                    "y1": 0.2216867469879518,
+                    "y2": 0.6060240963855422
+                }
+            ]
+        },
+        "2": {
+            "shapes": [
+                {
+                    "color": "blue",
+                    "kich_thuoc_max": 6,
+                    "kich_thuoc_min": 1,
+                    "mode": "min",
+                    "so_diem_dau": 2,
+                    "ten_hinh_min": "diem1",
+                    "type": "rect",
+                    "x1": 0.6882530120481928,
+                    "x2": 0.8471385542168675,
+                    "y1": 0.336144578313253,
+                    "y2": 0.6927710843373494
+                }
+            ]
+        }
+    }
+}

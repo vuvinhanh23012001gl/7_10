@@ -1,0 +1,4 @@
+2025-10-23 09:50:59,730 [INFO] [Thread-445 (process_request_thread)] (app:91): arr Point: [<point_oil.PointOil object at 0x000001812F55E030>, <point_oil.PointOil object at 0x000001812F55EAD0>, <point_oil.PointOil object at 0x000001812F614F50>]
+2025-10-23 09:50:59,731 [INFO] [Thread-445 (process_request_thread)] (app:91): Đã nhấn nút Run application
+2025-10-23 09:51:06,732 [INFO] [Thread-447 (process_request_thread)] (app:91): arr Point: [<point_oil.PointOil object at 0x000001812F55E030>, <point_oil.PointOil object at 0x000001812F55EAD0>, <point_oil.PointOil object at 0x000001812F614F50>]
+2025-10-23 09:51:06,757 [INFO] [Thread-447 (process_request_thread)] (app:91): Đã nhấn nút Run application

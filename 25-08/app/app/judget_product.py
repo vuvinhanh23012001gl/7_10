@@ -19,8 +19,10 @@ class Judget_Product:
     model = YOLO(file_path)
     model(img)
 
-    def __init__(self):
-        pass
+    def __init__(self,obj_log_img):
+        self.obj_log_img = obj_log_img
+    def save_log_img(self,img):
+         self.obj_log_img.create_file_log_img(img)
     def judget_img(self,atitude_z,index_picture,img:np.ndarray,data_one_point_master):
                 # ✅ Kiểm tra giá trị đầu vào
                 if img is None:
@@ -37,7 +39,7 @@ class Judget_Product:
             # ========================= BẮT ĐẦU XỬ LÝ ========================= #
                 """Khi cho 1 bức ảnh vào thì nó sẽ phán định ok hay ng"""
                 print("data_one_point_master sau",data_one_point_master)
-            
+                
                 data_regulation = Judget_Product.model(img)                                                  # Dữ liệu đi ra từ mô hình 
                 object_one_point_detect = Manage_Point_Oil_Detect(data_regulation,atitude_z)                 # Đưa vào đối tượng điểm của mô hình
                 polygons = object_one_point_detect.get_contourn_polygon_standardization()                    # Lấy các điểm bao 

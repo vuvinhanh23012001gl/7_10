@@ -1,6 +1,5 @@
 import cv2
 import time
-from datetime import datetime
 import base64
 from pypylon import pylon
 from folder_create import Create
@@ -14,7 +13,6 @@ class BaslerCamera:
     VIDEO_IMAGE_QUALITY = 50  #chất lượng hình ảnh video gửi lên
     SET_TIME_TAKE_IMG = 20000
     def __init__(self,queue_wait = None ,emit_func=None,config_file = None):
-     
         self.camera = None
         self.converter = None
         self.emit_func = emit_func  # Hàm để gửi dữ liệu qua SocketIO (nếu có)
@@ -28,7 +26,8 @@ class BaslerCamera:
         self.open_send_video = False
         self.flag_open_thread = True
         
-
+   
+        
     # Hàm bật
     def enable_send_video(self):
         self.open_send_video = True
@@ -173,8 +172,7 @@ class BaslerCamera:
                         capture_detect = data.get("capture_detect",-1)
                         #training == 1 chup anh 
                         #training == 2 traing lai
-                        #training == 3 chup anh
-
+                        #training == 3 chup an
                         if training == 3:
                             if  name_capture != -1:
                                 print("Đang chụp ảnh ")

@@ -434,7 +434,7 @@ class Create:
         # Tạo tên file theo timestamp nếu chưa có
         if file_name is None:
             now = datetime.now()
-            file_name = f"img_{now.strftime('%Y%m%d_%H-%M-%S')}"
+            file_name = f"img_{now.strftime('%y%m%d_%H%M%S')}_{now.microsecond // 1000:03d}"
 
         file_path = os.path.join(path_save_log_img, f"{file_name}.{extension}")
         cv2.imwrite(file_path, img)

@@ -10,7 +10,7 @@ import time
 
 def fuc_main_process():
     from judget_product import Judget_Product
-    judget_product = Judget_Product()
+    judget_product = Judget_Product(common_object.obj_log_img)
     flag_the_firts_connect = True
     while True:
         if common_object.obj_manager_serial.com_is_open:   #ham nay xoa

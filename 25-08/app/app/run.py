@@ -113,6 +113,7 @@ def handle_data_send_connect():
 # Blueprint main---------------------------------------------------------------------------------
 @main_html.route("/")
 def show_main():
+    product_ok,product_ng= common_object.obj_count.read_data_in_file()
     """Là hàm hiển thị giao diện chính trên Html"""
     func.create_choose_master(common_value.NAME_FILE_CHOOSE_MASTER) #tạo file choose_master nếu tạo rồi thì thôi
     choose_master_index = func.read_data_from_file(common_value.NAME_FILE_CHOOSE_MASTER)#đọc lại file choose master cũ xem lần trước  người dùng chọn gì

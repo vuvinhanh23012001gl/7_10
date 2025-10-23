@@ -10,7 +10,7 @@ from user import Manage_User
 from flask_socketio import SocketIO
 from flask import Flask
 from connect_camera import BaslerCamera
-
+from count_product_ok_ng import Count
 obj_manage_user = Manage_User()
 obj_config_software = OilDetectionSystem()
 obj_log = log.Log(obj_config_software)
@@ -25,6 +25,7 @@ cam_basler = BaslerCamera(queue_accept_capture,socketio,config_file="Camera_2512
 obj_manager_serial = ManagerSerial(queue_rx_arm=queue_rx_arm,queue_tx_arm=queue_tx_arm)
 manage_product = ProductTypeManager()
 shape_master = Proces_Shape_Master()
+obj_count = Count()
 
 
 

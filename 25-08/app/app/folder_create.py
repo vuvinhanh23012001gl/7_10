@@ -314,7 +314,7 @@ class Create:
 
             with open(file_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-                print(f"✅ Đã đọc JSON từ: {file_path}")
+                # print(f"✅ Đã đọc JSON từ: {file_path}")
                 return data
 
         except json.JSONDecodeError as e:

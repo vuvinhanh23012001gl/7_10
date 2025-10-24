@@ -440,6 +440,41 @@ class Create:
         cv2.imwrite(file_path, img)
         print(f"📸 Tạo file ảnh thành công: {file_path}")
         return file_path
+    def get_old_files_by_threshold_img(self, characters_check, files, days_threshold=30):
+        """
+        Nhận danh sách file theo định dạng 'img_YYMMDD_HHMMSS_mmm'.
+        Tìm file có ngày lớn nhất (mới nhất).
+        Trả về danh sách file có ngày cách ngày mới nhất > days_threshold.
+        """
+        if not files:
+            return []
+
+        file_dates = {}
+        for f in files:
+            try:
+                if f.startswith(characters_check):
+                    # Loại bỏ prefix và lấy phần timestamp
+                    timestamp_str = f[len(characters_check):]
+                    # Bỏ phần "_mmm" ở cuối
+                    timestamp_str = "_".join(timestamp_str.split("_")[:2])
+                    dt = datetime.strptime(timestamp_str, '%y%m%d_%H%M%S')
+                    file_dates[f] = dt
+            except Exception as e:
+                print(f"Lỗi parse {f}: {e}")
+
+        if not file_dates:
+            return []
+
+        latest_date = max(file_dates.values())
+        old_files = [f for f, dt in file_dates.items()
+                    if (latest_date - dt).days > days_threshold]
+
+        return old_files
+
+
+    def find_file(self,path, filename):
+        file_path = os.path.join(path, filename)
+        return file_path if os.path.exists(file_path) else False
     def create_file_text_log(self, folder_path, extension="txt", name_file=None):
         """
         Tạo file log text (dùng cho logging module).

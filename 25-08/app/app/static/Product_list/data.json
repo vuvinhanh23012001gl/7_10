@@ -31,5 +31,86 @@
                 "brightness": 80
             }
         ]
+    },
+    "SP03": {
+        "type_id": "SP03",
+        "type_name": "STM32-F103C8T6",
+        "description": " Description deafaut ",
+        "len": 11,
+        "xyz": [
+            110,
+            75,
+            12
+        ],
+        "path_img_product": "static/Product_Photo/IMG_SP03.png",
+        "path_img_master": "static/Master_Photo/Master_SP03",
+        "point_check": [
+            {
+                "x": 37,
+                "y": 41,
+                "z": 3,
+                "brightness": 80
+            },
+            {
+                "x": 33,
+                "y": 47,
+                "z": 2,
+                "brightness": 80
+            },
+            {
+                "x": 43,
+                "y": 49,
+                "z": 3,
+                "brightness": 80
+            },
+            {
+                "x": 49,
+                "y": 49,
+                "z": 11,
+                "brightness": 80
+            },
+            {
+                "x": 51,
+                "y": 54,
+                "z": 5,
+                "brightness": 80
+            },
+            {
+                "x": 46,
+                "y": 62,
+                "z": 8,
+                "brightness": 80
+            },
+            {
+                "x": 64,
+                "y": 50,
+                "z": 6,
+                "brightness": 80
+            },
+            {
+                "x": 73,
+                "y": 52,
+                "z": 5,
+                "brightness": 80
+            },
+            {
+                "x": 69,
+                "y": 69,
+                "z": 1,
+                "brightness": 80
+            },
+            {
+                "x": 74,
+                "y": 69,
+                "z": 12,
+                "brightness": 80
+            },
+            {
+                "x": 80,
+                "y": 69,
+                "z": 9,
+                "brightness": 80
+            }
+        ]
     }
 }

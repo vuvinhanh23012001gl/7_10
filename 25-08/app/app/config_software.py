@@ -21,7 +21,7 @@ class OilDetectionSystem:
     PATH_FOLDER_LOG_SOFWARE = folder.create_subfolder(PATH_FOLDER_LOG,NAME_FILE_LOG_SOFWARE)
     
     def __init__(self,
-                 name="Hệ thống nhận diện điểm dầu",
+                 name="Hệ thống nhận diện điểm dầu", 
                  version="v1.0",
                  author="Nhóm phần mềm RD-PE công ty Brother" ):
         
@@ -198,7 +198,6 @@ class OilDetectionSystem:
 
     def GetTimeSaveLogImg(self) -> int:
         """Lấy thời gian lưu log hình ảnh (đơn vị: ngày)"""
-        print(f"📄 Thời gian lưu log hình ảnh hiện tại: {self.time_save_log_img} ngày")
         return self.time_save_log_img
 
     def GetTimeSaveLogExcell(self) -> int:

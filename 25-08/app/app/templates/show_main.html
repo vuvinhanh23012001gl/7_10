@@ -72,10 +72,12 @@
                     <p id = "coordinate">Pixel: (0, 0)</p>
                     <div id="progress-container">
                         <div id="progress-row"></div>
-                    </div>
+                    </div>     
                     <button id="btn_reset_count_total" class="header-show-item-conect">Đặt lại</button>
                     <div id="time-display">Thời gian chạy: 0.0 s</div>
-                    <div id="product-count">OK: 0 | Total: 0</div>  
+                    <div id="product-count" data-path='{{ {"ok": product_ok, "ng": product_ng} | tojson | safe }}'>
+                            OK: 0 | NG: 0 | Tổng: 0
+                    </div> 
                     <div class="cluster">
                         <div class="header-show-item-conect item1">
                             <p id="element-circle-status-com"class="header-show-circle on"></p>    
@@ -297,11 +299,20 @@
               <span id="slider-darkmode"></span>
             </label>
         </div>
+        <div id="setting-log-cosole">
+            <span>Log cosole</span>
+            <label id="switch-cosole">
+              <input type="checkbox" id="set-cosole">
+              <span id="slider-cosole"></span>
+            </label>
+        </div>
+
         <!-- 🔘 Nút điều khiển -->
         <div id="buttons">
             <button id="save-settings">💾 Lưu cấu hình</button>
             <button id="close-settings">✖ Thoát</button>
         </div>
+        
   </div>
 </div>
 

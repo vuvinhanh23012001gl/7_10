@@ -215,7 +215,6 @@ html, body {
 .show-satus{
   font-weight: 600;
   display: flex;
-  margin: 0px;
   justify-content: space-between; /* căn trái phải */
   align-items: center;
   position: relative;
@@ -228,17 +227,14 @@ html, body {
   height:34px;
   padding-left: 10px;
   padding-right: 10px;
-
   display: flex;
   align-items: center;
   color: white;
   border-radius: 15px;   
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-
-
-   font-size: 16px;
+  font-size: 16px;
   position: absolute;
-  left:47.3%;
+  left:49%;
   font-weight: 600;
   color: #ffffff;
     font-family: 'Segoe UI', sans-serif;
@@ -251,7 +247,6 @@ html, body {
   height:34px;
   padding-left: 10px;
   padding-right: 10px;
-
   display: flex;
   align-items: center;
   color: white;
@@ -260,7 +255,7 @@ html, body {
   font-weight: 600;
   color: #ffffff;
   position: absolute;
-  left:37%;
+  left:26%;
   font-size: 16px;
   font-family: 'Segoe UI', sans-serif;
 }
@@ -272,7 +267,7 @@ html, body {
   align-items: center;
   background: white;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  max-width:280px;
+  max-width:180px;
   height: 20px;
   border-radius: 11px;
 }
@@ -1221,6 +1216,8 @@ form label {
 }
 
 #btn_reset_count_total {
+  position: absolute;
+  left: 41.5%;
   color: #e0e0e0;
   border: 1px solid #333;
   border-radius: 12px;
@@ -1229,11 +1226,9 @@ form label {
   font-weight: 600;
   letter-spacing: 0.5px;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4),
-  inset 0 0 10px rgba(0, 255, 255, 0.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
   transition: all 0.25s ease;
   backdrop-filter: blur(6px);
-  margin-right: 100px;
 }
 
 #btn_reset_count_total:hover {

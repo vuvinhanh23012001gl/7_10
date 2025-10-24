@@ -1,2 +1,0 @@
-2025-10-22 18:36:59,759 [INFO] [Thread-42 (process_request_thread)] (app:91): arr Point: [<point_oil.PointOil object at 0x00000216DE5AE660>, <point_oil.PointOil object at 0x00000216DE5DD310>, <point_oil.PointOil object at 0x00000216DE5DDA90>]
-2025-10-22 18:36:59,759 [INFO] [Thread-42 (process_request_thread)] (app:91): Đã nhấn nút Run application

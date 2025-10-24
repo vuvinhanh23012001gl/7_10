@@ -13,7 +13,9 @@ from connect_camera import BaslerCamera
 from count_product_ok_ng import Count
 obj_manage_user = Manage_User()
 obj_config_software = OilDetectionSystem()
+print("----------------------------------------Strat log File-----------------")
 obj_log = log.Log(obj_config_software)
+print("---------------------------------------- End log File-----------------")
 obj_log_img = log.log_img(obj_config_software)
 # obj_log_excell  = log_excell(obj_config_software)
 

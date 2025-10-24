@@ -298,3 +298,49 @@
   box-shadow: 0 0 6px #00d4ff, inset 0 0 6px rgba(0, 255, 255, 0.4);
 }
 
+/* ===== LOG CONSOLE SWITCH ===== */
+#setting-log-cosole {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 14px 0;
+  font-size: 0.95em;
+  color: #ccc;
+}
+
+#switch-cosole {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+#slider-cosole {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #555;
+  border-radius: 24px;
+  transition: 0.3s;
+}
+
+#slider-cosole:before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+#switch-cosole input:checked + #slider-cosole {
+  background-color: #00bcd4;
+  box-shadow: 0 0 12px #00bcd4;
+}
+
+#switch-cosole input:checked + #slider-cosole:before {
+  transform: translateX(24px);
+}

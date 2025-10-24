@@ -303,6 +303,9 @@ def run_and_capture(ID,List_point,judget_product,object_shape_master,obj_manager
             print("✅Chạy điểm thành Công")
         else:
             print("✅Điểm điểm không thành công")
+    time.sleep(0.3)
+    from_data_send_run = f"cmd:0,0,0,0"
+    obj_manager_serial.send_data(from_data_send_run)
     
         
         

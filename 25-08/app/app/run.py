@@ -35,7 +35,6 @@ def stream_frames():
 
 def stream_img(): # queue_tx_web_main gồm ảnh và data
     global OPEN_THREAD_IMG
-   
     arr_save_status_frame_ok = []
     while OPEN_THREAD_IMG:
         if shared_queue.queue_tx_web_main.qsize() > 0:
@@ -51,12 +50,16 @@ def stream_img(): # queue_tx_web_main gồm ảnh và data
                     arr_save_status_frame_ok.append(status_frame)
                 if index!=-1 and length != -1:
                     if index == length -1 :
-                        common_value.mumber_total_product += 1
-                        data_img_detect["total_product"] = common_value.mumber_total_product
                         status_judment = func.check_all_true(arr_save_status_frame_ok)
+                        
+                        if status_judment : 
+                            common_object.obj_count.increase_ok()
+                        else:
+                            common_object.obj_count.increase_ng()
+                        product_ok,product_ng = common_object.obj_count.read_data()
+                        data_img_detect["total_product_ok"] = product_ok
+                        data_img_detect["total_product_ng"] = product_ng
                         data_img_detect["status_judment"] = status_judment
-                        if status_judment : common_value.mumber_product_oke+=1
-                        data_img_detect["total_product_ok"] = common_value.mumber_product_oke
                         arr_save_status_frame_ok = []
                 common_object.socketio.emit("photo_taken",data_img_detect, namespace="/img_and_data")
             except:
@@ -113,7 +116,6 @@ def handle_data_send_connect():
 # Blueprint main---------------------------------------------------------------------------------
 @main_html.route("/")
 def show_main():
-    product_ok,product_ng= common_object.obj_count.read_data_in_file()
     """Là hàm hiển thị giao diện chính trên Html"""
     func.create_choose_master(common_value.NAME_FILE_CHOOSE_MASTER) #tạo file choose_master nếu tạo rồi thì thôi
     choose_master_index = func.read_data_from_file(common_value.NAME_FILE_CHOOSE_MASTER)#đọc lại file choose master cũ xem lần trước  người dùng chọn gì
@@ -126,8 +128,10 @@ def show_main():
         print(f"gui data master co ten {choose_master_index}")
         path_arr_img = common_object.manage_product.get_list_path_master_product_img_name(data_strip)
         print(path_arr_img)
-        return render_template("show_main.html",path_arr_img = path_arr_img)
-    return render_template("show_main.html",path_arr_img = None)
+        product_ok,product_ng = common_object.obj_count.read_data()
+
+        return render_template("show_main.html",path_arr_img = path_arr_img,product_ok = product_ok,product_ng = product_ng)
+    return render_template("show_main.html",path_arr_img = None,product_ok = 0,product_ng = 0)
 @main_html.route('/out_app', methods=['GET'])
 def out_app():
     func = request.environ.get("werkzeug.server.shutdown")
@@ -506,7 +510,7 @@ def config_software():
 @api_config_software.route("/change_log",methods=["POST"],strict_slashes=False)
 def change_log():   
     data_change = request.get_json()
-    print(data_change)
+    # print(data_change)
     status_log_img = data_change.get("log_img",True)
     status_log_product = data_change.get("log_product",True)
     status_log_software = data_change.get("log_software",True)
@@ -517,6 +521,7 @@ def change_log():
         status_log_img,status_log_product,status_log_software,
         int(set_time_save_log_software),int(set_time_save_log_img),int(set_time_save_log_excell)
     )
+    common_object.obj_log.info(f"Update trạng thái các nút nhấn btn_IMG:{status_log_img} btn_excell:{status_log_product} btn_log_txt:{status_log_software}")
     return jsonify({"status":"200OK"})
 
 @api_config_com.route("/exit")
@@ -652,8 +657,9 @@ def register_an_account():
 
 @api_reset_count_product.route("/click_reset",methods=["POST"])
 def click_reset():
-    data = request.get_json()
-    print(data)
+    # data = request.get_json()
+    # print(data)
+    common_object.obj_count.reset() 
     return jsonify({'status':"OK"})
 
         

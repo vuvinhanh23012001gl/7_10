@@ -1,2 +1,0 @@
-2025-10-23 09:29:16,860 [INFO] [Thread-42 (process_request_thread)] (app:91): arr Point: []
-2025-10-23 09:29:16,861 [INFO] [Thread-42 (process_request_thread)] (app:91): Đã nhấn nút Run application

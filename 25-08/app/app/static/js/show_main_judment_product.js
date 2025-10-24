@@ -80,9 +80,16 @@ run_btn.addEventListener('click',()=>{
 btn_reset_count_total.addEventListener("click",function(){
     console.log("Bạn vừa nhấn vào btn_reset_count_total");
     postData("api_reset_count_product/click_reset", { "command": "reset" }).then(data => {
-    console.log("du lieu nhan lai duoc",data)
-  });
+    // console.log("du lieu nhan lai duoc",data)
+      if (data?.status == "OK")
+        {
+          let   product_ok =  0;
+          let   product_ng  = 0;
+            productCount.innerHTML = `OK: ${product_ok} | NG: ${product_ng} | Tổng: ${product_ok + product_ng}`;
 
+
+        }
+  });
 
 });
 toggleBtn.addEventListener("click",()=>{
@@ -113,7 +120,6 @@ toggleBtn.addEventListener("click",()=>{
 
 import { get_user_or_admin } from "/static/js/user_role.js";
 document.addEventListener("DOMContentLoaded", () => {
-
  console.log("accept_power_by_user",getAcceptPowerByUser());
   if (getAcceptPowerByUser()){
         overlay_login.style.display = "none";
@@ -131,6 +137,10 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("Đây là tài khoản admin nên  được vào cấu hình")
     enableButtons();
   }
+  const counts = JSON.parse(productCount.dataset.path);
+  let product_ok = Number(counts.ok) || 0;
+  let product_ng = Number(counts.ng) || 0;
+  productCount.innerHTML = `OK: ${product_ok} | NG: ${product_ng} | Tổng: ${product_ok + product_ng}`;
   status_view_master = true  //ban đầu cho xuất hiện ảnh chụp master
   const dataImg = scroll_content.dataset.img;
   const imgList = JSON.parse(dataImg);
@@ -265,13 +275,13 @@ function show_table(data){
   }
 
 io_img_and_data.on("data_status", (data) => {
-// console.log("whgwhghewqgewjhegwehw",data);
-
   let product_ok = data?.total_product_ok;
-  let product_judment_total = data?.total_product_judment;
-  if (product_judment_total != null && product_ok != null){
-      // console.log("product_judment_total",product_judment_total,"s",product_ok);
-      productCount.innerHTML = `OK: ${product_ok} | Tổng: ${product_judment_total}`;
+  let product_ng  = data?.total_product_ng;
+  if (product_ng != null && product_ok != null){
+      product_ok = Number(data?.total_product_ok) || 0;
+      product_ng  = Number(data?.total_product_ng) || 0;
+      console.log("Số lượng sản phẩm ok",product_ok,"số lượng sản phẩm ng",product_ng);
+      productCount.innerHTML = `OK: ${product_ok} | NG: ${product_ng} | Tổng: ${product_ok + product_ng}`;
   }
 });
 
@@ -308,12 +318,22 @@ io_img_and_data.on("photo_taken", (data) => {
           status_judment.classList.add("NG");
       }
 
-      let product_judment_total = data?.total_product;
-      let product_ok = data?.total_product_ok;
-      if (product_judment_total != null && product_ok != null){
-          // console.log("product_judment_total",product_judment_total,"s",product_ok);
-          productCount.innerHTML = `OK: ${product_ok} | Tổng: ${product_judment_total}`;
-      }
+      // let product_judment_total = data?.total_product;
+      // let product_ok = data?.total_product_ok;
+      // if (product_judment_total != null && product_ok != null){
+      //     // console.log("product_judment_total",product_judment_total,"s",product_ok);
+      //     productCount.innerHTML = `OK: ${product_ok} | Tổng: ${product_judment_total}`;
+      // }
+        let product_ok = data?.total_product_ok;
+        let product_ng  = data?.total_product_ng;
+        if (product_ng != null && product_ok != null){
+            product_ok = Number(data?.total_product_ok) || 0;
+            product_ng  = Number(data?.total_product_ng) || 0;
+            console.log("Số lượng sản phẩm ok",product_ok,"số lượng sản phẩm ng",product_ng);
+            productCount.innerHTML =`OK: ${product_ok} | NG: ${product_ng} | Tổng: ${product_ok + product_ng}`;
+        }
+
+
     // console.log("Index:", data.index);
     // console.log("Total length:", data.length);
     if(data.index ==0){

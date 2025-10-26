@@ -1,11 +1,18 @@
 import logging
 import os
-
+from datetime import datetime
+import threading
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils import get_column_letter
+import os
+import time
 class Log:
+    """Lớp này lấy thông tin của log phần mềm và thực hiện bật tắt log phần mềm"""
     from folder_create import Create
     obj_folder = Create()
-    characters_check = "log_"
+    characters_check = "date_"
     def __init__(self,obj_config_software=None,name="app"):
+        self.log_file = None
         self.name = name
         self.console_enabled = False
         self.file_enabled = False
@@ -17,14 +24,21 @@ class Log:
         )
         self.obj_config_software = obj_config_software
         if self.obj_config_software :
+            self.delete_folder_old_log_software()
+
+            open_log_console = self.obj_config_software.get_log_console()
+            if open_log_console:
+                self.enable_console()
+            else:
+                self.disable_console()
+
             self.log_file = self.create_file_log_software()
             if self.log_file:
                 self.enable_file()
             else:
                 self.disable_file()
-            self.delete_file_old_log_software()
-        self.enable_console()
-        
+
+
     def get_time_software(self):
         """Lấy thời gian cho phép log phan mem được lưu nếu được bật"""
         return self.obj_config_software.GetTimeSaveLogSoftware()
@@ -32,48 +46,56 @@ class Log:
     def get_open_log_software(self):
         """lấy quyền lưu log"""
         return self.obj_config_software.get_log_software()
-
+    def get_open_log_console(self):
+        return self.obj_config_software.get_log_console()
     def get_path_save_software(self):
-        """Tra ve duong dan luu Fodel log"""
+        """Tra ve duong dan luu Fodel log log_software"""
         return self.obj_config_software.get_path_log_software()
-    
+
 
     def get_list_file_in_folder_log_sofware(self)->list:
-        """Hàm này trả về danh sách file hiện có trong folder software"""
-        return Log.obj_folder.get_list_file_in_folder(self.get_path_save_software())
-    
+        """Hàm này trả về danh sách folder hiện có trong folder software"""
+        return Log.obj_folder.get_list_folder_in_folder(self.get_path_save_software())
+
     def get_list_find_old_sofware(self,days_threshold):
-        """Trả về đường danh sách tên file có days_threshold không thỏa mãn để xóa """
+        """Trả về đường danh sách tên folder có days_threshold không thỏa mãn để xóa """
         list_file = self.get_list_file_in_folder_log_sofware()
         print("Danh sach file excell hiện có trong thư mục là:",list_file)
         if  list_file:
-            arr_old_file  = Log.obj_folder.get_old_files_by_threshold(Log.characters_check,list_file,days_threshold,"txt")
+            arr_old_file  = Log.obj_folder.get_old_folders_by_threshold(Log.characters_check,list_file,days_threshold)
             print(f"Danh sách file cũ hơn {days_threshold} ngày để xóa",arr_old_file)
             return arr_old_file
         else :
             print("Danh sách trong folder excell rỗng")
             return None
-    def delete_file_old_log_software(self):
+
+    def delete_folder_old_log_software(self):
         arr_file_old = self.get_list_find_old_sofware(self.get_time_software())
-        print("arr_file_old",arr_file_old)
         if arr_file_old:
-            print("---Xóa File quá hạn \n Bắt đầu xóa --")
+            print("---Bắt đầu xóa file quá hạn --")
             for file_delete in arr_file_old:
                 path_file_delete = Log.obj_folder.find_file(self.get_path_save_software(),file_delete)
-                print(path_file_delete)
+                print("Thư mục cần xóa",path_file_delete)
                 if path_file_delete:
-                    Log.obj_folder.delete_file(path_file_delete)
-            print("--Xóa thành công file--")
+                    Log.obj_folder.delete_folder(path_file_delete)
+            print("--Xóa thành công folder--")
+
     def create_file_log_software(self):
-       """Trả về đường dẫn của file log sản phẩn nếu folder không có trả về None"""
-       open_log_software = self.get_open_log_software()
-       if open_log_software:
-            path_log_folder_software = self.obj_config_software.get_path_log_software()
-            print("Đường Link log tồn tại .")
-            print(path_log_folder_software)
-            return Log.obj_folder.create_file_text_log(path_log_folder_software,"txt")
-       return None
-   
+        """nếu cho phép bật được bật thì sẽ tạo ra folder kiểu date_ngày tạo . và tạo file text theo ngày và giờ tạo file.
+        nếu open:trả thực hiện mở file và trả về đường dẫn file
+        nếu k open: thì trả về None
+        """
+        open_log_software = self.get_open_log_software()  # đổi đúng tên hàm getter
+        if not open_log_software:
+            print("Hiện tại đang tắt log software")
+            return None
+        # Lấy đường dẫn thư mục log phần mềm
+        path_log_folder_software = self.obj_config_software.get_path_log_software()
+        today = datetime.now().strftime("%Y-%m-%d")
+        name_folder = f"date_{today}"
+        path_foder = os.path.join(path_log_folder_software, name_folder)
+        return Log.obj_folder.create_file_text_log(path_foder,"txt")
+
     def log_and_print(self, msg, value=None, level="info"):
         # Ghép message nếu có value
         full_msg = f"{msg}: {value}" if value is not None else msg
@@ -87,8 +109,9 @@ class Log:
             self.logger.critical(full_msg)
         else:
             self.logger.info(full_msg)
-            
+
     def enable_console(self):
+            print("Bật Log console")
             if not self.console_enabled:
                 ch = logging.StreamHandler()
                 ch.setLevel(logging.DEBUG)
@@ -97,6 +120,7 @@ class Log:
                 self.console_enabled = True
 
     def disable_console(self):
+            print("Tắt Log console")
             for h in list(self.logger.handlers):
                 if isinstance(h, logging.StreamHandler):
                     self.logger.removeHandler(h)
@@ -106,6 +130,7 @@ class Log:
             print("Bật Log File")
             if not self.file_enabled:
                 os.makedirs(os.path.dirname(self.log_file) or ".", exist_ok=True)
+                print("Đường dẫn file log:", self.log_file)
                 fh = logging.FileHandler(self.log_file, encoding="utf-8")
                 fh.setLevel(logging.DEBUG)
                 fh.setFormatter(self.formatter)
@@ -114,7 +139,6 @@ class Log:
 
     def disable_file(self):
             print("Tắt Log File")
-            print("TATA LOGGGGGGGGGGGGGG  fILE")
             for h in list(self.logger.handlers):
                 if isinstance(h, logging.FileHandler):
                     self.logger.removeHandler(h)
@@ -125,7 +149,7 @@ class Log:
     # ===============================
     def debug(self, msg):
         self.logger.debug(msg)
-        
+
 
     def info(self, msg):
         self.logger.info(msg)
@@ -138,6 +162,29 @@ class Log:
 
     def critical(self, msg):
         self.logger.critical(msg)
+    def update_log_state(self):
+        """Kiểm tra và cập nhật trạng thái log theo obj_config_software (real-time)."""
+        if not self.obj_config_software:
+            return
+
+        # --- Console log ---
+        open_console = self.obj_config_software.get_log_console()
+        if open_console and not self.console_enabled:
+            self.enable_console()
+        elif not open_console and self.console_enabled:
+            self.disable_console()
+
+        # --- File log ---
+        open_file = self.obj_config_software.get_log_software()
+        if open_file:
+            if not self.file_enabled:
+                self.log_file = self.create_file_log_software()
+                if self.log_file:
+                    self.enable_file()
+        else:
+            if self.file_enabled:
+                self.disable_file()
+
 
 
 
@@ -148,88 +195,101 @@ class Log:
 # obj_log_data.info("wewewe232323232we")
 # obj_log_data.info("wewewe232323232we")
 # obj_log_data.info("wewewe232323232we")
+# obj_log_data.info("wewewe232323232we")
+# obj_log_data.info("wewewe232323232we")
+# obj_log_data.info("wewewe232323232we")
+# obj_log_data.info("wewewe232323232we")
+
 # path_file  = obj_log_data.create_file_log_software()
 # print(path_file)
-# obj_log_data.delete_file_old_log_software()
+# print(obj_log_data.get_list_find_old_sofware(1))
+# obj_log_data.delete_folder_old_log_software()
 #lAY THOI GIAN LUU LOG SOFTWARE
 # print(obj_log_data.get_time_software())
 # print(obj_log_data.get_open_log_software())
 # print(obj_log_data.get_path_save_software())
 # print(obj_log_data.get_list_file_in_folder_log_sofware())
-# print(obj_log_data.get_list_find_old_sofware(1))
 
 
 
-from openpyxl import Workbook, load_workbook
-from openpyxl.utils import get_column_letter
-import os
+
+
 
 class log_excell:
     '''Lớp này mỗi khi gọi sẽ tạo ra 1 file logexcell nếu được bật log excell ở trong config nếu tắt thì sẽ không tự động tạo ra 1 file'''
     from folder_create import Create
     obj_folder = Create()
-    characters_check = "log_"  
+    characters_check = "date_"
     def __init__(self,obj_config_software):
-
+        print("----------------------- Init File excell------------------------")
         self.wb = None
         self.ws = None
 
         self.obj_config_software = obj_config_software
-        
-
         self.path_file_save_log_excell = self.create_file_excell()  # self.path_file_save_log_excell  se cho co the bang none neu khong duoc phep tao file
         if self.path_file_save_log_excell:
             self.delete_file_old()
-            print("Cho phép mở tạo và tạo file excell mới vì đang bật log excell tại đường dẫn",self.path_file_save_log_excell)
             self.write_file_excel(["Thời gian","Mã sản phẩm","Tên sản phẩm","Tên người thao tác","Mã lỗi","Ghi chú"])
-        
-    def get_path_file_save_log_excell(self):
+        print("-----------------------End Init File excell------------------------")
+    def get_path_file_save_log_excell(self):  #ok
         """Tra ve path File luu log hien tai"""
         return self.path_file_save_log_excell
-    def get_time(self):
+    def get_time(self): #ok
         """Lấy thời gian cho phép log được lưu nếu được bật"""
         return self.obj_config_software.GetTimeSaveLogExcell()
 
-    def get_open_log_excell(self):
+    def get_open_log_excell(self): #ok
         """lấy quyền lưu log"""
         return  self.obj_config_software.get_log_product()
 
-    def get_path_save_log_excell(self):
+    def get_path_folder_log_excell(self): #ok
+        """Tra ve path folder luu log hien tai"""
         return self.obj_config_software.get_path_log_product()
-    
 
-    def get_list_file_in_folder_log_excell(self)->list:
-        """Hàm này trả về danh sách file hiện có trong folder excell"""
-        return log_excell.obj_folder.get_list_file_in_folder(self.get_path_save_log_excell())
-    
-    def create_file_excell(self):
-        """name_file la duong dan toi file"""
+
+    def get_list_folder_log_excell(self)->list: #ok
+        """Hàm này trả về danh sách foder hiện có trong folder excell"""
+        return log_excell.obj_folder.get_list_folder_in_folder(self.get_path_folder_log_excell())
+
+    def create_file_excell(self): #ok
+        """Tạo File Excell nếu trong config software cho phép
+        input :self
+        output:trả về đường dẫn file nếu cho phép tạo
+        trả về None nếu không cho phép tạo
+        """
         if self.get_open_log_excell():
-            file_path = log_excell.obj_folder.create_file_log(self.get_path_save_log_excell())
+            print("Log Excell đang bật")
+            path_excell =  self.get_path_folder_log_excell()
+            today = datetime.now().strftime("%Y-%m-%d")
+            name_folder = f"date_{today}"
+            path_foder = os.path.join(path_excell,name_folder)
+            file_path = log_excell.obj_folder.create_file_log(path_foder)
+            print("Path excell ghi dữ liệu:",file_path)
             return file_path
         else:
-            print("Không tạo File Log sản phẩm vì không bật log")
+            print("Log Excell đang tắt")
             return None
-    
-    def get_list_find_old(self,days_threshold):
-        """Trả về đường danh sách tên file có days_threshold không thỏa mãn để xóa """
-        list_file = self.get_list_file_in_folder_log_excell()
+
+    def get_list_find_old(self,days_threshold): #ok
+        """Trả về đường danh sách tên folder có days_threshold không thỏa mãn để xóa """
+        list_file = self.get_list_folder_log_excell()
         if  list_file:
-            arr_old_file = log_excell.obj_folder.get_old_files_by_threshold(log_excell.characters_check,list_file,days_threshold)
+            arr_old_file = log_excell.obj_folder.get_old_folders_by_threshold(log_excell.characters_check,list_file,days_threshold)
             print(f"Danh sách file cũ hơn {days_threshold} ngày để xóa",arr_old_file)
             return arr_old_file
         else :
-            print("Danh sách trong folder excell rỗng")
+            print("Danh sách trong folder excell rỗng hoặc không tồn tại file nào trong đó")
             return None
-    def delete_file_old(self):
+
+    def delete_file_old(self): # oke
         arr_file_old = self.get_list_find_old(self.get_time())
         if arr_file_old:
-            print("---Xóa File quá hạn \n Bắt đầu xóa --")
-            for file_delete in arr_file_old:
-                path_file_delete = log_excell.obj_folder.find_file(self.get_path_save_log_excell(),file_delete)
-                print(path_file_delete)
+            print("---Xóa File Excell quá hạn \n Bắt đầu xóa --")
+            for folder_name in arr_file_old:
+                path_file_delete = log_excell.obj_folder.find_file(self.get_path_folder_log_excell(),folder_name)
+                print("Path Folder cần xóa",path_file_delete)
                 if path_file_delete:
-                    log_excell.obj_folder.delete_file(path_file_delete)
+                    log_excell.obj_folder.delete_folder(path_file_delete)
             print("--Xóa thành công file--")
 
 
@@ -277,19 +337,38 @@ class log_excell:
         # print(f"✅ Đã lưu dòng dữ liệu vào: {file_path}")
 
         return file_path
-    
-# from config_software import OilDetectionSystem
-# obj_config_software = OilDetectionSystem()    
-# test_obj_log_excell = log_excell(obj_config_software)
+    def update_log_state(self):
+        """Cập nhật realtime trạng thái log Excel."""
+        open_log_excel = self.obj_config_software.get_log_product()
 
-# print("Đường dẫn File Excell có nếu Bật log Excell",test_obj_log_excell.get_path_file_save_log_excell())
-# test_obj_log_excell.get_time()
-# print("Cho phéo tạo file không ?",test_obj_log_excell.get_open_log_excell())
-# print("Dường dẫn lưu File excelc",test_obj_log_excell.get_path_save_log_excell())
-# test_obj_log_excell.write_file_excel([1,3,4,5,23])
-# test_obj_log_excell.delete_file_old()
-# test_obj_log_excell.create_file_excell()
+        # Nếu bật log Excel mà chưa có file -> tạo mới
+        if open_log_excel and not self.path_file_save_log_excell:
+            print("🟢 Bật lại log Excel, tạo file mới...")
+            self.path_file_save_log_excell = self.create_file_excell()
+            if self.path_file_save_log_excell:
+                self.write_file_excel(["Thời gian", "Mã sản phẩm", "Tên sản phẩm", "Tên người thao tác", "Mã lỗi", "Ghi chú"])
+        
+        # Nếu tắt log Excel mà vẫn có file -> dừng ghi
+        elif not open_log_excel and self.path_file_save_log_excell:
+            print("🔴 Tắt log Excel (realtime cập nhật)")
+            self.path_file_save_log_excell = None
+
+# from config_software import OilDetectionSystem
+# obj_config_software = OilDetectionSystem()
+# test_obj_log_excell = log_excell(obj_config_software)
+# print("danh sach folder hien co:",test_obj_log_excell.get_list_folder_log_excell())
+#print("Đường dẫn File Excell có nếu Bật log Excell",test_obj_log_excell.get_path_file_save_log_excell())
+#test_obj_log_excell.get_time()
+#print("Cho phéo tạo file không ?",test_obj_log_excell.get_open_log_excell())
+# print("Dường dẫn lưu File excelc",test_obj_log_excell.get_path_folder_log_excell())
 # test_obj_log_excell.get_list_find_old(1)
+# test_obj_log_excell.delete_file_old()
+# test_obj_log_excell.write_file_excel([1,3,4,5,23])
+# test_obj_log_excell.write_file_excel([1,3,4,5,23])
+# test_obj_log_excell.write_file_excel([1,3,4,5,23])
+
+
+
 
 
 
@@ -297,10 +376,11 @@ class log_img:
     #Kiểm thử hảm Log img Ok không cần kiểm tra lại
     from folder_create import Create
     obj_folder = Create()
-    characters_check  = "img_"
-    extension ="jpg"  
+    characters_check  = "date_"
+    extension ="jpg"
     def __init__(self,obj_config_software):
         self.obj_config_software = obj_config_software
+        self.enabled = self.get_open_log_img()  # 🔹 Khởi tạo trạng thái hiện tại
         print("-------Tiến hành xóa File log ảnh-----")
         self.delete_file_old_log_img()  #xoa truoc moi khi mo phan mem
         print("-----------Hoàn thành xóa-----------")
@@ -316,13 +396,17 @@ class log_img:
     def create_file_log_img(self,img):
         """Hàm này tạo lưu ảnh img khi yêu cầu bật ảnh được bật"""
         if self.get_open_log_img():
+            print("da vao day nha 2")
             path_foler_img = self.get_path_foldef_log_img()
-            log_img.obj_folder.create_file_log_img(img,path_foler_img,extension= log_img.extension)
+            today = datetime.now().strftime("%Y-%m-%d")
+            name_folder = f"date_{today}"
+            path_foder = os.path.join(path_foler_img,name_folder)
+            log_img.obj_folder.create_file_log_img(img,path_foder,extension= log_img.extension)
     def get_list_find_old_img(self):
             """Trả về danh sách sau khoảng thời gian time trong cấu hình information"""
             time_set  = self.get_time_log_img()
             list_file =  self.get_list_file_in_folder_img()
-            return log_img.obj_folder.get_old_files_by_threshold_img(log_img.characters_check,list_file,time_set)
+            return log_img.obj_folder.get_old_folders_by_threshold(log_img.characters_check,list_file,time_set)
     def delete_file_old_log_img(self):
         """Tự lấy danh sách ảnh cũ trong đường link ảnh và tự động xóa ảnh sau thời gian quá hạn"""
         arr_file_old_img = self.get_list_find_old_img()
@@ -330,16 +414,22 @@ class log_img:
             for file_delete in arr_file_old_img:
                 path_file_delete = Log.obj_folder.find_file(self.get_path_foldef_log_img(),file_delete)
                 if path_file_delete:
-                    log_img.obj_folder.delete_file(path_file_delete)
-            print("-------Xóa thành công file-------")
+                    log_img.obj_folder.delete_folder(path_file_delete)
+            print("-------Xóa thành công folder-------")
         print("Hiện tại không tìm thấy File quá hạn")
     def get_list_file_in_folder_img(self):
-        return log_img.obj_folder.get_list_file_in_folder(self.get_path_foldef_log_img())
+        return log_img.obj_folder.get_list_folder_in_folder(self.get_path_foldef_log_img())
+    def update_log_state(self):
+        """Kiểm tra và cập nhật trạng thái log ảnh theo cấu hình."""
+        new_state = self.get_open_log_img()
+        if new_state != self.enabled:
+            if new_state:
+                print("🟢 Bật log ảnh (cho phép lưu ảnh).")
+            else:
+                print("🔴 Tắt log ảnh (ngừng lưu ảnh).")
+            self.enabled = new_state
 
-        
-        
-
-
+    
 # from config_software import OilDetectionSystem
 # obj_config_software = OilDetectionSystem()
 # obj_log_img = log_img(obj_config_software)
@@ -347,15 +437,139 @@ class log_img:
 # print("Thời gian lưu log hình ảnh hiện tại",obj_log_img.get_time_log_img(),"ngày")
 # print("Đường dẫn lưu ảnh:",obj_log_img.get_path_foldef_log_img())
 # print("Danh sách ảnh cũ quá hạn",obj_log_img.get_list_find_old_img())
-# print("Danh sách ảnh cũ quá hạn",obj_log_img.get_list_file_in_folder_img())
+# print("Trạng thái lưu log hình ảnh hiện tại",obj_log_img.get_open_log_img())
+# print("Danh sách Folder ảnh cũ",obj_log_img.get_list_find_old_img())
 
+# print("Danh sách ảnh cũ quá hạn",obj_log_img.get_list_file_in_folder_img())
 # import numpy as np
 # import os
 # height, width, channels = 480, 640, 3
-# blank_image = np.zeros((height, width, channels), dtype=np.uint8)  
+# blank_image = np.zeros((height, width, channels), dtype=np.uint8)
 # obj_log_img.create_file_log_img(blank_image)
 # obj_log_img.delete_file_old_log_img()
 
+class Manager_Log:
+    def __init__(self,obj_config_software,queue_log):
+        self.obj_log_excell = log_excell(obj_config_software)
+        self.obj_log_img  = log_img(obj_config_software)
+        self.obj_log  = Log(obj_config_software)
+        
+        self.queue_log = queue_log
+        self.thread_running = False
+        self.thread = None
+        self.Init()
+    def Init(self):
+        status_log_excell = self.obj_log_excell.get_open_log_excell()
+        status_log = self.obj_log.get_open_log_software()
+        status_log_cosole = self.obj_log.get_open_log_console()
+        status_log_img = self.obj_log_img.get_open_log_img()
+        # print(status_log_excell,status_log,status_log_img,satus_log_cosole)
+        if any([
+             status_log_excell,
+             status_log,
+             status_log_cosole,
+             status_log_img 
+        ]):
+            self.start_log_thread()
+        else:
+            self.stop_log_thread()            
+    def start_log_thread(self):
+        """
+        Khởi động luồng đọc log từ queue_log.
+        Mỗi phần tử trong queue sẽ được xử lý tùy loại log.
+        """
+        if not self.thread_running:
+            self.thread_running = True
+            self.thread = threading.Thread(target=self._log_thread_loop, daemon=True)
+            self.thread.start()
+     
 
+    def stop_log_thread(self):
+        """
+        Dừng luồng ghi log an toàn.
+        """
+        self.thread_running = False
+        if self.thread:
+            self.thread.join(timeout=2)
+           
+
+    def _log_thread_loop(self):
+        """
+        Hàm chạy trong thread để đọc queue_log liên tục.
+        """
+        while self.thread_running:
+                # Lấy dữ liệu từ queue, timeout tránh treo vô hạn
+                if not self.queue_log.empty():
+                    item = self.queue_log.get(timeout=0.1)
+                    self._handle_log_item(item)
+                time.sleep(0.5)
+                print("dang mo luong log manager")
+    def _handle_log_item(self, item):
+        """
+        Xử lý 1 phần tử log lấy ra từ queue.
+        item có thể là dict chứa thông tin loại log, dữ liệu, v.v.
+        """
+        try:
+            log_type = item.get("type")
+            data = item.get("data")
+            if log_type == "excel":
+                self.obj_log_excell.write_file_excel(data)
+            elif log_type == "image":
+                print("da vao day nha1")
+                self.obj_log_img.create_file_log_img(data)
+            elif log_type == "software":
+                self.obj_log.logger.info(data)
+            else:
+                self.obj_log.logger.warning(f"⚠️ Unknown log type: {log_type}")
+        except Exception as e:
+            self.obj_log.logger.error(f"❌ Error handling log item: {e}")
+    def update_log(self):
+        """
+        Cập nhật trạng thái bật/tắt log.
+        Nếu tất cả đều tắt → dừng luồng & xóa sạch queue_log.
+        Nếu ít nhất 1 cái bật → bật luồng.
+        """
+        # Gọi hàm cập nhật trạng thái của từng module log
+        self.obj_log.update_log_state()
+        self.obj_log_img.update_log_state()
+        self.obj_log_excell.update_log_state()
+
+        # Lấy trạng thái hiện tại
+        status_log_excell = self.obj_log_excell.get_open_log_excell()
+        status_log = self.obj_log.get_open_log_software()
+        status_log_console = self.obj_log.get_open_log_console()
+        status_log_img = self.obj_log_img.get_open_log_img()
+
+        # Nếu tất cả đều False → tắt luồng & xóa queue
+        if not any([
+            status_log_excell,
+            status_log,
+            status_log_console,
+            status_log_img
+        ]):
+            self.stop_log_thread()
+            self.clear_log_queue()
+        else:
+            self.start_log_thread()
+    def clear_log_queue(self):
+        """
+        Xóa toàn bộ phần tử còn lại trong queue_log.
+        """
+        try:
+            cleared = 0
+            while not self.queue_log.empty():
+                self.queue_log.get_nowait()
+                cleared += 1
+            if cleared > 0:
+                print(f"🧹 Đã xóa {cleared} phần tử trong queue_log.")
+        except Exception as e:
+            print(f"⚠️ Lỗi khi xóa queue_log: {e}")
+
+# from config_software import OilDetectionSystem
+# obj_config_software = OilDetectionSystem()
+# import queue
+# queue_data = queue.Queue(maxsize = 30)
+# obj_manager_log = Manager_Log(obj_config_software,queue_data)
+# obj_manager_log.start_log_thread()
 
 

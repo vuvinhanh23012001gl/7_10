@@ -1,4 +1,0 @@
-2025-10-24 18:35:51,506 [INFO]:Update trạng thái các nút nhấn btn_IMG:False btn_excell:False btn_log_txt:False
-2025-10-24 18:49:59,853 [INFO]:Update trạng thái các nút nhấn btn_IMG:False btn_excell:False btn_log_txt:False
-2025-10-24 18:50:02,283 [INFO]:Update trạng thái các nút nhấn btn_IMG:False btn_excell:False btn_log_txt:False
-2025-10-24 18:50:02,678 [INFO]:Update trạng thái các nút nhấn btn_IMG:False btn_excell:False btn_log_txt:False

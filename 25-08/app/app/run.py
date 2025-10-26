@@ -146,22 +146,20 @@ def out_app():
 #--------------------------------------------------------Api_run_application---------------------------------------------
 @api_run_application.route('/run_application',methods = ['GET'])
 def run_application():
-    # import numpy as np
-    # print("khong nhya dcuo c2")                
-    # import os
-    # height, width, channels = 480, 640, 3
-    # blank_image = np.zeros((height, width, channels), dtype=np.uint8)  
-    # common_object.obj_log_img.create_file_log_img(blank_image)
+    import numpy as np
+    height, width, channels = 480, 640, 3
+    blank_image = np.zeros((height, width, channels), dtype=np.uint8) 
+    shared_queue.queue_log.put({"type":"image","data":blank_image})
     func.create_choose_master(common_value.NAME_FILE_CHOOSE_MASTER) # tạo file choose_master nếu tạo rồi thì thôi
     choose_master_index = func.read_data_from_file(common_value.NAME_FILE_CHOOSE_MASTER) # đọc lại file choose master cũ xem lần trước  người dùng chọn gì
     choose_master_index =  choose_master_index.strip()
     arr_point = common_object.manage_product.get_list_point_find_id(choose_master_index)
-    print("arr Point",)
-    common_object.obj_log.log_and_print("arr Point",arr_point)
+    print("arr Point",arr_point)
+    # common_object.obj_log.log_and_print("arr Point",arr_point)
     """Hàm này đê chạy run khi người dùng nhấn "chạy" trên giao diện chính"""
     common_value.is_run = 1      #bat bien Run len bat dau qua trinh chay
     print("Đã nhấn nút Run application")
-    common_object.obj_log.log_and_print("Đã nhấn nút Run application")
+    # common_object.obj_log.log_and_print("Đã nhấn nút Run application")
     return jsonify({"status":"OK"})
 #--------------------------------------------------------Api_master_take---------------------------------------------
 
@@ -514,15 +512,17 @@ def change_log():
     status_log_img = data_change.get("log_img",True)
     status_log_product = data_change.get("log_product",True)
     status_log_software = data_change.get("log_software",True)
+    status_log_console = data_change.get("log_console",True)
     set_time_save_log_software = data_change.get("set_time_save_log_software",30)
     set_time_save_log_img = data_change.get("set_time_save_log_img",30)
     set_time_save_log_excell = data_change.get("set_time_save_log_excell",30)
     common_object.obj_config_software.update_open_btn(
-        status_log_img,status_log_product,status_log_software,
+        status_log_img,status_log_product,status_log_software,status_log_console,
         int(set_time_save_log_software),int(set_time_save_log_img),int(set_time_save_log_excell)
     )
-    common_object.obj_log.info(f"Update trạng thái các nút nhấn btn_IMG:{status_log_img} btn_excell:{status_log_product} btn_log_txt:{status_log_software}")
-    return jsonify({"status":"200OK"})
+    common_object.obj_manager_log.update_log()
+    # common_object.obj_log.info(f"Update trạng thái các nút nhấn btn_IMG:{status_log_img} btn_excell:{status_log_product} btn_log_txt:{status_log_software}")
+    return jsonify({"status":"Cấu hình thành công!"})
 
 @api_config_com.route("/exit")
 def exit_api_config_com():
@@ -687,8 +687,6 @@ if __name__ == "__main__":
     OPEN_THREAD_IMG = True
     import main_pc
     import threading
-    print("hejhejegwjegrejgrewjhrgewhrgehrgehrgewhrewgrhrgewhrgewhi truoc",common_object.obj_log_img)
-    print("truoc",id(common_object.obj_log_img))
     threading.Thread(target=stream_logs,name="stream_log",daemon = True).start()
     threading.Thread(target=stream_img,name="stream_img_and_data",daemon = True).start()
     threading.Thread(target = stream_frames,name="stream_video",daemon=True).start()

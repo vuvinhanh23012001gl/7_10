@@ -1,8 +1,0 @@
-2025-10-24 17:38:27,863 [INFO]:Update trạng thái các nút nhấn btn_IMG:False btn_excell:True btn_log_txt:True
-2025-10-24 17:38:34,921 [INFO]:Update trạng thái các nút nhấn btn_IMG:False btn_excell:False btn_log_txt:True
-2025-10-24 17:38:37,308 [INFO]:Update trạng thái các nút nhấn btn_IMG:True btn_excell:False btn_log_txt:True
-2025-10-24 17:38:42,270 [INFO]:Update trạng thái các nút nhấn btn_IMG:True btn_excell:True btn_log_txt:True
-2025-10-24 17:38:45,970 [INFO]:Update trạng thái các nút nhấn btn_IMG:True btn_excell:False btn_log_txt:True
-2025-10-24 17:38:47,720 [INFO]:Update trạng thái các nút nhấn btn_IMG:False btn_excell:False btn_log_txt:True
-2025-10-24 17:38:50,799 [INFO]:Update trạng thái các nút nhấn btn_IMG:True btn_excell:False btn_log_txt:True
-2025-10-24 17:38:52,414 [INFO]:Update trạng thái các nút nhấn btn_IMG:True btn_excell:True btn_log_txt:True

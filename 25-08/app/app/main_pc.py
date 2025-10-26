@@ -10,7 +10,7 @@ import time
 
 def fuc_main_process():
     from judget_product import Judget_Product
-    judget_product = Judget_Product(common_object.obj_log_img)
+    judget_product = Judget_Product()
     flag_the_firts_connect = True
     while True:
         if common_object.obj_manager_serial.com_is_open:   #ham nay xoa
@@ -93,7 +93,9 @@ def fuc_main_process():
             func.clear_queue(shared_queue.queue_rx_web_main)
             time.sleep(1)
             print("❌ Không tìm thấy cổng Serial. Vui lòng kiểm tra kết nối.")
-       
+            shared_queue.queue_log.put({"type":"software","data":"xin chao ban nhe"})
+            shared_queue.queue_log.put({"type":"excel","data":[1,23,4,5,5]})
+            
 main_process = threading.Thread(target=fuc_main_process,name="main_pc",daemon=True)
 main_process.start()     
     

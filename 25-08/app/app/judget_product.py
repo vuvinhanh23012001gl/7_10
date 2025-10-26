@@ -19,10 +19,8 @@ class Judget_Product:
     model = YOLO(file_path)
     model(img)
 
-    def __init__(self,obj_log_img):
-        self.obj_log_img = obj_log_img
-    def save_log_img(self,img):
-         self.obj_log_img.create_file_log_img(img)
+    def __init__(self):
+        pass
     def judget_img(self,atitude_z,index_picture,img:np.ndarray,data_one_point_master):
                 # ✅ Kiểm tra giá trị đầu vào
                 if img is None:

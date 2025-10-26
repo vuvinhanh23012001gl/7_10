@@ -1240,3 +1240,10 @@ form label {
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.2) inset;
   background-color: red;
 }
+#infor-log-config-software {
+    padding-top:13px;
+    color: #3e8e41;
+    font-size:medium;
+    border-radius: 10px;         /* Bo góc */           /* Khoảng cách trong */        /* Cách phần trên */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Đổ bóng nhẹ */
+}

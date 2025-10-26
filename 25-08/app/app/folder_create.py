@@ -390,6 +390,12 @@ class Create:
             return []
         return [file for file in os.listdir(folder_path)
                 if os.path.isfile(os.path.join(folder_path, file))]
+    def get_list_folder_in_folder(self, folder_path: str) -> list:
+        """Trả về danh sách các thư mục con có trong folder (không gồm file)."""
+        if not os.path.exists(folder_path):
+            return []
+        return [name for name in os.listdir(folder_path)
+                if os.path.isdir(os.path.join(folder_path, name))]
     def create_file_log(self,path_save_log_excell,formart="xlsx",name_file=None):
         """
         Trả về đường dẫn đầy đủ của file Excel.
@@ -523,6 +529,43 @@ class Create:
                     if (latest_date - dt).days > days_threshold]
 
         return old_files
+
+    def find_file(self,path, filename):
+        file_path = os.path.join(path, filename)
+        return file_path if os.path.exists(file_path) else False
+    
+    def get_old_folders_by_threshold(self,prefix: str, folders: list, days_threshold=30):
+        """
+        Lọc ra danh sách folder có dạng 'prefixYYYY-MM-DD'
+        và có ngày cũ hơn 'days_threshold' ngày so với folder mới nhất.
+
+        Ví dụ folder: data_2025-10-26
+        """
+        if not folders:
+            return []
+
+        folder_dates = {}
+        for f in folders:
+            try:
+                if f.startswith(prefix):
+                    # lấy phần ngày trong tên folder (sau prefix)
+                    date_str = f[len(prefix):]
+                    dt = datetime.strptime(date_str, '%Y-%m-%d')
+                    folder_dates[f] = dt
+            except Exception as e:
+                print(f"Lỗi parse {f}: {e}")
+
+        if not folder_dates:
+            return []
+
+        # tìm ngày mới nhất
+        latest_date = max(folder_dates.values())
+
+        # lọc ra folder cũ hơn days_threshold
+        old_folders = [f for f, dt in folder_dates.items()
+                    if (latest_date - dt).days > days_threshold]
+
+        return old_folders
 
     def find_file(self,path, filename):
         file_path = os.path.join(path, filename)
